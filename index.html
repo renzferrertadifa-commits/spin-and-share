@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spin & Share</title>
+<style>
+:root{--bg:#101426;--panel:#1b2340;--muted:#aab4d0;--ink:#f8f9ff;--accent:#8b5cf6;--pink:#ec4899}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#29315c,#101426 55%);color:var(--ink);font:16px system-ui,Arial,sans-serif;min-height:100vh}
+header{padding:22px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px}h1{margin:0;font-size:clamp(25px,5vw,38px)}.tag{color:#c4b5fd;font-size:12px;letter-spacing:2px;font-weight:800}
+main{width:min(1100px,92%);margin:20px auto 60px}.panel{background:#1b2340eF;border:1px solid #ffffff20;border-radius:22px;padding:22px;box-shadow:0 18px 55px #0004;margin-bottom:18px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}button,.tab{border:0;border-radius:12px;padding:12px 17px;background:var(--accent);color:white;font-weight:750;cursor:pointer}.tab{background:#303a60}.tab.active{background:var(--accent)}button:disabled{opacity:.5;cursor:not-allowed}
+input,textarea{width:100%;padding:13px;border:1px solid #566184;border-radius:11px;background:#11182d;color:white;margin:7px 0 14px;font:inherit}label{font-weight:700;font-size:14px}.muted{color:var(--muted)}.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}.hidden{display:none!important}
+.wheel-wrap{display:grid;grid-template-columns:minmax(240px,420px) 1fr;gap:25px;align-items:center}.wheelbox{position:relative;width:min(78vw,390px);aspect-ratio:1;margin:auto}.wheel{width:100%;height:100%;border-radius:50%;border:9px solid #fff;box-shadow:0 12px 35px #0008;transition:transform 4s cubic-bezier(.12,.72,.12,1);background:conic-gradient(#f97316 0 60deg,#eab308 60deg 120deg,#22c55e 120deg 180deg,#06b6d4 180deg 240deg,#8b5cf6 240deg 300deg,#ec4899 300deg)}
+.pointer{position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:17px solid transparent;border-right:17px solid transparent;border-top:34px solid white;z-index:2;filter:drop-shadow(0 3px 3px #0008)}
+.center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;color:#222;border:6px solid #ddd;border-radius:50%;width:76px;height:76px;font-weight:900;display:grid;place-items:center}
+.result{font-size:clamp(24px,5vw,38px);font-weight:900;color:#f9a8d4;margin:12px 0}.choice{display:inline-block;padding:7px 11px;margin:4px;border-radius:20px;background:#303a60}.stat{font-size:28px;font-weight:900}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px;border-bottom:1px solid #ffffff20;font-size:14px}th{color:#c4b5fd}
+.notice{padding:12px;border-radius:12px;background:#30284e;color:#ddd6fe;margin:10px 0}.danger{background:#8b2635}.small{font-size:12px}
+@media(max-width:720px){.wheel-wrap{grid-template-columns:1fr}.panel{padding:16px}header{padding:18px 4%}}
+</style>
+</head>
+<body>
+<header><div><div class="tag">REAL-TIME MULTIPLAYER</div><h1>🎡 Spin & Share</h1></div><div class="muted small">Shared rooms • One-time results</div></header>
+<main>
+<div class="notice" id="setupNotice">Connect your Supabase project first. Follow the README and run the SQL setup.</div>
+<div class="tabs"><button class="tab active" data-tab="play">Participant</button><button class="tab" data-tab="admin">Admin / Developer</button></div>
+<section id="play" class="panel">
+<h2>Join a wheel</h2><div class="row"><div><label>Your name</label><input id="playerName" placeholder="Enter your name"></div><div><label>Room code</label><input id="roomCode" placeholder="Example: BLUE42" maxlength="12"></div></div>
+<button id="joinBtn">Join room</button><span id="joinMsg" class="muted"></span>
+<div id="game" class="hidden"><div class="wheel-wrap"><div class="wheelbox"><div class="pointer"></div><div id="wheel" class="wheel"></div><div class="center">SPIN</div></div><div><div class="muted">WELCOME</div><h2 id="welcome"></h2><div class="muted">Available choices</div><div id="choices"></div><p><span class="stat" id="remaining">0</span> <span class="muted">choices remaining</span></p><button id="spinBtn">SPIN THE WHEEL</button><div id="result" class="result"></div><p class="muted small" id="spinStatus"></p></div></div></div>
+</section>
+<section id="admin" class="panel hidden">
+<h2>Developer dashboard</h2><p class="muted">Sign in with the admin email and password you created in Supabase. Only approved admin emails can manage rooms and view results.</p>
+<div id="adminLogin"><label>Admin email</label><input id="adminEmail" type="email" placeholder="you@example.com"><label>Password</label><input id="adminPassword" type="password" placeholder="Password"><button id="loginBtn">Sign in</button><span id="loginMsg" class="muted"></span></div>
+<div id="adminArea" class="hidden"><div class="row"><div><label>Room name</label><input id="newRoomName" placeholder="Classroom raffle"></div><div><label>Choices (one per line)</label><textarea id="newChoices" rows="5" placeholder="Prize 1&#10;Prize 2&#10;Prize 3"></textarea></div></div><button id="createRoomBtn">Create room</button> <button id="logoutBtn" class="tab">Sign out</button><div id="createdRoom" class="notice hidden"></div>
+<hr style="border-color:#ffffff20;margin:22px 0"><label>Room code to monitor</label><div class="row"><input id="monitorCode" placeholder="Enter room code"><button id="loadRoomBtn">Load results</button></div><div id="adminStats"></div><div style="overflow:auto"><table><thead><tr><th>Participant</th><th>Result</th><th>Time</th></tr></thead><tbody id="history"></tbody></table></div></div>
+</section>
+<p class="muted small">Tip: each person should use their own phone/browser session and enter their own name. The room code is shared; the admin login is private.</p>
+</main>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+// Paste your project URL and anon/public key from Supabase here:
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const configured = SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('YOUR_') && !SUPABASE_ANON_KEY.includes('YOUR_');
+const notice=document.getElementById('setupNotice');
+let sb=null, currentRoom=null, player=null, spinning=false, subscription=null;
+if(configured){sb=createClient(SUPABASE_URL,SUPABASE_ANON_KEY);notice.classList.add('hidden');}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.tab){document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));document.getElementById('play').classList.toggle('hidden',b.dataset.tab!=='play');document.getElementById('admin').classList.toggle('hidden',b.dataset.tab!=='admin');}}));
+async function ensureSession(){const {data:{session}}=await sb.auth.getSession();if(!session){const {error}=await sb.auth.signInAnonymously();if(error)throw error;}}
+async function loadGame(){
+ const {data:room,error}=await sb.from('rooms').select('id,room_code,name').eq('room_code',currentRoom).single();if(error)throw error;
+ const {data:items,error:e}=await sb.from('choices').select('id,label,is_taken').eq('room_id',room.id).eq('is_taken',false);if(e)throw e;
+ document.getElementById('welcome').textContent=room.name;
+ document.getElementById('choices').innerHTML=items.map(x=>`<span class="choice">${escapeHtml(x.label)}</span>`).join('')||'<span class="muted">No choices left.</span>';
+ document.getElementById('remaining').textContent=items.length;
+ document.getElementById('spinBtn').disabled=items.length===0;
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+document.getElementById('joinBtn').onclick=async()=>{try{if(!sb)throw Error('Admin must finish Supabase setup first.');await ensureSession();player=document.getElementById('playerName').value.trim();currentRoom=document.getElementById('roomCode').value.trim().toUpperCase();if(!player||!currentRoom)throw Error('Enter your name and room code.');await loadGame();document.getElementById('game').classList.remove('hidden');document.getElementById('joinMsg').textContent=' Joined!';if(subscription)sb.removeChannel(subscription);subscription=sb.channel('room-'+currentRoom).on('postgres_changes',{event:'*',schema:'public',table:'choices'},loadGame).subscribe();}catch(e){document.getElementById('joinMsg').textContent=' '+e.message;}};
+document.getElementById('spinBtn').onclick=async()=>{if(spinning)return;spinning=true;const btn=document.getElementById('spinBtn');btn.disabled=true;document.getElementById('result').textContent='Spinning...';document.getElementById('spinStatus').textContent='';const wheel=document.getElementById('wheel');wheel.style.transform=`rotate(${1800+Math.random()*1800}deg)`;try{const {data,error}=await sb.rpc('claim_random_choice',{p_room_code:currentRoom,p_participant_name:player});if(error)throw error;setTimeout(async()=>{document.getElementById('result').textContent=data?.label?`You got: ${data.label}`:'No choices remain!';document.getElementById('spinStatus').textContent=data?.label?'This result is now removed for everyone.':'';await loadGame();spinning=false;},4100);}catch(e){document.getElementById('spinStatus').textContent=e.message;setTimeout(()=>{spinning=false;btn.disabled=false;},4100);}};
+document.getElementById('loginBtn').onclick=async()=>{try{if(!sb)throw Error('Complete setup first.');const {error}=await sb.auth.signInWithPassword({email:document.getElementById('adminEmail').value,password:document.getElementById('adminPassword').value});if(error)throw error;const {data, error:e}=await sb.rpc('is_current_user_admin');if(e||!data)throw Error('This account is not on the admin allowlist. Add its email using the SQL instructions.');document.getElementById('adminLogin').classList.add('hidden');document.getElementById('adminArea').classList.remove('hidden');}catch(e){document.getElementById('loginMsg').textContent=' '+e.message;}};
+document.getElementById('logoutBtn').onclick=async()=>{await sb.auth.signOut();location.reload();};
+document.getElementById('createRoomBtn').onclick=async()=>{try{const name=document.getElementById('newRoomName').value.trim()||'Spin room';const labels=document.getElementById('newChoices').value.split('\n').map(x=>x.trim()).filter(Boolean);if(labels.length<2)throw Error('Add at least two choices, one per line.');const code=Math.random().toString(36).slice(2,8).toUpperCase();const {data:room,error}=await sb.from('rooms').insert({name,room_code:code,created_by:(await sb.auth.getUser()).data.user.id}).select().single();if(error)throw error;const {error:e}=await sb.from('choices').insert(labels.map(label=>({room_id:room.id,label})));if(e)throw e;const box=document.getElementById('createdRoom');box.classList.remove('hidden');box.textContent=`Room created! Share this code: ${code}`;document.getElementById('monitorCode').value=code;}catch(e){alert(e.message);}};
+document.getElementById('loadRoomBtn').onclick=loadHistory;
+async function loadHistory(){try{const code=document.getElementById('monitorCode').value.trim().toUpperCase();const {data:room,error}=await sb.from('rooms').select('id,name').eq('room_code',code).single();if(error)throw error;const {data,error:e}=await sb.from('spins').select('participant_name,choice_label,created_at').eq('room_id',room.id).order('created_at',{ascending:false});if(e)throw e;document.getElementById('adminStats').innerHTML=`<h3>${escapeHtml(room.name)}</h3><p><span class="stat">${data.length}</span> total spins</p>`;document.getElementById('history').innerHTML=data.map(x=>`<tr><td>${escapeHtml(x.participant_name)}</td><td>${escapeHtml(x.choice_label)}</td><td>${new Date(x.created_at).toLocaleString()}</td></tr>`).join('');}catch(e){alert(e.message);}}
+</script>
+</body></html>
