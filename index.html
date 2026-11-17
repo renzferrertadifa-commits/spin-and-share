@@ -1,68 +1,1275 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Spin & Share</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#173c30">
+<title>Tadifa Clan | Christmas Gift Exchange</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-:root{--bg:#101426;--panel:#1b2340;--muted:#aab4d0;--ink:#f8f9ff;--accent:#8b5cf6;--pink:#ec4899}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#29315c,#101426 55%);color:var(--ink);font:16px system-ui,Arial,sans-serif;min-height:100vh}
-header{padding:22px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px}h1{margin:0;font-size:clamp(25px,5vw,38px)}.tag{color:#c4b5fd;font-size:12px;letter-spacing:2px;font-weight:800}
-main{width:min(1100px,92%);margin:20px auto 60px}.panel{background:#1b2340eF;border:1px solid #ffffff20;border-radius:22px;padding:22px;box-shadow:0 18px 55px #0004;margin-bottom:18px}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}button,.tab{border:0;border-radius:12px;padding:12px 17px;background:var(--accent);color:white;font-weight:750;cursor:pointer}.tab{background:#303a60}.tab.active{background:var(--accent)}button:disabled{opacity:.5;cursor:not-allowed}
-input,textarea{width:100%;padding:13px;border:1px solid #566184;border-radius:11px;background:#11182d;color:white;margin:7px 0 14px;font:inherit}label{font-weight:700;font-size:14px}.muted{color:var(--muted)}.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}.hidden{display:none!important}
-.wheel-wrap{display:grid;grid-template-columns:minmax(240px,420px) 1fr;gap:25px;align-items:center}.wheelbox{position:relative;width:min(78vw,390px);aspect-ratio:1;margin:auto}.wheel{width:100%;height:100%;border-radius:50%;border:9px solid #fff;box-shadow:0 12px 35px #0008;transition:transform 4s cubic-bezier(.12,.72,.12,1);background:conic-gradient(#f97316 0 60deg,#eab308 60deg 120deg,#22c55e 120deg 180deg,#06b6d4 180deg 240deg,#8b5cf6 240deg 300deg,#ec4899 300deg)}
-.pointer{position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:17px solid transparent;border-right:17px solid transparent;border-top:34px solid white;z-index:2;filter:drop-shadow(0 3px 3px #0008)}
-.center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;color:#222;border:6px solid #ddd;border-radius:50%;width:76px;height:76px;font-weight:900;display:grid;place-items:center}
-.result{font-size:clamp(24px,5vw,38px);font-weight:900;color:#f9a8d4;margin:12px 0}.choice{display:inline-block;padding:7px 11px;margin:4px;border-radius:20px;background:#303a60}.stat{font-size:28px;font-weight:900}
-table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px;border-bottom:1px solid #ffffff20;font-size:14px}th{color:#c4b5fd}
-.notice{padding:12px;border-radius:12px;background:#30284e;color:#ddd6fe;margin:10px 0}.danger{background:#8b2635}.small{font-size:12px}
-@media(max-width:720px){.wheel-wrap{grid-template-columns:1fr}.panel{padding:16px}header{padding:18px 4%}}
+:root {
+  --green:#173c30;
+  --green2:#285442;
+  --gold:#c6a66b;
+  --cream:#f5f0e6;
+  --white:#fffdf8;
+  --red:#a94f48;
+  --muted:#7d857c;
+  --line:#e8dfd0;
+  --shadow:0 18px 55px #173c3015;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--cream);color:#26332c;
+  font-family:"DM Sans",sans-serif;min-height:100vh;
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+header{
+  min-height:75px;padding:12px clamp(18px,5vw,65px);
+  display:flex;justify-content:space-between;align-items:center;
+  background:#faf7ef;border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-icon{
+  width:42px;height:42px;border:1px solid var(--gold);
+  border-radius:50%;display:grid;place-items:center;
+  font-size:22px;color:var(--gold);
+}
+.brand-name{
+  font:600 21px "Playfair Display",serif;
+  color:var(--green);letter-spacing:.07em;
+}
+.brand-sub{
+  font-size:9px;letter-spacing:.18em;
+  color:#8d8679;text-transform:uppercase;margin-top:3px;
+}
+.dev-button{
+  background:transparent;border:1px solid #d9cfbd;
+  color:#647269;border-radius:30px;padding:9px 13px;
+  font-size:10px;letter-spacing:.1em;
+}
+.dev-button:hover{border-color:var(--gold);color:var(--green)}
+
+main{max-width:1120px;margin:auto;padding:43px 20px 60px}
+.hero{text-align:center;margin-bottom:35px}
+.eyebrow{
+  font-size:10px;letter-spacing:.23em;text-transform:uppercase;
+  color:#a1844f;font-weight:700;
+}
+.hero h1{
+  font:600 clamp(36px,6vw,62px)/1.08 "Playfair Display",serif;
+  color:var(--green);margin:12px 0;
+}
+.hero p{
+  color:var(--muted);font-size:13px;line-height:1.8;margin:0;
+}
+.card{
+  background:var(--white);border:1px solid var(--line);
+  border-radius:17px;padding:28px;box-shadow:var(--shadow);
+  max-width:680px;margin:0 auto;
+}
+.card h2{
+  font:600 27px "Playfair Display",serif;
+  color:var(--green);margin:8px 0;
+}
+.description{font-size:12px;line-height:1.8;color:var(--muted)}
+.field{margin-top:17px}
+.field label{
+  display:block;font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:#727c73;margin-bottom:8px;
+}
+.field input,.field select{
+  width:100%;padding:14px;border:1px solid var(--line);
+  border-radius:9px;background:#fffefa;outline:none;
+}
+.field input:focus,.field select:focus{
+  border-color:var(--gold);box-shadow:0 0 0 3px #c6a66b20;
+}
+.btn{
+  border:0;border-radius:9px;padding:14px 19px;
+  background:var(--green);color:white;
+  font-size:11px;font-weight:700;letter-spacing:.08em;
+  transition:.2s;
+}
+.btn:hover{background:var(--green2);transform:translateY(-1px)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn.gold{background:var(--gold);color:#1b3026}
+.btn.outline{background:transparent;color:var(--green);border:1px solid var(--line)}
+.btn.full{width:100%;margin-top:18px}
+.status{font-size:11px;color:var(--muted);margin-top:12px;min-height:17px;line-height:1.6}
+.divider{height:1px;background:var(--line);margin:23px 0}
+.back{
+  background:none;border:0;color:#8b7857;
+  font-size:11px;padding:0;margin-bottom:18px;
+}
+
+.section-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:15px;margin-top:22px;
+}
+.section-card{
+  border:1px solid var(--line);border-radius:14px;
+  padding:25px 15px;background:#fffdf8;
+  text-align:center;transition:.2s;color:var(--green);
+}
+.section-card:hover{
+  border-color:var(--gold);transform:translateY(-3px);
+  box-shadow:var(--shadow);
+}
+.section-icon{font-size:36px;margin-bottom:12px}
+.section-title{font:600 23px "Playfair Display",serif}
+.section-caption{font-size:10px;color:var(--muted);margin-top:7px}
+.instructions{
+  background:#f5f0e5;border:1px solid #e8dfd0;
+  border-radius:11px;padding:16px;margin-top:20px;
+  font-size:11px;line-height:1.8;color:#69746b;
+}
+.instructions strong{color:var(--green)}
+
+.wheel-card{max-width:850px}
+.wheel-header{
+  display:flex;justify-content:space-between;
+  align-items:center;gap:10px;flex-wrap:wrap;
+}
+.pill{
+  background:#f3ead7;color:#8c7042;
+  border-radius:30px;padding:8px 12px;
+  font-size:9px;letter-spacing:.12em;
+}
+.wheel-box{
+  position:relative;width:min(100%,390px);
+  aspect-ratio:1;margin:22px auto 12px;
+}
+#wheel{
+  width:100%;height:100%;
+  filter:drop-shadow(0 12px 18px #173c3020);
+}
+.wheel-box:after{
+  content:"";position:absolute;top:-5px;left:50%;
+  transform:translateX(-50%);
+  border-left:13px solid transparent;
+  border-right:13px solid transparent;
+  border-top:28px solid var(--gold);
+  z-index:3;
+}
+.spin{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:84px;height:84px;border-radius:50%;
+  border:5px solid #f8f2e7;background:var(--green);
+  color:#fff4df;font:600 14px "Playfair Display",serif;
+  box-shadow:0 4px 16px #0003;z-index:2;
+}
+.spin:disabled{opacity:.5}
+.wheel-hint{text-align:center;font-size:11px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:17px}
+.chip{
+  padding:7px 10px;border:1px solid var(--line);
+  border-radius:30px;font-size:10px;background:white;color:#59645c;
+}
+.chip.taken{text-decoration:line-through;opacity:.4}
+.result{
+  display:none;text-align:center;padding:20px;
+  margin-top:20px;background:#f4eddd;
+  border:1px solid #e5d8bc;border-radius:12px;
+}
+.result small{
+  font-size:9px;letter-spacing:.2em;
+  text-transform:uppercase;color:#927747;
+}
+.result strong{
+  display:block;font:600 30px "Playfair Display",serif;
+  color:var(--green);margin-top:8px;
+}
+.support{
+  text-align:center;font-size:11px;line-height:1.8;
+  color:#85877e;margin-top:35px;
+}
+.support strong{color:var(--green)}
+footer{
+  text-align:center;padding:20px;color:#999184;
+  font-size:9px;letter-spacing:.15em;
+}
+
+.modal-back{
+  position:fixed;inset:0;background:#101d18b5;
+  display:none;place-items:center;padding:15px;z-index:10;
+}
+.modal-back.show{display:grid}
+.modal{
+  position:relative;background:var(--white);
+  border-radius:17px;padding:28px;
+  width:min(100%,490px);max-height:90vh;
+  overflow:auto;box-shadow:0 30px 100px #0004;
+}
+.close{
+  position:absolute;right:17px;top:12px;
+  background:none;border:0;font-size:24px;color:#777;
+}
+.admin-section{
+  border-top:1px solid var(--line);
+  padding-top:17px;margin-top:20px;
+}
+.admin-section h3{
+  font:600 19px "Playfair Display",serif;
+  color:var(--green);margin:0 0 12px;
+}
+.inline{display:flex;gap:8px}
+.inline input{min-width:0;flex:1}
+.list{display:grid;gap:8px;margin-top:12px}
+.item{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:10px;padding:11px;border:1px solid var(--line);
+  border-radius:8px;font-size:11px;
+}
+.remove{
+  border:0;border-radius:6px;padding:7px 10px;
+  color:var(--red);background:#f8eeeb;font-size:10px;
+}
+.empty{font-size:11px;color:var(--muted);padding:10px 0}
+@media(max-width:700px){
+  main{padding:30px 14px 50px}
+  .card{padding:21px}
+  .section-grid{gap:10px}
+  .section-card{padding:20px 10px}
+  .wheel-box{width:min(100%,340px)}
+}
 </style>
 </head>
+
 <body>
-<header><div><div class="tag">REAL-TIME MULTIPLAYER</div><h1>🎡 Spin & Share</h1></div><div class="muted small">Shared rooms • One-time results</div></header>
+
+<header>
+  <div class="brand">
+    <div class="brand-icon">🎄</div>
+    <div>
+      <div class="brand-name">TADIFA CLAN</div>
+      <div class="brand-sub">Christmas Gift Exchange</div>
+    </div>
+  </div>
+  <button class="dev-button" id="openDeveloper">DEVELOPER</button>
+</header>
+
 <main>
-<div class="notice" id="setupNotice">Connect your Supabase project first. Follow the README and run the SQL setup.</div>
-<div class="tabs"><button class="tab active" data-tab="play">Participant</button><button class="tab" data-tab="admin">Admin / Developer</button></div>
-<section id="play" class="panel">
-<h2>Join a wheel</h2><div class="row"><div><label>Your name</label><input id="playerName" placeholder="Enter your name"></div><div><label>Room code</label><input id="roomCode" placeholder="Example: BLUE42" maxlength="12"></div></div>
-<button id="joinBtn">Join room</button><span id="joinMsg" class="muted"></span>
-<div id="game" class="hidden"><div class="wheel-wrap"><div class="wheelbox"><div class="pointer"></div><div id="wheel" class="wheel"></div><div class="center">SPIN</div></div><div><div class="muted">WELCOME</div><h2 id="welcome"></h2><div class="muted">Available choices</div><div id="choices"></div><p><span class="stat" id="remaining">0</span> <span class="muted">choices remaining</span></p><button id="spinBtn">SPIN THE WHEEL</button><div id="result" class="result"></div><p class="muted small" id="spinStatus"></p></div></div></div>
-</section>
-<section id="admin" class="panel hidden">
-<h2>Developer dashboard</h2><p class="muted">Sign in with the admin email and password you created in Supabase. Only approved admin emails can manage rooms and view results.</p>
-<div id="adminLogin"><label>Admin email</label><input id="adminEmail" type="email" placeholder="you@example.com"><label>Password</label><input id="adminPassword" type="password" placeholder="Password"><button id="loginBtn">Sign in</button><span id="loginMsg" class="muted"></span></div>
-<div id="adminArea" class="hidden"><div class="row"><div><label>Room name</label><input id="newRoomName" placeholder="Classroom raffle"></div><div><label>Choices (one per line)</label><textarea id="newChoices" rows="5" placeholder="Prize 1&#10;Prize 2&#10;Prize 3"></textarea></div></div><button id="createRoomBtn">Create room</button> <button id="logoutBtn" class="tab">Sign out</button><div id="createdRoom" class="notice hidden"></div>
-<hr style="border-color:#ffffff20;margin:22px 0"><label>Room code to monitor</label><div class="row"><input id="monitorCode" placeholder="Enter room code"><button id="loadRoomBtn">Load results</button></div><div id="adminStats"></div><div style="overflow:auto"><table><thead><tr><th>Participant</th><th>Result</th><th>Time</th></tr></thead><tbody id="history"></tbody></table></div></div>
-</section>
-<p class="muted small">Tip: each person should use their own phone/browser session and enter their own name. The room code is shared; the admin login is private.</p>
+
+  <section class="hero">
+    <div class="eyebrow">A Christmas celebration</div>
+    <h1>Tadifa Clan Spin the Wheel</h1>
+    <p>Christmas Party Gift Exchange</p>
+  </section>
+
+  <!-- STEP 1: ACCESS CODE -->
+  <section class="card" id="accessStep">
+    <div class="eyebrow">Welcome to our celebration</div>
+    <h2>Enter the party</h2>
+    <p class="description">
+      Welcome to the Tadifa Clan Christmas Gift Exchange!
+      Enter the shared party access code to continue.
+    </p>
+
+    <div class="field">
+      <label>Christmas Party Access Code</label>
+      <input id="accessCode" type="password"
+        placeholder="Enter your access code">
+    </div>
+
+    <button class="btn full" id="accessBtn">ENTER PARTY</button>
+    <div class="status" id="accessStatus"></div>
+
+    <div class="instructions">
+      <strong>Before you begin:</strong><br>
+      Make sure you have the correct party access code.
+      Every participant uses the same code.
+    </div>
+  </section>
+
+  <!-- STEP 2: SECTION -->
+  <section class="card hidden" id="sectionStep">
+    <button class="back" id="backToAccess">← Back</button>
+    <div class="eyebrow">Choose your category</div>
+    <h2>Which section are you joining?</h2>
+    <p class="description">
+      Select the section that belongs to you.
+      Kids and Adults have separate gift wheels.
+    </p>
+
+    <div class="section-grid">
+      <button class="section-card" data-section="kids">
+        <div class="section-icon">🎁</div>
+        <div class="section-title">Kids</div>
+        <div class="section-caption">KIDS GIFT EXCHANGE</div>
+      </button>
+
+      <button class="section-card" data-section="adults">
+        <div class="section-icon">🎄</div>
+        <div class="section-title">Adults</div>
+        <div class="section-caption">ADULTS GIFT EXCHANGE</div>
+      </button>
+    </div>
+
+    <div class="instructions">
+      <strong>Important:</strong><br>
+      Choose carefully. Your selected section determines
+      which gifts will appear on your spinning wheel.
+    </div>
+  </section>
+
+  <!-- STEP 3: NAME -->
+  <section class="card hidden" id="nameStep">
+    <button class="back" id="backToSections">← Change section</button>
+    <div class="eyebrow">Participant information</div>
+    <h2>What's your name?</h2>
+    <p class="description">
+      Enter your name so your gift exchange result
+      can be recorded correctly.
+    </p>
+
+    <div class="field">
+      <label>Your complete name</label>
+      <input id="participantName" maxlength="50"
+        placeholder="Enter your name">
+    </div>
+
+    <button class="btn full" id="continueBtn">CONTINUE TO MY WHEEL</button>
+    <div class="status" id="nameStatus"></div>
+  </section>
+
+  <!-- STEP 4: WHEEL -->
+  <section class="card wheel-card hidden" id="wheelStep">
+    <button class="back" id="changeSection">← Back to section selection</button>
+
+    <div class="wheel-header">
+      <div>
+        <div class="eyebrow">Your Christmas gift</div>
+        <h2 id="wheelTitle">Kids Gift Wheel</h2>
+        <div class="description" id="welcomeName"></div>
+      </div>
+      <span class="pill" id="sectionPill">KIDS SECTION</span>
+    </div>
+
+    <div class="wheel-box">
+      <canvas id="wheel" width="720" height="720"></canvas>
+      <button class="spin" id="spinBtn" disabled>SPIN</button>
+    </div>
+
+    <p class="wheel-hint" id="wheelHint">
+      Waiting for the gift choices…
+    </p>
+
+    <div class="chips" id="choiceChips"></div>
+
+    <div class="result" id="result">
+      <small>Your Christmas gift exchange item</small>
+      <strong id="resultText"></strong>
+      <p class="description">
+        Congratulations! This is the gift you will exchange
+        for the Christmas party.
+      </p>
+    </div>
+
+    <div class="status" id="wheelStatus"></div>
+
+    <div class="instructions">
+      <strong>HOW TO PLAY:</strong><br>
+      1. Make sure your name is correct.<br>
+      2. Press the SPIN button once.<br>
+      3. Wait until the wheel stops.<br>
+      4. The gift shown on your screen is your assigned
+      gift exchange item.<br>
+      5. Remember your result and prepare that gift!<br><br>
+      <strong>Reminder:</strong> Each gift can only be
+      claimed once in your section.
+    </div>
+  </section>
+
+  <div class="support">
+    For problems or concerns, please contact:<br>
+    <strong>Renz Ferrer Tadifa / Kikiw Tadifa</strong>
+  </div>
+
 </main>
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-// Paste your project URL and anon/public key from Supabase here:
-const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
-const configured = SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('YOUR_') && !SUPABASE_ANON_KEY.includes('YOUR_');
-const notice=document.getElementById('setupNotice');
-let sb=null, currentRoom=null, player=null, spinning=false, subscription=null;
-if(configured){sb=createClient(SUPABASE_URL,SUPABASE_ANON_KEY);notice.classList.add('hidden');}
-document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.tab){document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));document.getElementById('play').classList.toggle('hidden',b.dataset.tab!=='play');document.getElementById('admin').classList.toggle('hidden',b.dataset.tab!=='admin');}}));
-async function ensureSession(){const {data:{session}}=await sb.auth.getSession();if(!session){const {error}=await sb.auth.signInAnonymously();if(error)throw error;}}
-async function loadGame(){
- const {data:room,error}=await sb.from('rooms').select('id,room_code,name').eq('room_code',currentRoom).single();if(error)throw error;
- const {data:items,error:e}=await sb.from('choices').select('id,label,is_taken').eq('room_id',room.id).eq('is_taken',false);if(e)throw e;
- document.getElementById('welcome').textContent=room.name;
- document.getElementById('choices').innerHTML=items.map(x=>`<span class="choice">${escapeHtml(x.label)}</span>`).join('')||'<span class="muted">No choices left.</span>';
- document.getElementById('remaining').textContent=items.length;
- document.getElementById('spinBtn').disabled=items.length===0;
-}
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-document.getElementById('joinBtn').onclick=async()=>{try{if(!sb)throw Error('Admin must finish Supabase setup first.');await ensureSession();player=document.getElementById('playerName').value.trim();currentRoom=document.getElementById('roomCode').value.trim().toUpperCase();if(!player||!currentRoom)throw Error('Enter your name and room code.');await loadGame();document.getElementById('game').classList.remove('hidden');document.getElementById('joinMsg').textContent=' Joined!';if(subscription)sb.removeChannel(subscription);subscription=sb.channel('room-'+currentRoom).on('postgres_changes',{event:'*',schema:'public',table:'choices'},loadGame).subscribe();}catch(e){document.getElementById('joinMsg').textContent=' '+e.message;}};
-document.getElementById('spinBtn').onclick=async()=>{if(spinning)return;spinning=true;const btn=document.getElementById('spinBtn');btn.disabled=true;document.getElementById('result').textContent='Spinning...';document.getElementById('spinStatus').textContent='';const wheel=document.getElementById('wheel');wheel.style.transform=`rotate(${1800+Math.random()*1800}deg)`;try{const {data,error}=await sb.rpc('claim_random_choice',{p_room_code:currentRoom,p_participant_name:player});if(error)throw error;setTimeout(async()=>{document.getElementById('result').textContent=data?.label?`You got: ${data.label}`:'No choices remain!';document.getElementById('spinStatus').textContent=data?.label?'This result is now removed for everyone.':'';await loadGame();spinning=false;},4100);}catch(e){document.getElementById('spinStatus').textContent=e.message;setTimeout(()=>{spinning=false;btn.disabled=false;},4100);}};
-document.getElementById('loginBtn').onclick=async()=>{try{if(!sb)throw Error('Complete setup first.');const {error}=await sb.auth.signInWithPassword({email:document.getElementById('adminEmail').value,password:document.getElementById('adminPassword').value});if(error)throw error;const {data, error:e}=await sb.rpc('is_current_user_admin');if(e||!data)throw Error('This account is not on the admin allowlist. Add its email using the SQL instructions.');document.getElementById('adminLogin').classList.add('hidden');document.getElementById('adminArea').classList.remove('hidden');}catch(e){document.getElementById('loginMsg').textContent=' '+e.message;}};
-document.getElementById('logoutBtn').onclick=async()=>{await sb.auth.signOut();location.reload();};
-document.getElementById('createRoomBtn').onclick=async()=>{try{const name=document.getElementById('newRoomName').value.trim()||'Spin room';const labels=document.getElementById('newChoices').value.split('\n').map(x=>x.trim()).filter(Boolean);if(labels.length<2)throw Error('Add at least two choices, one per line.');const code=Math.random().toString(36).slice(2,8).toUpperCase();const {data:room,error}=await sb.from('rooms').insert({name,room_code:code,created_by:(await sb.auth.getUser()).data.user.id}).select().single();if(error)throw error;const {error:e}=await sb.from('choices').insert(labels.map(label=>({room_id:room.id,label})));if(e)throw e;const box=document.getElementById('createdRoom');box.classList.remove('hidden');box.textContent=`Room created! Share this code: ${code}`;document.getElementById('monitorCode').value=code;}catch(e){alert(e.message);}};
-document.getElementById('loadRoomBtn').onclick=loadHistory;
-async function loadHistory(){try{const code=document.getElementById('monitorCode').value.trim().toUpperCase();const {data:room,error}=await sb.from('rooms').select('id,name').eq('room_code',code).single();if(error)throw error;const {data,error:e}=await sb.from('spins').select('participant_name,choice_label,created_at').eq('room_id',room.id).order('created_at',{ascending:false});if(e)throw e;document.getElementById('adminStats').innerHTML=`<h3>${escapeHtml(room.name)}</h3><p><span class="stat">${data.length}</span> total spins</p>`;document.getElementById('history').innerHTML=data.map(x=>`<tr><td>${escapeHtml(x.participant_name)}</td><td>${escapeHtml(x.choice_label)}</td><td>${new Date(x.created_at).toLocaleString()}</td></tr>`).join('');}catch(e){alert(e.message);}}
+
+<footer>
+  TADIFA CLAN · CHRISTMAS PARTY GIFT EXCHANGE
+</footer>
+
+<!-- DEVELOPER LOGIN -->
+<div class="modal-back" id="developerModal">
+  <div class="modal">
+    <button class="close" id="closeDeveloper">×</button>
+
+    <div id="loginView">
+      <div class="eyebrow">Private administrator area</div>
+      <h2>Developer Login</h2>
+      <p class="description">
+        Only the authorized developer can manage the gift wheels.
+      </p>
+
+      <div class="field">
+        <label>Administrator email</label>
+        <input id="adminEmail" type="email"
+          placeholder="Your Supabase email">
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input id="adminPassword" type="password"
+          placeholder="Your password">
+      </div>
+
+      <button class="btn full" id="loginBtn">SIGN IN</button>
+      <div class="status" id="loginStatus"></div>
+    </div>
+
+    <!-- DEVELOPER DASHBOARD -->
+    <div id="dashboardView" class="hidden">
+      <div class="eyebrow">Administrator control room</div>
+      <h2>Developer Dashboard</h2>
+      <p class="description">
+        Manage the Kids and Adults gift exchange wheels separately.
+      </p>
+
+      <div class="admin-section">
+        <h3>Wheel setup</h3>
+        <p class="description">
+          Prepare both section rooms. This only needs to be done
+          once for this Supabase project.
+        </p>
+        <button class="btn full" id="setupBtn">PREPARE BOTH WHEELS</button>
+        <div class="status" id="setupStatus"></div>
+      </div>
+
+      <div class="admin-section">
+        <h3>Manage gift choices</h3>
+
+        <div class="field">
+          <label>Select section</label>
+          <select id="manageSection">
+            <option value="kids">Kids</option>
+            <option value="adults">Adults</option>
+          </select>
+        </div>
+
+        <div class="inline field">
+          <input id="newChoice" maxlength="80"
+            placeholder="Enter a gift choice">
+          <button class="btn gold" id="addChoiceBtn">ADD</button>
+        </div>
+
+        <div class="list" id="adminChoices">
+          <div class="empty">Prepare the wheels first.</div>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <h3>Gift exchange history</h3>
+
+        <div class="field">
+          <label>Choose section</label>
+          <select id="historySection">
+            <option value="kids">Kids</option>
+            <option value="adults">Adults</option>
+          </select>
+        </div>
+
+        <button class="btn outline full" id="loadHistoryBtn">
+          LOAD HISTORY
+        </button>
+
+        <div class="list" id="historyList">
+          <div class="empty">No history loaded.</div>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <button class="btn outline full" id="logoutBtn">LOG OUT</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+
+  // ==========================================
+  // 1. PROJECT SETTINGS
+  // ==========================================
+
+  const SUPABASE_URL =
+    'https://dbffyzbeywibhlvmobzb.supabase.co';
+
+  const SUPABASE_KEY =
+    'sb_publishable_K9wUziaVO5LJ5fqjRnQIHg_HBtJeG2m';
+
+  // CHANGE YOUR SHARED PARTY CODE HERE:
+  const PARTY_ACCESS_CODE = 'TADIFA2026';
+
+  // These are the two internal database room codes.
+  const SECTIONS = {
+    kids: {
+      name: 'Kids',
+      code: 'TADIFA-KIDS',
+      roomName: 'Tadifa Clan Kids Gift Exchange'
+    },
+    adults: {
+      name: 'Adults',
+      code: 'TADIFA-ADULTS',
+      roomName: 'Tadifa Clan Adults Gift Exchange'
+    }
+  };
+
+  const db = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+  const $ = id => document.getElementById(id);
+
+  const colors = [
+    '#20513d',
+    '#c7a96d',
+    '#9b4c45',
+    '#718a72',
+    '#d6c49e',
+    '#315f4c',
+    '#a66b55',
+    '#899b83'
+  ];
+
+  let currentSection = null;
+  let currentRoom = null;
+  let choices = [];
+  let participant = '';
+  let busy = false;
+  let realtimeChannel = null;
+
+  // ==========================================
+  // 2. GENERAL HELPERS
+  // ==========================================
+
+  function message(id, text, error=false) {
+    const el = $(id);
+    el.textContent = text || '';
+    el.style.color = error ? '#a94f48' : '';
+  }
+
+  function safe(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#39;'
+    }[char]));
+  }
+
+  function showStep(stepId) {
+    [
+      'accessStep',
+      'sectionStep',
+      'nameStep',
+      'wheelStep'
+    ].forEach(id => $(id).classList.add('hidden'));
+
+    $(stepId).classList.remove('hidden');
+  }
+
+  // ==========================================
+  // 3. ACCESS CODE
+  // ==========================================
+
+  $('accessBtn').addEventListener('click', () => {
+    const entered = $('accessCode').value.trim();
+
+    if (!entered) {
+      message('accessStatus','Please enter the party code.',true);
+      return;
+    }
+
+    if (entered.toUpperCase() !== PARTY_ACCESS_CODE.toUpperCase()) {
+      message('accessStatus','Incorrect access code. Please try again.',true);
+      return;
+    }
+
+    message('accessStatus','Access granted!');
+    showStep('sectionStep');
+  });
+
+  $('accessCode').addEventListener('keydown', e => {
+    if (e.key === 'Enter') $('accessBtn').click();
+  });
+
+  $('backToAccess').addEventListener('click', () => {
+    showStep('accessStep');
+  });
+
+  // ==========================================
+  // 4. SECTION SELECTION
+  // ==========================================
+
+  document.querySelectorAll('[data-section]').forEach(button => {
+    button.addEventListener('click', () => {
+      currentSection = button.dataset.section;
+
+      $('wheelTitle').textContent =
+        SECTIONS[currentSection].name + ' Gift Wheel';
+
+      $('sectionPill').textContent =
+        SECTIONS[currentSection].name.toUpperCase() + ' SECTION';
+
+      showStep('nameStep');
+    });
+  });
+
+  $('backToSections').addEventListener('click', () => {
+    showStep('sectionStep');
+  });
+
+  $('changeSection').addEventListener('click', () => {
+    if (realtimeChannel) {
+      db.removeChannel(realtimeChannel);
+      realtimeChannel = null;
+    }
+
+    currentRoom = null;
+    choices = [];
+    renderWheel();
+    showStep('sectionStep');
+  });
+
+  // ==========================================
+  // 5. PARTICIPANT NAME AND ROOM JOIN
+  // ==========================================
+
+  $('continueBtn').addEventListener('click', async () => {
+    participant = $('participantName').value.trim();
+
+    if (!participant) {
+      message('nameStatus','Please enter your name.',true);
+      return;
+    }
+
+    $('continueBtn').disabled = true;
+    message('nameStatus','Preparing your gift wheel…');
+
+    try {
+      // Participants use anonymous Supabase authentication.
+      const {data:{session}} = await db.auth.getSession();
+
+      if (!session) {
+        const {error} = await db.auth.signInAnonymously();
+        if (error) throw error;
+      }
+
+      await joinSection();
+
+      $('welcomeName').textContent =
+        'Welcome, ' + participant + '!';
+
+      showStep('wheelStep');
+
+    } catch (error) {
+      message(
+        'nameStatus',
+        error.message || 'Could not open your wheel.',
+        true
+      );
+    } finally {
+      $('continueBtn').disabled = false;
+    }
+  });
+
+  async function joinSection() {
+    const section = SECTIONS[currentSection];
+
+    const {data:room,error:roomError} = await db
+      .from('rooms')
+      .select('*')
+      .eq('room_code',section.code)
+      .maybeSingle();
+
+    if (roomError) throw roomError;
+
+    if (!room) {
+      throw new Error(
+        'The developer has not prepared this wheel yet. Please contact Renz.'
+      );
+    }
+
+    const {data:list,error} = await db
+      .from('choices')
+      .select('*')
+      .eq('room_id',room.id)
+      .order('label');
+
+    if (error) throw error;
+
+    currentRoom = room;
+    choices = list || [];
+
+    $('result').style.display = 'none';
+
+    renderWheel();
+    subscribeToChoices();
+  }
+
+  // ==========================================
+  // 6. LIVE SHARED CHOICES
+  // ==========================================
+
+  function subscribeToChoices() {
+    if (realtimeChannel) {
+      db.removeChannel(realtimeChannel);
+    }
+
+    realtimeChannel = db
+      .channel('tadifa-' + currentRoom.id)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'choices',
+          filter: 'room_id=eq.' + currentRoom.id
+        },
+        async () => {
+          if (busy) return;
+
+          const {data,error} = await db
+            .from('choices')
+            .select('*')
+            .eq('room_id',currentRoom.id)
+            .order('label');
+
+          if (!error) {
+            choices = data || [];
+            renderWheel();
+          }
+        }
+      )
+      .subscribe();
+  }
+
+  // ==========================================
+  // 7. DRAW THE WHEEL
+  // ==========================================
+
+  function drawWheel() {
+    const canvas = $('wheel');
+    const ctx = canvas.getContext('2d');
+    const center = canvas.width / 2;
+    const radius = 315;
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    const available = choices.filter(x => !x.is_taken);
+
+    if (!available.length) {
+      ctx.beginPath();
+      ctx.arc(center,center,radius,0,Math.PI*2);
+      ctx.fillStyle = '#e8e1d4';
+      ctx.fill();
+      ctx.strokeStyle = '#c6a66b';
+      ctx.lineWidth = 8;
+      ctx.stroke();
+
+      ctx.fillStyle = '#53645a';
+      ctx.textAlign = 'center';
+      ctx.font = '600 24px "DM Sans"';
+      ctx.fillText(
+        currentRoom ? 'NO GIFTS LEFT' : 'WELCOME',
+        center,
+        center
+      );
+      return;
+    }
+
+    const arc = Math.PI * 2 / available.length;
+
+    available.forEach((item,index) => {
+      const start = -Math.PI/2 + index*arc;
+
+      ctx.beginPath();
+      ctx.moveTo(center,center);
+      ctx.arc(center,center,radius,start,start+arc);
+      ctx.closePath();
+
+      ctx.fillStyle = colors[index % colors.length];
+      ctx.fill();
+
+      ctx.strokeStyle = '#fff8e9';
+      ctx.lineWidth = 5;
+      ctx.stroke();
+
+      ctx.save();
+      ctx.translate(center,center);
+      ctx.rotate(start + arc/2);
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#fffaf0';
+
+      const fontSize = Math.max(
+        13,
+        Math.min(21,220/available.length)
+      );
+
+      ctx.font = `600 ${fontSize}px "DM Sans"`;
+
+      let label = item.label;
+      if (label.length > 19) {
+        label = label.substring(0,17) + '…';
+      }
+
+      ctx.fillText(label,radius-23,7);
+      ctx.restore();
+    });
+
+    ctx.beginPath();
+    ctx.arc(center,center,43,0,Math.PI*2);
+    ctx.fillStyle = '#f8f2e6';
+    ctx.fill();
+    ctx.strokeStyle = '#c6a66b';
+    ctx.lineWidth = 5;
+    ctx.stroke();
+  }
+
+  function renderWheel() {
+    const available = choices.filter(x => !x.is_taken);
+
+    $('choiceChips').innerHTML = choices.map(x =>
+      `<span class="chip ${x.is_taken?'taken':''}">
+        ${safe(x.label)}
+      </span>`
+    ).join('');
+
+    $('wheelHint').textContent =
+      available.length + ' gifts remaining · ' +
+      (choices.length-available.length) + ' already claimed';
+
+    $('spinBtn').disabled =
+      !currentRoom || !available.length || busy;
+
+    drawWheel();
+  }
+
+  // ==========================================
+  // 8. SPIN AND CLAIM A GIFT
+  // ==========================================
+
+  $('spinBtn').addEventListener('click', async () => {
+    if (!currentRoom || busy) return;
+
+    if (!participant) {
+      message('wheelStatus','Please enter your name first.',true);
+      return;
+    }
+
+    const before = choices.filter(x => !x.is_taken);
+
+    if (!before.length) {
+      message('wheelStatus','There are no gifts remaining.');
+      return;
+    }
+
+    busy = true;
+    renderWheel();
+
+    $('result').style.display = 'none';
+    message('wheelStatus','Good luck! Your wheel is spinning…');
+
+    try {
+      // The database chooses and claims the gift atomically.
+      const {data,error} = await db.rpc(
+        'claim_random_choice',
+        {
+          p_room_code: currentRoom.room_code,
+          p_participant_name: participant
+        }
+      );
+
+      if (error) throw error;
+
+      const winner = data && data.label;
+
+      if (!winner) {
+        throw new Error('No gift was returned.');
+      }
+
+      // Animate the actual selected sector when it is still present.
+      const index = before.findIndex(x => x.label === winner);
+      const canvas = $('wheel');
+      const arc = 2*Math.PI/before.length;
+
+      const from = Number(canvas.dataset.rotation || 0);
+      const current = from % (2*Math.PI);
+
+      let delta;
+
+      if (index >= 0) {
+        const desired = (
+          2*Math.PI - (index*arc + arc/2)
+        ) % (2*Math.PI);
+
+        delta = (desired-current+2*Math.PI)%(2*Math.PI);
+      } else {
+        // Another participant may have claimed a choice at the same time.
+        delta = Math.random()*2*Math.PI;
+      }
+
+      const target = from + Math.PI*2*6 + delta;
+      const start = performance.now();
+      const duration = 3200;
+
+      await new Promise(resolve => {
+        function animate(now) {
+          const progress = Math.min(1,(now-start)/duration);
+          const eased = 1-Math.pow(1-progress,4);
+          const angle = from+(target-from)*eased;
+
+          canvas.style.transform = `rotate(${angle}rad)`;
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            canvas.dataset.rotation = String(target);
+            resolve();
+          }
+        }
+
+        requestAnimationFrame(animate);
+      });
+
+      $('resultText').textContent = winner;
+      $('result').style.display = 'block';
+
+      message(
+        'wheelStatus',
+        'Congratulations, ' + participant + '! Your gift has been recorded.'
+      );
+
+    } catch (error) {
+      message(
+        'wheelStatus',
+        error.message || 'The spin could not be completed.',
+        true
+      );
+    } finally {
+      busy = false;
+
+      const {data,error} = await db
+        .from('choices')
+        .select('*')
+        .eq('room_id',currentRoom.id)
+        .order('label');
+
+      if (!error) choices = data || [];
+
+      renderWheel();
+    }
+  });
+
+  // ==========================================
+  // 9. DEVELOPER LOGIN
+  // ==========================================
+
+  $('openDeveloper').addEventListener('click',() => {
+    $('developerModal').classList.add('show');
+  });
+
+  $('closeDeveloper').addEventListener('click',() => {
+    $('developerModal').classList.remove('show');
+  });
+
+  $('developerModal').addEventListener('click',event => {
+    if (event.target === $('developerModal')) {
+      $('developerModal').classList.remove('show');
+    }
+  });
+
+  async function verifyDeveloper() {
+    const {data,error} = await db.rpc('is_current_user_admin');
+
+    if (error) throw error;
+
+    if (data !== true) {
+      throw new Error(
+        'This account is not registered as a developer.'
+      );
+    }
+  }
+
+  $('loginBtn').addEventListener('click',async () => {
+    const email = $('adminEmail').value.trim();
+    const password = $('adminPassword').value;
+
+    if (!email || !password) {
+      message('loginStatus','Enter your email and password.',true);
+      return;
+    }
+
+    $('loginBtn').disabled = true;
+    message('loginStatus','Signing in…');
+
+    try {
+      const {error} = await db.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) throw error;
+
+      await verifyDeveloper();
+
+      $('loginView').classList.add('hidden');
+      $('dashboardView').classList.remove('hidden');
+
+      message('loginStatus','');
+
+      await prepareWheels();
+
+    } catch (error) {
+      await db.auth.signOut();
+
+      message(
+        'loginStatus',
+        error.message || 'Developer login failed.',
+        true
+      );
+    } finally {
+      $('loginBtn').disabled = false;
+    }
+  });
+
+  $('logoutBtn').addEventListener('click',async () => {
+    await db.auth.signOut();
+
+    $('dashboardView').classList.add('hidden');
+    $('loginView').classList.remove('hidden');
+
+    message('loginStatus','You have signed out.');
+  });
+
+  // ==========================================
+  // 10. PREPARE KIDS AND ADULTS ROOMS
+  // ==========================================
+
+  async function prepareWheels() {
+    message('setupStatus','Checking both gift wheels…');
+
+    try {
+      await verifyDeveloper();
+
+      const {data:{user}} = await db.auth.getUser();
+
+      if (!user) throw new Error('Please sign in again.');
+
+      for (const key of Object.keys(SECTIONS)) {
+        const section = SECTIONS[key];
+
+        const {data:existing,error:lookupError} = await db
+          .from('rooms')
+          .select('id')
+          .eq('room_code',section.code)
+          .maybeSingle();
+
+        if (lookupError) throw lookupError;
+
+        if (!existing) {
+          const {error} = await db.from('rooms').insert({
+            room_code:section.code,
+            name:section.roomName,
+            created_by:user.id
+          });
+
+          if (error) throw error;
+        }
+      }
+
+      message(
+        'setupStatus',
+        'Both wheels are ready! You can now add gift choices.'
+      );
+
+      await loadAdminChoices();
+
+    } catch (error) {
+      message(
+        'setupStatus',
+        error.message || 'Could not prepare the wheels.',
+        true
+      );
+    }
+  }
+
+  $('setupBtn').addEventListener('click',prepareWheels);
+
+  // ==========================================
+  // 11. DEVELOPER CHOICE MANAGEMENT
+  // ==========================================
+
+  async function getSectionRoom(sectionKey) {
+    const section = SECTIONS[sectionKey];
+
+    const {data,error} = await db
+      .from('rooms')
+      .select('*')
+      .eq('room_code',section.code)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Prepare the wheels first.');
+
+    return data;
+  }
+
+  async function loadAdminChoices() {
+    try {
+      await verifyDeveloper();
+
+      const sectionKey = $('manageSection').value;
+      const room = await getSectionRoom(sectionKey);
+
+      const {data,error} = await db
+        .from('choices')
+        .select('*')
+        .eq('room_id',room.id)
+        .order('label');
+
+      if (error) throw error;
+
+      $('adminChoices').innerHTML = data.length
+        ? data.map(item => `
+          <div class="item">
+            <span>
+              ${safe(item.label)}
+              ${item.is_taken ? '(CLAIMED)' : ''}
+            </span>
+            <button class="remove" data-id="${item.id}">
+              REMOVE
+            </button>
+          </div>
+        `).join('')
+        : '<div class="empty">No gifts added yet.</div>';
+
+      $('adminChoices').querySelectorAll('[data-id]').forEach(button => {
+        button.addEventListener('click',() => {
+          removeChoice(button.dataset.id);
+        });
+      });
+
+    } catch (error) {
+      $('adminChoices').innerHTML =
+        `<div class="empty">${safe(error.message)}</div>`;
+    }
+  }
+
+  $('manageSection').addEventListener(
+    'change',
+    loadAdminChoices
+  );
+
+  $('addChoiceBtn').addEventListener('click',async () => {
+    const label = $('newChoice').value.trim();
+
+    if (!label) {
+      alert('Enter a gift choice first.');
+      return;
+    }
+
+    try {
+      await verifyDeveloper();
+
+      const room = await getSectionRoom(
+        $('manageSection').value
+      );
+
+      const {error} = await db.from('choices').insert({
+        room_id:room.id,
+        label
+      });
+
+      if (error) throw error;
+
+      $('newChoice').value = '';
+
+      await loadAdminChoices();
+
+    } catch (error) {
+      alert(error.message);
+    }
+  });
+
+  async function removeChoice(id) {
+    try {
+      await verifyDeveloper();
+
+      const {error} = await db
+        .from('choices')
+        .delete()
+        .eq('id',id);
+
+      if (error) throw error;
+
+      await loadAdminChoices();
+
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
+  // ==========================================
+  // 12. SPIN HISTORY
+  // ==========================================
+
+  $('loadHistoryBtn').addEventListener('click',async () => {
+    $('historyList').innerHTML =
+      '<div class="empty">Loading history…</div>';
+
+    try {
+      await verifyDeveloper();
+
+      const room = await getSectionRoom(
+        $('historySection').value
+      );
+
+      const {data,error} = await db
+        .from('spins')
+        .select('*')
+        .eq('room_id',room.id)
+        .order('created_at',{ascending:false})
+        .limit(100);
+
+      if (error) throw error;
+
+      $('historyList').innerHTML = data.length
+        ? data.map(item => `
+          <div class="item">
+            <span>
+              <strong>${safe(item.participant_name)}</strong><br>
+              ${safe(item.choice_label)}
+            </span>
+            <span>
+              ${new Date(item.created_at).toLocaleString()}
+            </span>
+          </div>
+        `).join('')
+        : '<div class="empty">No gift exchanges recorded yet.</div>';
+
+    } catch (error) {
+      $('historyList').innerHTML =
+        `<div class="empty">${safe(error.message)}</div>`;
+    }
+  });
+
+  // Initial wheel drawing
+  drawWheel();
+
+})();
 </script>
-</body></html>
+</body>
+</html>
