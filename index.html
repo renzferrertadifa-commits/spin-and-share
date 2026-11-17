@@ -2,1274 +2,1875 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#173c30">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#10271f">
 <title>Tadifa Clan | Christmas Gift Exchange</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root {
-  --green:#173c30;
-  --green2:#285442;
-  --gold:#c6a66b;
-  --cream:#f5f0e6;
-  --white:#fffdf8;
-  --red:#a94f48;
-  --muted:#7d857c;
-  --line:#e8dfd0;
-  --shadow:0 18px 55px #173c3015;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;background:var(--cream);color:#26332c;
-  font-family:"DM Sans",sans-serif;min-height:100vh;
-}
-button,input,select{font:inherit}
-button{cursor:pointer}
-.hidden{display:none!important}
-
-header{
-  min-height:75px;padding:12px clamp(18px,5vw,65px);
-  display:flex;justify-content:space-between;align-items:center;
-  background:#faf7ef;border-bottom:1px solid var(--line);
-}
-.brand{display:flex;align-items:center;gap:12px}
-.brand-icon{
-  width:42px;height:42px;border:1px solid var(--gold);
-  border-radius:50%;display:grid;place-items:center;
-  font-size:22px;color:var(--gold);
-}
-.brand-name{
-  font:600 21px "Playfair Display",serif;
-  color:var(--green);letter-spacing:.07em;
-}
-.brand-sub{
-  font-size:9px;letter-spacing:.18em;
-  color:#8d8679;text-transform:uppercase;margin-top:3px;
-}
-.dev-button{
-  background:transparent;border:1px solid #d9cfbd;
-  color:#647269;border-radius:30px;padding:9px 13px;
-  font-size:10px;letter-spacing:.1em;
-}
-.dev-button:hover{border-color:var(--gold);color:var(--green)}
-
-main{max-width:1120px;margin:auto;padding:43px 20px 60px}
-.hero{text-align:center;margin-bottom:35px}
-.eyebrow{
-  font-size:10px;letter-spacing:.23em;text-transform:uppercase;
-  color:#a1844f;font-weight:700;
-}
-.hero h1{
-  font:600 clamp(36px,6vw,62px)/1.08 "Playfair Display",serif;
-  color:var(--green);margin:12px 0;
-}
-.hero p{
-  color:var(--muted);font-size:13px;line-height:1.8;margin:0;
-}
-.card{
-  background:var(--white);border:1px solid var(--line);
-  border-radius:17px;padding:28px;box-shadow:var(--shadow);
-  max-width:680px;margin:0 auto;
-}
-.card h2{
-  font:600 27px "Playfair Display",serif;
-  color:var(--green);margin:8px 0;
-}
-.description{font-size:12px;line-height:1.8;color:var(--muted)}
-.field{margin-top:17px}
-.field label{
-  display:block;font-size:10px;letter-spacing:.12em;
-  text-transform:uppercase;color:#727c73;margin-bottom:8px;
-}
-.field input,.field select{
-  width:100%;padding:14px;border:1px solid var(--line);
-  border-radius:9px;background:#fffefa;outline:none;
-}
-.field input:focus,.field select:focus{
-  border-color:var(--gold);box-shadow:0 0 0 3px #c6a66b20;
-}
-.btn{
-  border:0;border-radius:9px;padding:14px 19px;
-  background:var(--green);color:white;
-  font-size:11px;font-weight:700;letter-spacing:.08em;
-  transition:.2s;
-}
-.btn:hover{background:var(--green2);transform:translateY(-1px)}
-.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
-.btn.gold{background:var(--gold);color:#1b3026}
-.btn.outline{background:transparent;color:var(--green);border:1px solid var(--line)}
-.btn.full{width:100%;margin-top:18px}
-.status{font-size:11px;color:var(--muted);margin-top:12px;min-height:17px;line-height:1.6}
-.divider{height:1px;background:var(--line);margin:23px 0}
-.back{
-  background:none;border:0;color:#8b7857;
-  font-size:11px;padding:0;margin-bottom:18px;
+  --forest:#10271f;
+  --forest2:#1c4030;
+  --gold:#d7b66e;
+  --goldlight:#f0dfb3;
+  --cream:#f7f3e9;
+  --paper:#fffdf8;
+  --ink:#26392f;
+  --muted:#78837a;
+  --red:#8c3440;
+  --line:#e7dcc5;
+  --shadow:0 24px 70px rgba(5,20,14,.23);
 }
 
-.section-grid{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:15px;margin-top:22px;
+* {box-sizing:border-box}
+body {
+  margin:0;
+  min-height:100vh;
+  color:var(--ink);
+  font-family:"DM Sans",sans-serif;
+  background:
+    radial-gradient(circle at 10% 10%,rgba(215,182,110,.13),transparent 25rem),
+    radial-gradient(circle at 90% 85%,rgba(140,52,64,.13),transparent 25rem),
+    var(--forest);
 }
-.section-card{
-  border:1px solid var(--line);border-radius:14px;
-  padding:25px 15px;background:#fffdf8;
-  text-align:center;transition:.2s;color:var(--green);
-}
-.section-card:hover{
-  border-color:var(--gold);transform:translateY(-3px);
+button,input,textarea {font:inherit}
+button {cursor:pointer}
+.site-shell {min-height:100vh;padding:22px}
+.site-frame {
+  width:min(1120px,100%);
+  min-height:calc(100vh - 44px);
+  margin:auto;
+  overflow:hidden;
+  position:relative;
+  border:1px solid rgba(215,182,110,.35);
+  border-radius:28px;
+  background:var(--cream);
   box-shadow:var(--shadow);
 }
-.section-icon{font-size:36px;margin-bottom:12px}
-.section-title{font:600 23px "Playfair Display",serif}
-.section-caption{font-size:10px;color:var(--muted);margin-top:7px}
-.instructions{
-  background:#f5f0e5;border:1px solid #e8dfd0;
-  border-radius:11px;padding:16px;margin-top:20px;
-  font-size:11px;line-height:1.8;color:#69746b;
+.topbar {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  padding:22px 34px;
+  color:var(--goldlight);
+  background:var(--forest);
+  border-bottom:1px solid rgba(215,182,110,.3);
 }
-.instructions strong{color:var(--green)}
-
-.wheel-card{max-width:850px}
-.wheel-header{
-  display:flex;justify-content:space-between;
-  align-items:center;gap:10px;flex-wrap:wrap;
+.brand {display:flex;align-items:center;gap:13px}
+.brand-mark {
+  width:43px;height:43px;
+  display:grid;place-items:center;
+  border:1px solid var(--gold);
+  border-radius:50%;
+  color:var(--gold);
+  font:22px "Playfair Display",serif;
 }
-.pill{
-  background:#f3ead7;color:#8c7042;
-  border-radius:30px;padding:8px 12px;
-  font-size:9px;letter-spacing:.12em;
+.brand-name {
+  font:14px "Playfair Display",serif;
+  letter-spacing:.15em;
 }
-.wheel-box{
-  position:relative;width:min(100%,390px);
-  aspect-ratio:1;margin:22px auto 12px;
+.brand-sub {
+  margin-top:4px;
+  color:#bdc8bf;
+  font-size:9px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
 }
-#wheel{
-  width:100%;height:100%;
-  filter:drop-shadow(0 12px 18px #173c3020);
+.top-tag {
+  padding:9px 14px;
+  border:1px solid rgba(215,182,110,.4);
+  border-radius:30px;
+  font-size:10px;
+  letter-spacing:.12em;
 }
-.wheel-box:after{
-  content:"";position:absolute;top:-5px;left:50%;
-  transform:translateX(-50%);
-  border-left:13px solid transparent;
-  border-right:13px solid transparent;
-  border-top:28px solid var(--gold);
+.view {
+  display:none;
+  padding:clamp(24px,5vw,58px);
+  animation:appear .3s ease;
+}
+.view.active {display:block}
+@keyframes appear {
+  from {opacity:0;transform:translateY(8px)}
+  to {opacity:1;transform:translateY(0)}
+}
+h1,h2,h3 {font-family:"Playfair Display",serif}
+.eyebrow {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:#9b7940;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+}
+.eyebrow:before {
+  content:"";
+  width:27px;
+  height:1px;
+  background:var(--gold);
+}
+.hero {
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:34px;
+  align-items:center;
+  padding:10px 0 38px;
+}
+.hero h1 {
+  margin:17px 0;
+  color:var(--forest);
+  font-size:clamp(40px,6vw,68px);
+  line-height:1.02;
+  letter-spacing:-.035em;
+}
+.hero h1 span {color:#a77f3e;font-style:italic}
+.hero-copy {
+  max-width:560px;
+  color:#6c786f;
+  font-size:14px;
+  line-height:1.9;
+}
+.hero-art {
+  min-height:270px;
+  position:relative;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  border:1px solid rgba(215,182,110,.55);
+  border-radius:24px;
+  background:
+    radial-gradient(circle at center,rgba(240,223,179,.2),transparent 45%),
+    linear-gradient(145deg,#1d4935,#0c2119);
+}
+.hero-art:before,.hero-art:after {
+  content:"";
+  position:absolute;
+  border:1px solid rgba(215,182,110,.3);
+  border-radius:50%;
+}
+.hero-art:before {width:230px;height:230px}
+.hero-art:after {width:175px;height:175px}
+.ornament {
+  position:absolute;
+  width:65px;height:65px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.5);
+  background:radial-gradient(circle at 30% 25%,#f6e7c1,#bd9148 60%,#805c2e);
+  box-shadow:0 12px 35px #0005;
+}
+.ornament.one {transform:translate(-75px,-35px)}
+.ornament.two {
+  width:47px;height:47px;
+  transform:translate(75px,45px);
+  background:radial-gradient(circle at 30% 25%,#e7c5c5,#943c48 60%,#56232b);
+}
+.ornament.three {
+  width:33px;height:33px;
+  transform:translate(95px,-80px);
+}
+.star {
+  z-index:1;
+  color:var(--goldlight);
+  font-size:76px;
+  text-shadow:0 0 28px rgba(240,223,179,.4);
+}
+.art-caption {
+  position:absolute;
+  bottom:20px;
+  color:#e0cea1;
+  font:14px "Playfair Display",serif;
+  letter-spacing:.13em;
+}
+.section-heading {text-align:center;margin:5px 0 24px}
+.section-heading h2 {
+  margin:10px 0 7px;
+  color:var(--forest);
+  font-size:clamp(27px,4vw,37px);
+}
+.section-heading p {color:var(--muted);font-size:13px}
+.center-eyebrow {justify-content:center}
+.section-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px;
+  max-width:760px;
+  margin:auto;
+}
+.section-card {
+  min-height:175px;
+  padding:25px;
+  position:relative;
+  overflow:hidden;
+  text-align:left;
+  color:var(--cream);
+  border:1px solid rgba(215,182,110,.65);
+  border-radius:20px;
+  background:linear-gradient(135deg,#1b4030,#10271f);
+  box-shadow:0 12px 28px rgba(16,39,31,.12);
+  transition:.2s;
+}
+.section-card:hover {
+  transform:translateY(-4px);
+  box-shadow:0 18px 36px rgba(16,39,31,.2);
+}
+.section-card.kids {background:linear-gradient(135deg,#873b45,#4d222b)}
+.section-card .symbol {
+  display:block;
+  margin-bottom:17px;
+  color:var(--goldlight);
+  font-size:26px;
+}
+.section-card strong {
+  display:block;
+  font:29px "Playfair Display",serif;
+}
+.section-card small {
+  display:block;
+  margin-top:7px;
+  color:#e0d9c8;
+  font-size:10px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.section-card .arrow {
+  position:absolute;
+  right:22px;
+  bottom:20px;
+  color:var(--goldlight);
+  font-size:23px;
+}
+.instructions {
+  max-width:760px;
+  margin:24px auto 0;
+  padding:17px 20px;
+  display:flex;
+  gap:13px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:rgba(255,253,248,.8);
+  color:#6b786f;
+  font-size:12px;
+  line-height:1.8;
+}
+.instructions b {color:var(--forest)}
+.instructions .bulb {color:#a77f3e;font-size:19px}
+.center-panel {
+  width:min(550px,100%);
+  margin:8px auto;
+  text-align:center;
+}
+.back-link {
+  display:block;
+  margin-bottom:20px;
+  padding:8px 0;
+  border:0;
+  background:none;
+  color:#8a744e;
+  font-size:12px;
+}
+.back-link:hover {text-decoration:underline}
+.center-panel h2 {
+  margin:15px 0 8px;
+  color:var(--forest);
+  font-size:clamp(30px,5vw,42px);
+}
+.subcopy {
+  margin-bottom:25px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.7;
+}
+.field-label {
+  display:block;
+  margin:0 0 8px;
+  color:#526258;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-align:left;
+  text-transform:uppercase;
+}
+.text-field,.text-area {
+  width:100%;
+  padding:15px 16px;
+  border:1px solid #ded6c5;
+  border-radius:12px;
+  outline:none;
+  background:#fffefa;
+  color:var(--ink);
+  font-size:14px;
+}
+.text-field:focus,.text-area:focus {
+  border-color:#b99450;
+  box-shadow:0 0 0 3px rgba(215,182,110,.16);
+}
+.text-area {min-height:120px;resize:vertical;line-height:1.6}
+.primary-btn,.secondary-btn,.danger-btn {
+  padding:13px 18px;
+  border:0;
+  border-radius:12px;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  transition:.18s;
+}
+.primary-btn {
+  color:#1d2e25;
+  background:linear-gradient(135deg,#efdba9,#c69b50);
+  box-shadow:0 9px 20px rgba(166,126,57,.18);
+}
+.secondary-btn {
+  color:var(--forest);
+  border:1px solid #ded4bf;
+  background:#eee8da;
+}
+.danger-btn {color:white;background:#963f49}
+.primary-btn:hover,.secondary-btn:hover,.danger-btn:hover {
+  transform:translateY(-2px);
+  filter:brightness(1.04);
+}
+.primary-btn:disabled {opacity:.55;cursor:not-allowed;transform:none}
+.full {width:100%;margin-top:15px}
+.status-line {
+  min-height:20px;
+  margin:10px 0 0;
+  color:#8b6530;
+  font-size:11px;
+  line-height:1.5;
+}
+.wheel-layout {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(260px,.7fr);
+  gap:30px;
+  align-items:center;
+}
+.wheel-stage {
+  width:min(450px,100%);
+  aspect-ratio:1;
+  margin:auto;
+  padding:12px;
+  position:relative;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:linear-gradient(145deg,#e8d5a5,#a77f3e);
+  box-shadow:0 18px 40px rgba(16,39,31,.2);
+}
+.wheel-stage:before {
+  content:"";
+  position:absolute;
+  inset:7px;
+  border:1px solid #ffffffaa;
+  border-radius:50%;
+  pointer-events:none;
+}
+#wheelCanvas {width:100%;height:100%;border-radius:50%}
+.pointer {
+  position:absolute;
+  top:-2px;
+  left:50%;
   z-index:3;
+  transform:translateX(-50%);
+  width:0;height:0;
+  border-left:17px solid transparent;
+  border-right:17px solid transparent;
+  border-top:35px solid var(--red);
+  filter:drop-shadow(0 3px 2px #0004);
 }
-.spin{
-  position:absolute;top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  width:84px;height:84px;border-radius:50%;
-  border:5px solid #f8f2e7;background:var(--green);
-  color:#fff4df;font:600 14px "Playfair Display",serif;
-  box-shadow:0 4px 16px #0003;z-index:2;
+.wheel-side {text-align:center}
+.wheel-side h2 {
+  margin:0 0 8px;
+  color:var(--forest);
+  font-size:34px;
 }
-.spin:disabled{opacity:.5}
-.wheel-hint{text-align:center;font-size:11px;color:var(--muted)}
-.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:17px}
-.chip{
-  padding:7px 10px;border:1px solid var(--line);
-  border-radius:30px;font-size:10px;background:white;color:#59645c;
+.wheel-side p {
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.7;
 }
-.chip.taken{text-decoration:line-through;opacity:.4}
-.result{
-  display:none;text-align:center;padding:20px;
-  margin-top:20px;background:#f4eddd;
-  border:1px solid #e5d8bc;border-radius:12px;
+.participant-chip {
+  display:inline-flex;
+  gap:8px;
+  margin:9px 0 16px;
+  padding:8px 13px;
+  border:1px solid #e4d8bd;
+  border-radius:30px;
+  color:#7d6337;
+  background:#fffaf0;
+  font-size:12px;
 }
-.result small{
-  font-size:9px;letter-spacing:.2em;
-  text-transform:uppercase;color:#927747;
+.wheel-count {margin:12px 0;color:#89938b;font-size:11px}
+.result-card {
+  width:min(650px,100%);
+  margin:12px auto;
+  padding:clamp(28px,6vw,52px);
+  text-align:center;
+  border:1px solid #dfc995;
+  border-radius:24px;
+  background:linear-gradient(145deg,#fffdf8,#f4eddd);
+  box-shadow:0 20px 50px rgba(16,39,31,.1);
 }
-.result strong{
-  display:block;font:600 30px "Playfair Display",serif;
-  color:var(--green);margin-top:8px;
+.result-icon {margin-bottom:12px;font-size:42px}
+.result-card h2 {
+  margin:0 0 10px;
+  color:var(--forest);
+  font-size:clamp(30px,5vw,46px);
 }
-.support{
-  text-align:center;font-size:11px;line-height:1.8;
-  color:#85877e;margin-top:35px;
+.result-name {
+  margin:22px 0;
+  padding:20px;
+  overflow-wrap:anywhere;
+  border:1px dashed #c9a45f;
+  border-radius:16px;
+  color:#8b6530;
+  background:#fffaf0;
+  font:clamp(26px,5vw,40px) "Playfair Display",serif;
 }
-.support strong{color:var(--green)}
-footer{
-  text-align:center;padding:20px;color:#999184;
-  font-size:9px;letter-spacing:.15em;
+.screenshot-note {color:#68756d;font-size:13px;line-height:1.7}
+.admin-link {
+  position:absolute;
+  right:28px;
+  bottom:20px;
+  border:0;
+  background:transparent;
+  color:#9a9a8b;
+  font-size:10px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
 }
+.admin-link:hover {color:#8a6530}
+.footer {
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  align-items:center;
+  padding:19px 34px;
+  color:#b9c6bd;
+  background:var(--forest);
+  font-size:10px;
+}
+.footer strong {color:var(--goldlight);font-weight:600}
+.admin-head {
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  align-items:flex-start;
+  margin-bottom:24px;
+}
+.admin-head h2 {margin:8px 0;color:var(--forest);font-size:34px}
+.admin-head p {margin:0;color:var(--muted);font-size:12px}
+.admin-tabs,.admin-actions {display:flex;flex-wrap:wrap;gap:8px;margin:15px 0}
+.tab-btn {
+  padding:10px 16px;
+  border:1px solid #ded5c3;
+  border-radius:30px;
+  color:#66746a;
+  background:#fffdf8;
+  font-size:11px;
+  font-weight:700;
+}
+.tab-btn.active {color:#fff8e8;border-color:var(--forest);background:var(--forest)}
+.admin-grid {display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.admin-card {
+  padding:20px;
+  border:1px solid #e6ddca;
+  border-radius:17px;
+  background:#fffdf8;
+}
+.admin-card h3 {margin:0 0 8px;color:var(--forest);font-size:21px}
+.admin-card p {color:var(--muted);font-size:11px;line-height:1.6}
+.admin-card .primary-btn,.admin-card .secondary-btn {margin-top:10px}
+.name-list {display:grid;gap:8px;margin-top:12px}
+.name-row {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:11px 12px;
+  border:1px solid #ece5d7;
+  border-radius:11px;
+  background:#fff;
+}
+.name-row strong {display:block;color:#34483c;font-size:12px;overflow-wrap:anywhere}
+.name-row small {display:block;margin-top:3px;color:#8a948c;font-size:10px}
+.row-actions {display:flex;gap:6px;flex-shrink:0}
+.mini-btn {
+  padding:7px 9px;
+  border:1px solid #e3d9c6;
+  border-radius:8px;
+  color:#6c5b3c;
+  background:#f8f3e9;
+  font-size:10px;
+}
+.mini-btn.remove {color:#913f49;border-color:#ecd4d5;background:#fbf0f0}
+.history-table {width:100%;border-collapse:collapse;font-size:11px;margin-top:12px}
+.history-table th,.history-table td {
+  padding:10px 8px;
+  text-align:left;
+  border-bottom:1px solid #eee6d8;
+}
+.history-table th {
+  color:#8b744e;
+  font-size:9px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.empty-state {
+  padding:20px;
+  border:1px dashed #ddd2bd;
+  border-radius:12px;
+  color:#8b948c;
+  text-align:center;
+  font-size:12px;
+}
+.modal-backdrop {
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:20;
+  padding:20px;
+  align-items:center;
+  justify-content:center;
+  background:#04110cba;
+  backdrop-filter:blur(7px);
+}
+.modal-backdrop.open {display:flex}
+.modal {
+  width:min(440px,100%);
+  padding:30px;
+  border:1px solid #d9bf82;
+  border-radius:22px;
+  background:var(--cream);
+  box-shadow:var(--shadow);
+}
+.modal h2 {margin:8px 0;color:var(--forest);font-size:30px}
+.modal p {color:var(--muted);font-size:12px;line-height:1.7}
+.modal-close {
+  float:right;
+  border:0;
+  background:none;
+  color:#7b857d;
+  font-size:22px;
+}
+.toast {
+  position:fixed;
+  z-index:30;
+  left:50%;
+  bottom:25px;
+  max-width:90vw;
+  padding:12px 17px;
+  transform:translate(-50%,20px);
+  opacity:0;
+  pointer-events:none;
+  border:1px solid rgba(215,182,110,.5);
+  border-radius:12px;
+  color:#fff8e8;
+  background:#173629;
+  box-shadow:0 10px 28px #0004;
+  font-size:12px;
+  transition:.25s;
+}
+.toast.show {opacity:1;transform:translate(-50%,0)}
+.hidden {display:none!important}
 
-.modal-back{
-  position:fixed;inset:0;background:#101d18b5;
-  display:none;place-items:center;padding:15px;z-index:10;
+@media(max-width:760px) {
+  .site-shell {padding:0}
+  .site-frame {min-height:100vh;border:0;border-radius:0}
+  .topbar {padding:17px 20px}
+  .top-tag {display:none}
+  .view {padding:28px 20px 65px}
+  .hero {grid-template-columns:1fr;gap:20px}
+  .hero-art {min-height:190px}
+  .section-grid {gap:11px}
+  .section-card {min-height:155px;padding:18px}
+  .section-card strong {font-size:24px}
+  .wheel-layout {grid-template-columns:1fr;gap:23px}
+  .wheel-stage {width:min(370px,100%)}
+  .wheel-side h2 {font-size:29px}
+  .admin-grid {grid-template-columns:1fr}
+  .admin-head {flex-direction:column}
+  .footer {padding:17px 20px;flex-direction:column;text-align:center}
+  .admin-link {right:16px;bottom:73px}
 }
-.modal-back.show{display:grid}
-.modal{
-  position:relative;background:var(--white);
-  border-radius:17px;padding:28px;
-  width:min(100%,490px);max-height:90vh;
-  overflow:auto;box-shadow:0 30px 100px #0004;
-}
-.close{
-  position:absolute;right:17px;top:12px;
-  background:none;border:0;font-size:24px;color:#777;
-}
-.admin-section{
-  border-top:1px solid var(--line);
-  padding-top:17px;margin-top:20px;
-}
-.admin-section h3{
-  font:600 19px "Playfair Display",serif;
-  color:var(--green);margin:0 0 12px;
-}
-.inline{display:flex;gap:8px}
-.inline input{min-width:0;flex:1}
-.list{display:grid;gap:8px;margin-top:12px}
-.item{
-  display:flex;justify-content:space-between;align-items:center;
-  gap:10px;padding:11px;border:1px solid var(--line);
-  border-radius:8px;font-size:11px;
-}
-.remove{
-  border:0;border-radius:6px;padding:7px 10px;
-  color:var(--red);background:#f8eeeb;font-size:10px;
-}
-.empty{font-size:11px;color:var(--muted);padding:10px 0}
-@media(max-width:700px){
-  main{padding:30px 14px 50px}
-  .card{padding:21px}
-  .section-grid{gap:10px}
-  .section-card{padding:20px 10px}
-  .wheel-box{width:min(100%,340px)}
+@media(max-width:390px) {
+  .brand-name {font-size:12px}
+  .brand-sub {font-size:8px}
+  .section-card {min-height:145px;padding:14px}
+  .section-card strong {font-size:21px}
 }
 </style>
 </head>
 
 <body>
+<div class="site-shell">
+<div class="site-frame">
 
-<header>
+<header class="topbar">
   <div class="brand">
-    <div class="brand-icon">🎄</div>
+    <div class="brand-mark">T</div>
     <div>
       <div class="brand-name">TADIFA CLAN</div>
       <div class="brand-sub">Christmas Gift Exchange</div>
     </div>
   </div>
-  <button class="dev-button" id="openDeveloper">DEVELOPER</button>
+  <div class="top-tag">A little joy. A special surprise.</div>
 </header>
 
 <main>
 
-  <section class="hero">
-    <div class="eyebrow">A Christmas celebration</div>
-    <h1>Tadifa Clan Spin the Wheel</h1>
-    <p>Christmas Party Gift Exchange</p>
-  </section>
-
-  <!-- STEP 1: ACCESS CODE -->
-  <section class="card" id="accessStep">
-    <div class="eyebrow">Welcome to our celebration</div>
-    <h2>Enter the party</h2>
-    <p class="description">
-      Welcome to the Tadifa Clan Christmas Gift Exchange!
-      Enter the shared party access code to continue.
-    </p>
-
-    <div class="field">
-      <label>Christmas Party Access Code</label>
-      <input id="accessCode" type="password"
-        placeholder="Enter your access code">
-    </div>
-
-    <button class="btn full" id="accessBtn">ENTER PARTY</button>
-    <div class="status" id="accessStatus"></div>
-
-    <div class="instructions">
-      <strong>Before you begin:</strong><br>
-      Make sure you have the correct party access code.
-      Every participant uses the same code.
-    </div>
-  </section>
-
-  <!-- STEP 2: SECTION -->
-  <section class="card hidden" id="sectionStep">
-    <button class="back" id="backToAccess">← Back</button>
-    <div class="eyebrow">Choose your category</div>
-    <h2>Which section are you joining?</h2>
-    <p class="description">
-      Select the section that belongs to you.
-      Kids and Adults have separate gift wheels.
-    </p>
-
-    <div class="section-grid">
-      <button class="section-card" data-section="kids">
-        <div class="section-icon">🎁</div>
-        <div class="section-title">Kids</div>
-        <div class="section-caption">KIDS GIFT EXCHANGE</div>
-      </button>
-
-      <button class="section-card" data-section="adults">
-        <div class="section-icon">🎄</div>
-        <div class="section-title">Adults</div>
-        <div class="section-caption">ADULTS GIFT EXCHANGE</div>
-      </button>
-    </div>
-
-    <div class="instructions">
-      <strong>Important:</strong><br>
-      Choose carefully. Your selected section determines
-      which gifts will appear on your spinning wheel.
-    </div>
-  </section>
-
-  <!-- STEP 3: NAME -->
-  <section class="card hidden" id="nameStep">
-    <button class="back" id="backToSections">← Change section</button>
-    <div class="eyebrow">Participant information</div>
-    <h2>What's your name?</h2>
-    <p class="description">
-      Enter your name so your gift exchange result
-      can be recorded correctly.
-    </p>
-
-    <div class="field">
-      <label>Your complete name</label>
-      <input id="participantName" maxlength="50"
-        placeholder="Enter your name">
-    </div>
-
-    <button class="btn full" id="continueBtn">CONTINUE TO MY WHEEL</button>
-    <div class="status" id="nameStatus"></div>
-  </section>
-
-  <!-- STEP 4: WHEEL -->
-  <section class="card wheel-card hidden" id="wheelStep">
-    <button class="back" id="changeSection">← Back to section selection</button>
-
-    <div class="wheel-header">
-      <div>
-        <div class="eyebrow">Your Christmas gift</div>
-        <h2 id="wheelTitle">Kids Gift Wheel</h2>
-        <div class="description" id="welcomeName"></div>
-      </div>
-      <span class="pill" id="sectionPill">KIDS SECTION</span>
-    </div>
-
-    <div class="wheel-box">
-      <canvas id="wheel" width="720" height="720"></canvas>
-      <button class="spin" id="spinBtn" disabled>SPIN</button>
-    </div>
-
-    <p class="wheel-hint" id="wheelHint">
-      Waiting for the gift choices…
-    </p>
-
-    <div class="chips" id="choiceChips"></div>
-
-    <div class="result" id="result">
-      <small>Your Christmas gift exchange item</small>
-      <strong id="resultText"></strong>
-      <p class="description">
-        Congratulations! This is the gift you will exchange
-        for the Christmas party.
+<!-- HOME -->
+<section id="homeView" class="view active">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">The season of giving · 2026</div>
+      <h1>One spin.<br><span>One surprise.</span></h1>
+      <p class="hero-copy">
+        Welcome to the Tadifa Clan Christmas Gift Exchange.
+        Choose your group, enter your name, and let the wheel decide
+        who you will prepare a gift for. Keep your result a surprise!
       </p>
     </div>
 
-    <div class="status" id="wheelStatus"></div>
-
-    <div class="instructions">
-      <strong>HOW TO PLAY:</strong><br>
-      1. Make sure your name is correct.<br>
-      2. Press the SPIN button once.<br>
-      3. Wait until the wheel stops.<br>
-      4. The gift shown on your screen is your assigned
-      gift exchange item.<br>
-      5. Remember your result and prepare that gift!<br><br>
-      <strong>Reminder:</strong> Each gift can only be
-      claimed once in your section.
+    <div class="hero-art">
+      <div class="ornament one"></div>
+      <div class="ornament two"></div>
+      <div class="ornament three"></div>
+      <div class="star">✦</div>
+      <div class="art-caption">THE JOY OF GIVING</div>
     </div>
-  </section>
-
-  <div class="support">
-    For problems or concerns, please contact:<br>
-    <strong>Renz Ferrer Tadifa / Kikiw Tadifa</strong>
   </div>
+
+  <div class="section-heading">
+    <div class="eyebrow center-eyebrow">Choose your section</div>
+    <h2>Where do you belong?</h2>
+    <p>Adults and Kids have separate wheels.</p>
+  </div>
+
+  <div class="section-grid">
+    <button class="section-card" onclick="chooseSection('adults')">
+      <span class="symbol">✧</span>
+      <strong>Adults</strong>
+      <small><span data-count="adults">Loading...</span></small>
+      <span class="arrow">↗</span>
+    </button>
+
+    <button class="section-card kids" onclick="chooseSection('kids')">
+      <span class="symbol">❄</span>
+      <strong>Kids</strong>
+      <small><span data-count="kids">Loading...</span></small>
+      <span class="arrow">↗</span>
+    </button>
+  </div>
+
+  <div class="instructions">
+    <span class="bulb">✦</span>
+    <div>
+      <b>How it works:</b> Choose Adults or Kids, enter your name,
+      then spin once. Your selected person will be removed from that
+      section's available names so another participant won't receive
+      the same person. <b>Take a screenshot of your result</b> and keep it private.
+    </div>
+  </div>
+
+  <button class="admin-link" onclick="openDeveloper()">Developer access</button>
+</section>
+
+<!-- NAME ENTRY -->
+<section id="nameView" class="view">
+  <div class="center-panel">
+    <button class="back-link" onclick="showView('homeView')">← Back to sections</button>
+    <div class="eyebrow center-eyebrow">Participant entry</div>
+    <h2 id="nameHeading">Adults' Wheel</h2>
+    <p class="subcopy">Enter your name below. Make sure your name is correct before you continue.</p>
+
+    <label class="field-label" for="participantName">Your name</label>
+    <input class="text-field" id="participantName" maxlength="60" placeholder="Type your complete name">
+
+    <button class="primary-btn full" id="continueBtn" onclick="continueToWheel()">
+      Continue to the wheel →
+    </button>
+    <p class="status-line" id="nameStatus"></p>
+  </div>
+</section>
+
+<!-- WHEEL -->
+<section id="wheelView" class="view">
+  <button class="back-link" onclick="showView('homeView')">← Back to home</button>
+
+  <div class="wheel-layout">
+    <div class="wheel-stage">
+      <div class="pointer"></div>
+      <canvas id="wheelCanvas" width="900" height="900"></canvas>
+    </div>
+
+    <div class="wheel-side">
+      <div class="eyebrow center-eyebrow">Your moment of surprise</div>
+      <h2 id="wheelHeading">Adults' Wheel</h2>
+      <div class="participant-chip">✦ <span id="wheelParticipant"></span></div>
+      <p>Take a breath, make a wish, and spin the wheel to discover who you will be giving a gift to.</p>
+
+      <button class="primary-btn full" id="spinBtn" onclick="spinWheel()">SPIN THE WHEEL</button>
+      <div class="wheel-count" id="wheelCount">Loading available names...</div>
+      <p class="status-line" id="wheelStatus"></p>
+    </div>
+  </div>
+</section>
+
+<!-- RESULT -->
+<section id="resultView" class="view">
+  <div class="result-card">
+    <div class="result-icon">🎁</div>
+    <div class="eyebrow center-eyebrow">Your gift exchange result</div>
+    <h2>It's a surprise!</h2>
+    <p class="screenshot-note">You will be preparing a gift for:</p>
+    <div class="result-name" id="resultName">Your selected name</div>
+    <p class="screenshot-note">
+      <b>Important:</b> Take a screenshot of this result and keep it private.
+      Please don't tell the person you picked!
+    </p>
+    <button class="primary-btn full" onclick="showView('homeView')">Finish</button>
+  </div>
+</section>
+
+<!-- DEVELOPER DASHBOARD -->
+<section id="adminView" class="view">
+  <div class="admin-head">
+    <div>
+      <div class="eyebrow">Private control room</div>
+      <h2>Developer Dashboard</h2>
+      <p>Manage the Adults and Kids wheels from one place.</p>
+    </div>
+    <div class="admin-actions">
+      <button class="secondary-btn" onclick="showView('homeView')">Public page</button>
+      <button class="danger-btn" onclick="logoutDeveloper()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="admin-card" style="margin-bottom:16px">
+    <h3>Prepare both wheels</h3>
+    <p>
+      Put one participant name on each line. Saving replaces the current
+      names in both wheels. Previous spin history will remain available.
+    </p>
+
+    <div class="admin-grid">
+      <div>
+        <label class="field-label" for="adultsNames">Adults — one name per line</label>
+        <textarea class="text-area" id="adultsNames" placeholder="Alex&#10;Jamie&#10;Taylor"></textarea>
+      </div>
+      <div>
+        <label class="field-label" for="kidsNames">Kids — one name per line</label>
+        <textarea class="text-area" id="kidsNames" placeholder="Sam&#10;Jordan&#10;Casey"></textarea>
+      </div>
+    </div>
+
+    <button class="primary-btn full" onclick="prepareBothWheels()">Save / replace both wheels</button>
+    <p class="status-line" id="prepareStatus"></p>
+  </div>
+
+  <div class="admin-tabs">
+    <button class="tab-btn active" id="tabAdults" onclick="selectAdminSection('adults')">Adults</button>
+    <button class="tab-btn" id="tabKids" onclick="selectAdminSection('kids')">Kids</button>
+    <button class="tab-btn" id="tabHistory" onclick="showHistory()">Spin history</button>
+  </div>
+
+  <div id="sectionAdminPanel">
+    <div class="admin-grid">
+      <div class="admin-card">
+        <h3 id="adminSectionTitle">Adults wheel</h3>
+        <p id="adminSummary">Loading wheel information...</p>
+
+        <label class="field-label" for="singleName">Add one name</label>
+        <input class="text-field" id="singleName" maxlength="60" placeholder="Enter a participant name">
+
+        <button class="secondary-btn full" onclick="addSingleName()">+ Add name</button>
+
+        <div class="admin-actions">
+          <button class="secondary-btn" onclick="returnAllSelected()">Return all selected names</button>
+        </div>
+
+        <p class="status-line" id="sectionStatus"></p>
+      </div>
+
+      <div class="admin-card">
+        <h3>Participant list</h3>
+        <p>Return a selected name to the wheel or remove a name from the list.</p>
+        <div class="name-list" id="adminNameList">
+          <div class="empty-state">Loading names...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="historyPanel" class="admin-card hidden">
+    <h3>Recent spin history</h3>
+    <p>History is separated by section and stays available when you return names to a wheel.</p>
+
+    <div class="admin-actions">
+      <button class="tab-btn active" id="historyAdults" onclick="loadHistoryFor('adults')">Adults history</button>
+      <button class="tab-btn" id="historyKids" onclick="loadHistoryFor('kids')">Kids history</button>
+    </div>
+
+    <div id="historyContent"><div class="empty-state">Choose a section to view its history.</div></div>
+  </div>
+</section>
 
 </main>
 
-<footer>
-  TADIFA CLAN · CHRISTMAS PARTY GIFT EXCHANGE
+<footer class="footer">
+  <div>Made for the <strong>Tadifa Clan</strong> Christmas celebration</div>
+  <div>Need help? Contact <strong>the event organizer</strong></div>
 </footer>
 
+</div>
+</div>
+
 <!-- DEVELOPER LOGIN -->
-<div class="modal-back" id="developerModal">
+<div class="modal-backdrop" id="developerModal">
   <div class="modal">
-    <button class="close" id="closeDeveloper">×</button>
+    <button class="modal-close" onclick="closeDeveloper()">×</button>
+    <div class="eyebrow">Restricted access</div>
+    <h2>Developer sign in</h2>
+    <p>
+      Enter the registered developer Gmail. A secure sign-in link will
+      be sent to that inbox. There is no party access code.
+    </p>
 
-    <div id="loginView">
-      <div class="eyebrow">Private administrator area</div>
-      <h2>Developer Login</h2>
-      <p class="description">
-        Only the authorized developer can manage the gift wheels.
-      </p>
+    <label class="field-label" for="developerEmail">Developer Gmail</label>
+    <input class="text-field" id="developerEmail" type="email" placeholder="Enter registered Gmail">
 
-      <div class="field">
-        <label>Administrator email</label>
-        <input id="adminEmail" type="email"
-          placeholder="Your Supabase email">
-      </div>
-
-      <div class="field">
-        <label>Password</label>
-        <input id="adminPassword" type="password"
-          placeholder="Your password">
-      </div>
-
-      <button class="btn full" id="loginBtn">SIGN IN</button>
-      <div class="status" id="loginStatus"></div>
-    </div>
-
-    <!-- DEVELOPER DASHBOARD -->
-    <div id="dashboardView" class="hidden">
-      <div class="eyebrow">Administrator control room</div>
-      <h2>Developer Dashboard</h2>
-      <p class="description">
-        Manage the Kids and Adults gift exchange wheels separately.
-      </p>
-
-      <div class="admin-section">
-        <h3>Wheel setup</h3>
-        <p class="description">
-          Prepare both section rooms. This only needs to be done
-          once for this Supabase project.
-        </p>
-        <button class="btn full" id="setupBtn">PREPARE BOTH WHEELS</button>
-        <div class="status" id="setupStatus"></div>
-      </div>
-
-      <div class="admin-section">
-        <h3>Manage gift choices</h3>
-
-        <div class="field">
-          <label>Select section</label>
-          <select id="manageSection">
-            <option value="kids">Kids</option>
-            <option value="adults">Adults</option>
-          </select>
-        </div>
-
-        <div class="inline field">
-          <input id="newChoice" maxlength="80"
-            placeholder="Enter a gift choice">
-          <button class="btn gold" id="addChoiceBtn">ADD</button>
-        </div>
-
-        <div class="list" id="adminChoices">
-          <div class="empty">Prepare the wheels first.</div>
-        </div>
-      </div>
-
-      <div class="admin-section">
-        <h3>Gift exchange history</h3>
-
-        <div class="field">
-          <label>Choose section</label>
-          <select id="historySection">
-            <option value="kids">Kids</option>
-            <option value="adults">Adults</option>
-          </select>
-        </div>
-
-        <button class="btn outline full" id="loadHistoryBtn">
-          LOAD HISTORY
-        </button>
-
-        <div class="list" id="historyList">
-          <div class="empty">No history loaded.</div>
-        </div>
-      </div>
-
-      <div class="admin-section">
-        <button class="btn outline full" id="logoutBtn">LOG OUT</button>
-      </div>
-    </div>
+    <button class="primary-btn full" id="sendLinkBtn" onclick="sendDeveloperLink()">
+      Send secure sign-in link
+    </button>
+    <p class="status-line" id="developerStatus"></p>
   </div>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
-(() => {
+/* ==========================================================
+   SUPABASE SETTINGS
+   Use your project's publishable key only.
+   NEVER put your service_role key in this HTML.
+========================================================== */
 
-  // ==========================================
-  // 1. PROJECT SETTINGS
-  // ==========================================
+const SUPABASE_URL = "https://dbffyzbeywibhlvmobzb.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_K9wUziaVO5LJ5fqjRnQIHg_HBtJeG2m";
+const ADMIN_EMAIL = "renzferrertadifa@gmail.com";
 
-  const SUPABASE_URL =
-    'https://dbffyzbeywibhlvmobzb.supabase.co';
+const ROOM_CODES = {
+  adults: "TADIFA-ADULTS",
+  kids: "TADIFA-KIDS"
+};
 
-  const SUPABASE_KEY =
-    'sb_publishable_K9wUziaVO5LJ5fqjRnQIHg_HBtJeG2m';
+const SECTION_NAMES = {
+  adults: "Adults",
+  kids: "Kids"
+};
 
-  // CHANGE YOUR SHARED PARTY CODE HERE:
-  const PARTY_ACCESS_CODE = 'TADIFA2026';
-
-  // These are the two internal database room codes.
-  const SECTIONS = {
-    kids: {
-      name: 'Kids',
-      code: 'TADIFA-KIDS',
-      roomName: 'Tadifa Clan Kids Gift Exchange'
-    },
-    adults: {
-      name: 'Adults',
-      code: 'TADIFA-ADULTS',
-      roomName: 'Tadifa Clan Adults Gift Exchange'
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
     }
-  };
+  }
+);
 
-  const db = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+let currentSection = "adults";
+let participantName = "";
+let currentChoices = [];
+let currentRoom = null;
+let adminSection = "adults";
+let historySection = "adults";
+let wheelRotation = 0;
+let isSpinning = false;
+let toastTimer;
 
-  const $ = id => document.getElementById(id);
+const $ = id => document.getElementById(id);
 
-  const colors = [
-    '#20513d',
-    '#c7a96d',
-    '#9b4c45',
-    '#718a72',
-    '#d6c49e',
-    '#315f4c',
-    '#a66b55',
-    '#899b83'
+/* ==========================================================
+   GENERAL FUNCTIONS
+========================================================== */
+
+function showView(id) {
+  document.querySelectorAll(".view").forEach(view => {
+    view.classList.remove("active");
+  });
+
+  $(id).classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+
+  if (id === "homeView") updateHomeCounts();
+}
+
+function notify(message) {
+  const toast = $("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("show"), 3500);
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, character => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[character]));
+}
+
+async function ensureSession() {
+  const {data,error} = await db.auth.getSession();
+  if (error) throw error;
+  if (data.session) return data.session;
+
+  const {data:guestData,error:guestError} = await db.auth.signInAnonymously();
+  if (guestError) throw guestError;
+
+  return guestData.session;
+}
+
+/* ==========================================================
+   DATABASE ROOM FUNCTIONS
+========================================================== */
+
+async function getRoom(section) {
+  const {data,error} = await db
+    .from("rooms")
+    .select("id,room_code,name")
+    .eq("room_code",ROOM_CODES[section])
+    .maybeSingle();
+
+  if (error) throw error;
+
+  if (!data) {
+    throw new Error("This wheel has not been prepared yet. Please ask the developer.");
+  }
+
+  return data;
+}
+
+async function getAvailableChoices(section) {
+  const room = await getRoom(section);
+
+  const {data,error} = await db
+    .from("choices")
+    .select("id,label")
+    .eq("room_id",room.id)
+    .eq("is_taken",false)
+    .order("label",{ascending:true});
+
+  if (error) throw error;
+
+  currentRoom = room;
+  currentChoices = data || [];
+
+  return currentChoices;
+}
+
+async function updateHomeCounts() {
+  try {
+    const {data:rooms,error} = await db
+      .from("rooms")
+      .select("id,room_code")
+      .in("room_code",[ROOM_CODES.adults,ROOM_CODES.kids]);
+
+    if (error) throw error;
+
+    const roomMap = Object.fromEntries(
+      (rooms || []).map(room => [room.room_code,room])
+    );
+
+    for (const section of ["adults","kids"]) {
+      const target = document.querySelector(`[data-count="${section}"]`);
+      const room = roomMap[ROOM_CODES[section]];
+
+      if (!room) {
+        target.textContent = "Not prepared yet";
+        continue;
+      }
+
+      const {count,error:countError} = await db
+        .from("choices")
+        .select("id",{count:"exact",head:true})
+        .eq("room_id",room.id)
+        .eq("is_taken",false);
+
+      if (countError) throw countError;
+
+      target.textContent = `${count ?? 0} available`;
+    }
+  } catch (_) {
+    // The section buttons remain usable if the count cannot load.
+  }
+}
+
+/* ==========================================================
+   PARTICIPANT FLOW
+========================================================== */
+
+function chooseSection(section) {
+  currentSection = section;
+  $("nameHeading").textContent = `${SECTION_NAMES[section]}' Wheel`;
+  $("participantName").value = "";
+  $("nameStatus").textContent = "";
+  showView("nameView");
+  $("participantName").focus();
+}
+
+async function continueToWheel() {
+  const name = $("participantName").value.trim();
+
+  if (!name) {
+    $("nameStatus").textContent = "Please enter your name first.";
+    $("participantName").focus();
+    return;
+  }
+
+  participantName = name;
+  $("continueBtn").disabled = true;
+  $("nameStatus").textContent = "Connecting to the shared wheel...";
+
+  try {
+    await ensureSession();
+
+    const choices = await getAvailableChoices(currentSection);
+
+    if (!choices.length) {
+      $("nameStatus").textContent =
+        "There are no available names left in this section. Please contact the developer.";
+      return;
+    }
+
+    $("wheelHeading").textContent = `${SECTION_NAMES[currentSection]}' Wheel`;
+    $("wheelParticipant").textContent = participantName;
+    $("wheelCount").textContent =
+      `${choices.length} name${choices.length === 1 ? "" : "s"} available`;
+
+    $("wheelStatus").textContent = "";
+    $("spinBtn").disabled = false;
+    $("spinBtn").textContent = "SPIN THE WHEEL";
+
+    wheelRotation = 0;
+    $("wheelCanvas").style.transition = "none";
+    $("wheelCanvas").style.transform = "rotate(0rad)";
+
+    drawWheel(choices);
+    showView("wheelView");
+
+  } catch (error) {
+    $("nameStatus").textContent =
+      error.message || "Could not load the wheel. Please try again.";
+  } finally {
+    $("continueBtn").disabled = false;
+  }
+}
+
+/* ==========================================================
+   WHEEL DRAWING
+========================================================== */
+
+function drawWheel(choices) {
+  const canvas = $("wheelCanvas");
+  const ctx = canvas.getContext("2d");
+
+  const size = canvas.width;
+  const center = size / 2;
+  const radius = size * .475;
+
+  ctx.clearRect(0,0,size,size);
+
+  if (!choices || !choices.length) return;
+
+  const palette = [
+    "#1c4937",
+    "#9a3f49",
+    "#d6b56e",
+    "#315a48",
+    "#b9864c",
+    "#6f3039",
+    "#66806a",
+    "#d9c99f"
   ];
 
-  let currentSection = null;
-  let currentRoom = null;
-  let choices = [];
-  let participant = '';
-  let busy = false;
-  let realtimeChannel = null;
+  const slice = (Math.PI * 2) / choices.length;
 
-  // ==========================================
-  // 2. GENERAL HELPERS
-  // ==========================================
-
-  function message(id, text, error=false) {
-    const el = $(id);
-    el.textContent = text || '';
-    el.style.color = error ? '#a94f48' : '';
-  }
-
-  function safe(value) {
-    return String(value).replace(/[&<>"']/g, char => ({
-      '&':'&amp;',
-      '<':'&lt;',
-      '>':'&gt;',
-      '"':'&quot;',
-      "'":'&#39;'
-    }[char]));
-  }
-
-  function showStep(stepId) {
-    [
-      'accessStep',
-      'sectionStep',
-      'nameStep',
-      'wheelStep'
-    ].forEach(id => $(id).classList.add('hidden'));
-
-    $(stepId).classList.remove('hidden');
-  }
-
-  // ==========================================
-  // 3. ACCESS CODE
-  // ==========================================
-
-  $('accessBtn').addEventListener('click', () => {
-    const entered = $('accessCode').value.trim();
-
-    if (!entered) {
-      message('accessStatus','Please enter the party code.',true);
-      return;
-    }
-
-    if (entered.toUpperCase() !== PARTY_ACCESS_CODE.toUpperCase()) {
-      message('accessStatus','Incorrect access code. Please try again.',true);
-      return;
-    }
-
-    message('accessStatus','Access granted!');
-    showStep('sectionStep');
-  });
-
-  $('accessCode').addEventListener('keydown', e => {
-    if (e.key === 'Enter') $('accessBtn').click();
-  });
-
-  $('backToAccess').addEventListener('click', () => {
-    showStep('accessStep');
-  });
-
-  // ==========================================
-  // 4. SECTION SELECTION
-  // ==========================================
-
-  document.querySelectorAll('[data-section]').forEach(button => {
-    button.addEventListener('click', () => {
-      currentSection = button.dataset.section;
-
-      $('wheelTitle').textContent =
-        SECTIONS[currentSection].name + ' Gift Wheel';
-
-      $('sectionPill').textContent =
-        SECTIONS[currentSection].name.toUpperCase() + ' SECTION';
-
-      showStep('nameStep');
-    });
-  });
-
-  $('backToSections').addEventListener('click', () => {
-    showStep('sectionStep');
-  });
-
-  $('changeSection').addEventListener('click', () => {
-    if (realtimeChannel) {
-      db.removeChannel(realtimeChannel);
-      realtimeChannel = null;
-    }
-
-    currentRoom = null;
-    choices = [];
-    renderWheel();
-    showStep('sectionStep');
-  });
-
-  // ==========================================
-  // 5. PARTICIPANT NAME AND ROOM JOIN
-  // ==========================================
-
-  $('continueBtn').addEventListener('click', async () => {
-    participant = $('participantName').value.trim();
-
-    if (!participant) {
-      message('nameStatus','Please enter your name.',true);
-      return;
-    }
-
-    $('continueBtn').disabled = true;
-    message('nameStatus','Preparing your gift wheel…');
-
-    try {
-      // Participants use anonymous Supabase authentication.
-      const {data:{session}} = await db.auth.getSession();
-
-      if (!session) {
-        const {error} = await db.auth.signInAnonymously();
-        if (error) throw error;
-      }
-
-      await joinSection();
-
-      $('welcomeName').textContent =
-        'Welcome, ' + participant + '!';
-
-      showStep('wheelStep');
-
-    } catch (error) {
-      message(
-        'nameStatus',
-        error.message || 'Could not open your wheel.',
-        true
-      );
-    } finally {
-      $('continueBtn').disabled = false;
-    }
-  });
-
-  async function joinSection() {
-    const section = SECTIONS[currentSection];
-
-    const {data:room,error:roomError} = await db
-      .from('rooms')
-      .select('*')
-      .eq('room_code',section.code)
-      .maybeSingle();
-
-    if (roomError) throw roomError;
-
-    if (!room) {
-      throw new Error(
-        'The developer has not prepared this wheel yet. Please contact Renz.'
-      );
-    }
-
-    const {data:list,error} = await db
-      .from('choices')
-      .select('*')
-      .eq('room_id',room.id)
-      .order('label');
-
-    if (error) throw error;
-
-    currentRoom = room;
-    choices = list || [];
-
-    $('result').style.display = 'none';
-
-    renderWheel();
-    subscribeToChoices();
-  }
-
-  // ==========================================
-  // 6. LIVE SHARED CHOICES
-  // ==========================================
-
-  function subscribeToChoices() {
-    if (realtimeChannel) {
-      db.removeChannel(realtimeChannel);
-    }
-
-    realtimeChannel = db
-      .channel('tadifa-' + currentRoom.id)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'choices',
-          filter: 'room_id=eq.' + currentRoom.id
-        },
-        async () => {
-          if (busy) return;
-
-          const {data,error} = await db
-            .from('choices')
-            .select('*')
-            .eq('room_id',currentRoom.id)
-            .order('label');
-
-          if (!error) {
-            choices = data || [];
-            renderWheel();
-          }
-        }
-      )
-      .subscribe();
-  }
-
-  // ==========================================
-  // 7. DRAW THE WHEEL
-  // ==========================================
-
-  function drawWheel() {
-    const canvas = $('wheel');
-    const ctx = canvas.getContext('2d');
-    const center = canvas.width / 2;
-    const radius = 315;
-
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    const available = choices.filter(x => !x.is_taken);
-
-    if (!available.length) {
-      ctx.beginPath();
-      ctx.arc(center,center,radius,0,Math.PI*2);
-      ctx.fillStyle = '#e8e1d4';
-      ctx.fill();
-      ctx.strokeStyle = '#c6a66b';
-      ctx.lineWidth = 8;
-      ctx.stroke();
-
-      ctx.fillStyle = '#53645a';
-      ctx.textAlign = 'center';
-      ctx.font = '600 24px "DM Sans"';
-      ctx.fillText(
-        currentRoom ? 'NO GIFTS LEFT' : 'WELCOME',
-        center,
-        center
-      );
-      return;
-    }
-
-    const arc = Math.PI * 2 / available.length;
-
-    available.forEach((item,index) => {
-      const start = -Math.PI/2 + index*arc;
-
-      ctx.beginPath();
-      ctx.moveTo(center,center);
-      ctx.arc(center,center,radius,start,start+arc);
-      ctx.closePath();
-
-      ctx.fillStyle = colors[index % colors.length];
-      ctx.fill();
-
-      ctx.strokeStyle = '#fff8e9';
-      ctx.lineWidth = 5;
-      ctx.stroke();
-
-      ctx.save();
-      ctx.translate(center,center);
-      ctx.rotate(start + arc/2);
-      ctx.textAlign = 'right';
-      ctx.fillStyle = '#fffaf0';
-
-      const fontSize = Math.max(
-        13,
-        Math.min(21,220/available.length)
-      );
-
-      ctx.font = `600 ${fontSize}px "DM Sans"`;
-
-      let label = item.label;
-      if (label.length > 19) {
-        label = label.substring(0,17) + '…';
-      }
-
-      ctx.fillText(label,radius-23,7);
-      ctx.restore();
-    });
+  choices.forEach((choice,index) => {
+    const start = -Math.PI / 2 + index * slice;
+    const end = start + slice;
 
     ctx.beginPath();
-    ctx.arc(center,center,43,0,Math.PI*2);
-    ctx.fillStyle = '#f8f2e6';
+    ctx.moveTo(center,center);
+    ctx.arc(center,center,radius,start,end);
+    ctx.closePath();
+
+    ctx.fillStyle = palette[index % palette.length];
     ctx.fill();
-    ctx.strokeStyle = '#c6a66b';
+
+    ctx.strokeStyle = "rgba(255,248,226,.85)";
     ctx.lineWidth = 5;
     ctx.stroke();
+
+    if (choices.length <= 26) {
+      ctx.save();
+      ctx.translate(center,center);
+      ctx.rotate(start + slice / 2);
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+
+      const fontSize = Math.max(19,Math.min(31,33 - choices.length * .45));
+      ctx.font = `600 ${fontSize}px DM Sans,sans-serif`;
+
+      ctx.fillStyle =
+        [2,7].includes(index % palette.length) ? "#26372d" : "#fffaf0";
+
+      const original = String(choice.label);
+      const label = original.length > 17
+        ? original.slice(0,16) + "…"
+        : original;
+
+      ctx.fillText(label,radius * .83,0,radius * .47);
+      ctx.restore();
+    }
+  });
+
+  ctx.beginPath();
+  ctx.arc(center,center,size * .145,0,Math.PI * 2);
+  ctx.fillStyle = "#f5e8c8";
+  ctx.fill();
+
+  ctx.lineWidth = 10;
+  ctx.strokeStyle = "#a77f3e";
+  ctx.stroke();
+
+  ctx.fillStyle = "#173629";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = "700 35px Playfair Display,serif";
+  ctx.fillText("T",center,center + 2);
+}
+
+function animateWheelTo(index,total) {
+  return new Promise(resolve => {
+    const canvas = $("wheelCanvas");
+    const slice = (Math.PI * 2) / total;
+
+    const targetMod =
+      ((-((index + .5) * slice)) % (Math.PI * 2) + Math.PI * 2) %
+      (Math.PI * 2);
+
+    const currentMod =
+      ((wheelRotation % (Math.PI * 2)) + Math.PI * 2) %
+      (Math.PI * 2);
+
+    const delta =
+      (targetMod - currentMod + Math.PI * 2) % (Math.PI * 2);
+
+    const target =
+      wheelRotation + (Math.PI * 2 * 6) + delta;
+
+    canvas.style.transition = "none";
+    canvas.style.transform = `rotate(${wheelRotation}rad)`;
+
+    void canvas.offsetWidth;
+
+    canvas.style.transition =
+      "transform 5.2s cubic-bezier(.12,.72,.12,1)";
+
+    canvas.style.transform = `rotate(${target}rad)`;
+    wheelRotation = target;
+
+    setTimeout(resolve,5350);
+  });
+}
+
+/* ==========================================================
+   SPIN AND CLAIM A NAME
+========================================================== */
+
+async function spinWheel() {
+  if (isSpinning) return;
+
+  if (!participantName) {
+    notify("Please enter your name first.");
+    showView("nameView");
+    return;
   }
 
-  function renderWheel() {
-    const available = choices.filter(x => !x.is_taken);
+  isSpinning = true;
+  $("spinBtn").disabled = true;
+  $("spinBtn").textContent = "SPINNING...";
+  $("wheelStatus").textContent = "The wheel is choosing your surprise...";
 
-    $('choiceChips').innerHTML = choices.map(x =>
-      `<span class="chip ${x.is_taken?'taken':''}">
-        ${safe(x.label)}
-      </span>`
-    ).join('');
+  try {
+    const freshChoices = await getAvailableChoices(currentSection);
 
-    $('wheelHint').textContent =
-      available.length + ' gifts remaining · ' +
-      (choices.length-available.length) + ' already claimed';
-
-    $('spinBtn').disabled =
-      !currentRoom || !available.length || busy;
-
-    drawWheel();
-  }
-
-  // ==========================================
-  // 8. SPIN AND CLAIM A GIFT
-  // ==========================================
-
-  $('spinBtn').addEventListener('click', async () => {
-    if (!currentRoom || busy) return;
-
-    if (!participant) {
-      message('wheelStatus','Please enter your name first.',true);
-      return;
+    if (!freshChoices.length) {
+      throw new Error("No names remain in this section.");
     }
 
-    const before = choices.filter(x => !x.is_taken);
+    drawWheel(freshChoices);
 
-    if (!before.length) {
-      message('wheelStatus','There are no gifts remaining.');
-      return;
-    }
-
-    busy = true;
-    renderWheel();
-
-    $('result').style.display = 'none';
-    message('wheelStatus','Good luck! Your wheel is spinning…');
-
-    try {
-      // The database chooses and claims the gift atomically.
-      const {data,error} = await db.rpc(
-        'claim_random_choice',
-        {
-          p_room_code: currentRoom.room_code,
-          p_participant_name: participant
-        }
-      );
-
-      if (error) throw error;
-
-      const winner = data && data.label;
-
-      if (!winner) {
-        throw new Error('No gift was returned.');
-      }
-
-      // Animate the actual selected sector when it is still present.
-      const index = before.findIndex(x => x.label === winner);
-      const canvas = $('wheel');
-      const arc = 2*Math.PI/before.length;
-
-      const from = Number(canvas.dataset.rotation || 0);
-      const current = from % (2*Math.PI);
-
-      let delta;
-
-      if (index >= 0) {
-        const desired = (
-          2*Math.PI - (index*arc + arc/2)
-        ) % (2*Math.PI);
-
-        delta = (desired-current+2*Math.PI)%(2*Math.PI);
-      } else {
-        // Another participant may have claimed a choice at the same time.
-        delta = Math.random()*2*Math.PI;
-      }
-
-      const target = from + Math.PI*2*6 + delta;
-      const start = performance.now();
-      const duration = 3200;
-
-      await new Promise(resolve => {
-        function animate(now) {
-          const progress = Math.min(1,(now-start)/duration);
-          const eased = 1-Math.pow(1-progress,4);
-          const angle = from+(target-from)*eased;
-
-          canvas.style.transform = `rotate(${angle}rad)`;
-
-          if (progress < 1) {
-            requestAnimationFrame(animate);
-          } else {
-            canvas.dataset.rotation = String(target);
-            resolve();
-          }
-        }
-
-        requestAnimationFrame(animate);
-      });
-
-      $('resultText').textContent = winner;
-      $('result').style.display = 'block';
-
-      message(
-        'wheelStatus',
-        'Congratulations, ' + participant + '! Your gift has been recorded.'
-      );
-
-    } catch (error) {
-      message(
-        'wheelStatus',
-        error.message || 'The spin could not be completed.',
-        true
-      );
-    } finally {
-      busy = false;
-
-      const {data,error} = await db
-        .from('choices')
-        .select('*')
-        .eq('room_id',currentRoom.id)
-        .order('label');
-
-      if (!error) choices = data || [];
-
-      renderWheel();
-    }
-  });
-
-  // ==========================================
-  // 9. DEVELOPER LOGIN
-  // ==========================================
-
-  $('openDeveloper').addEventListener('click',() => {
-    $('developerModal').classList.add('show');
-  });
-
-  $('closeDeveloper').addEventListener('click',() => {
-    $('developerModal').classList.remove('show');
-  });
-
-  $('developerModal').addEventListener('click',event => {
-    if (event.target === $('developerModal')) {
-      $('developerModal').classList.remove('show');
-    }
-  });
-
-  async function verifyDeveloper() {
-    const {data,error} = await db.rpc('is_current_user_admin');
+    // The database function claims and locks one available name.
+    // This prevents two participants from receiving the same name.
+    const {data,error} = await db.rpc("claim_random_choice",{
+      p_room_code:ROOM_CODES[currentSection],
+      p_participant_name:participantName
+    });
 
     if (error) throw error;
 
-    if (data !== true) {
-      throw new Error(
-        'This account is not registered as a developer.'
-      );
+    const payload = Array.isArray(data) ? data[0] : data;
+    const selectedLabel = payload && payload.label;
+
+    if (!selectedLabel) {
+      throw new Error("The wheel did not return a name. Please try again.");
+    }
+
+    let selectedIndex = freshChoices.findIndex(
+      choice => choice.label === selectedLabel
+    );
+
+    if (selectedIndex < 0) {
+      selectedIndex = Math.floor(Math.random() * freshChoices.length);
+    }
+
+    await animateWheelTo(selectedIndex,freshChoices.length);
+
+    $("resultName").textContent = selectedLabel;
+    showView("resultView");
+
+    await updateHomeCounts();
+    notify("Your result is ready. Remember to take a screenshot!");
+
+  } catch (error) {
+    $("wheelStatus").textContent =
+      error.message || "Something went wrong. Please try again.";
+
+    $("spinBtn").disabled = false;
+
+  } finally {
+    isSpinning = false;
+    $("spinBtn").textContent = "SPIN THE WHEEL";
+
+    if ($("wheelView").classList.contains("active")) {
+      $("spinBtn").disabled = false;
     }
   }
+}
 
-  $('loginBtn').addEventListener('click',async () => {
-    const email = $('adminEmail').value.trim();
-    const password = $('adminPassword').value;
+/* ==========================================================
+   DEVELOPER LOGIN
+========================================================== */
 
-    if (!email || !password) {
-      message('loginStatus','Enter your email and password.',true);
+function openDeveloper() {
+  $("developerModal").classList.add("open");
+  $("developerStatus").textContent = "";
+  $("developerEmail").value = ADMIN_EMAIL;
+  $("developerEmail").focus();
+
+  checkExistingDeveloperSession();
+}
+
+function closeDeveloper() {
+  $("developerModal").classList.remove("open");
+}
+
+async function checkAdminAccess() {
+  const {data:userData,error:userError} = await db.auth.getUser();
+
+  if (
+    userError ||
+    !userData.user ||
+    userData.user.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()
+  ) {
+    return false;
+  }
+
+  const {data,error} = await db.rpc("is_current_user_admin");
+
+  return !error && data === true;
+}
+
+async function checkExistingDeveloperSession() {
+  try {
+    if (await checkAdminAccess()) {
+      $("developerStatus").textContent =
+        "Developer account verified. Opening dashboard...";
+
+      setTimeout(openAdminDashboard,450);
+    }
+  } catch (_) {}
+}
+
+async function sendDeveloperLink() {
+  const email = $("developerEmail").value.trim().toLowerCase();
+
+  if (email !== ADMIN_EMAIL.toLowerCase()) {
+    $("developerStatus").textContent =
+      "This email is not the registered developer account.";
+    return;
+  }
+
+  $("sendLinkBtn").disabled = true;
+  $("developerStatus").textContent = "Sending secure sign-in link...";
+
+  try {
+    await ensureSession();
+
+    const redirectUrl =
+      window.location.origin + window.location.pathname;
+
+    const {error} = await db.auth.signInWithOtp({
+      email:ADMIN_EMAIL,
+      options:{
+        shouldCreateUser:false,
+        emailRedirectTo:redirectUrl
+      }
+    });
+
+    if (error) throw error;
+
+    $("developerStatus").textContent =
+      "Sign-in link sent. Open the email in your registered Gmail on this same device/browser.";
+
+  } catch (error) {
+    $("developerStatus").textContent =
+      error.message || "Could not send the sign-in link. Please try again later.";
+
+  } finally {
+    $("sendLinkBtn").disabled = false;
+  }
+}
+
+async function openAdminDashboard() {
+  try {
+    const allowed = await checkAdminAccess();
+
+    if (!allowed) {
+      $("developerStatus").textContent =
+        "Developer access is not verified. Use the registered Gmail sign-in link.";
+
+      $("developerModal").classList.add("open");
       return;
     }
 
-    $('loginBtn').disabled = true;
-    message('loginStatus','Signing in…');
+    closeDeveloper();
+    showView("adminView");
 
-    try {
-      const {error} = await db.auth.signInWithPassword({
-        email,
-        password
-      });
+    await ensureAdminRooms();
+    await selectAdminSection("adults");
 
-      if (error) throw error;
+  } catch (error) {
+    notify(error.message || "Could not open the developer dashboard.");
+  }
+}
 
-      await verifyDeveloper();
+/* ==========================================================
+   CREATE THE TWO ROOMS IF THEY DO NOT EXIST
+========================================================== */
 
-      $('loginView').classList.add('hidden');
-      $('dashboardView').classList.remove('hidden');
+async function ensureAdminRooms() {
+  const {data:userData,error:userError} = await db.auth.getUser();
 
-      message('loginStatus','');
-
-      await prepareWheels();
-
-    } catch (error) {
-      await db.auth.signOut();
-
-      message(
-        'loginStatus',
-        error.message || 'Developer login failed.',
-        true
-      );
-    } finally {
-      $('loginBtn').disabled = false;
-    }
-  });
-
-  $('logoutBtn').addEventListener('click',async () => {
-    await db.auth.signOut();
-
-    $('dashboardView').classList.add('hidden');
-    $('loginView').classList.remove('hidden');
-
-    message('loginStatus','You have signed out.');
-  });
-
-  // ==========================================
-  // 10. PREPARE KIDS AND ADULTS ROOMS
-  // ==========================================
-
-  async function prepareWheels() {
-    message('setupStatus','Checking both gift wheels…');
-
-    try {
-      await verifyDeveloper();
-
-      const {data:{user}} = await db.auth.getUser();
-
-      if (!user) throw new Error('Please sign in again.');
-
-      for (const key of Object.keys(SECTIONS)) {
-        const section = SECTIONS[key];
-
-        const {data:existing,error:lookupError} = await db
-          .from('rooms')
-          .select('id')
-          .eq('room_code',section.code)
-          .maybeSingle();
-
-        if (lookupError) throw lookupError;
-
-        if (!existing) {
-          const {error} = await db.from('rooms').insert({
-            room_code:section.code,
-            name:section.roomName,
-            created_by:user.id
-          });
-
-          if (error) throw error;
-        }
-      }
-
-      message(
-        'setupStatus',
-        'Both wheels are ready! You can now add gift choices.'
-      );
-
-      await loadAdminChoices();
-
-    } catch (error) {
-      message(
-        'setupStatus',
-        error.message || 'Could not prepare the wheels.',
-        true
-      );
-    }
+  if (userError || !userData.user) {
+    throw new Error("Please sign in again.");
   }
 
-  $('setupBtn').addEventListener('click',prepareWheels);
+  for (const section of ["adults","kids"]) {
+    const code = ROOM_CODES[section];
 
-  // ==========================================
-  // 11. DEVELOPER CHOICE MANAGEMENT
-  // ==========================================
-
-  async function getSectionRoom(sectionKey) {
-    const section = SECTIONS[sectionKey];
-
-    const {data,error} = await db
-      .from('rooms')
-      .select('*')
-      .eq('room_code',section.code)
+    const {data:existing,error:findError} = await db
+      .from("rooms")
+      .select("id")
+      .eq("room_code",code)
       .maybeSingle();
 
-    if (error) throw error;
-    if (!data) throw new Error('Prepare the wheels first.');
+    if (findError) throw findError;
 
-    return data;
-  }
-
-  async function loadAdminChoices() {
-    try {
-      await verifyDeveloper();
-
-      const sectionKey = $('manageSection').value;
-      const room = await getSectionRoom(sectionKey);
-
-      const {data,error} = await db
-        .from('choices')
-        .select('*')
-        .eq('room_id',room.id)
-        .order('label');
-
-      if (error) throw error;
-
-      $('adminChoices').innerHTML = data.length
-        ? data.map(item => `
-          <div class="item">
-            <span>
-              ${safe(item.label)}
-              ${item.is_taken ? '(CLAIMED)' : ''}
-            </span>
-            <button class="remove" data-id="${item.id}">
-              REMOVE
-            </button>
-          </div>
-        `).join('')
-        : '<div class="empty">No gifts added yet.</div>';
-
-      $('adminChoices').querySelectorAll('[data-id]').forEach(button => {
-        button.addEventListener('click',() => {
-          removeChoice(button.dataset.id);
-        });
+    if (!existing) {
+      const {error:insertError} = await db.from("rooms").insert({
+        room_code:code,
+        name:`${SECTION_NAMES[section]} Gift Exchange`,
+        created_by:userData.user.id
       });
 
-    } catch (error) {
-      $('adminChoices').innerHTML =
-        `<div class="empty">${safe(error.message)}</div>`;
+      if (
+        insertError &&
+        !String(insertError.message).toLowerCase().includes("duplicate")
+      ) {
+        throw insertError;
+      }
     }
   }
+}
 
-  $('manageSection').addEventListener(
-    'change',
-    loadAdminChoices
+/* ==========================================================
+   DEVELOPER: PREPARE BOTH WHEELS
+========================================================== */
+
+function parseNames(text) {
+  const seen = new Set();
+
+  return String(text || "")
+    .split(/\r?\n/)
+    .map(name => name.trim())
+    .filter(name => {
+      if (!name) return false;
+
+      const key = name.toLocaleLowerCase();
+
+      if (seen.has(key)) return false;
+
+      seen.add(key);
+      return true;
+    });
+}
+
+async function prepareBothWheels() {
+  const adults = parseNames($("adultsNames").value);
+  const kids = parseNames($("kidsNames").value);
+
+  if (!adults.length && !kids.length) {
+    $("prepareStatus").textContent =
+      "Enter at least one name in Adults or Kids.";
+    return;
+  }
+
+  const confirmed = confirm(
+    "This replaces the current names in BOTH wheels with the names in these boxes. Spin history will be kept. Continue?"
   );
 
-  $('addChoiceBtn').addEventListener('click',async () => {
-    const label = $('newChoice').value.trim();
+  if (!confirmed) return;
 
-    if (!label) {
-      alert('Enter a gift choice first.');
+  $("prepareStatus").textContent = "Preparing both wheels...";
+
+  try {
+    if (!(await checkAdminAccess())) {
+      throw new Error("Your developer session has expired. Sign in again.");
+    }
+
+    await ensureAdminRooms();
+
+    for (const section of ["adults","kids"]) {
+      const room = await getRoom(section);
+
+      const {error:deleteError} = await db
+        .from("choices")
+        .delete()
+        .eq("room_id",room.id);
+
+      if (deleteError) throw deleteError;
+
+      const names = section === "adults" ? adults : kids;
+
+      if (names.length) {
+        const rows = names.map(label => ({
+          room_id:room.id,
+          label,
+          is_taken:false
+        }));
+
+        const {error:insertError} = await db
+          .from("choices")
+          .insert(rows);
+
+        if (insertError) throw insertError;
+      }
+    }
+
+    $("prepareStatus").textContent =
+      `Saved successfully — Adults: ${adults.length} names · Kids: ${kids.length} names.`;
+
+    await selectAdminSection(adminSection);
+    await updateHomeCounts();
+
+    notify("Both wheels have been updated.");
+
+  } catch (error) {
+    $("prepareStatus").textContent =
+      error.message || "Could not prepare the wheels.";
+  }
+}
+
+/* ==========================================================
+   DEVELOPER: SECTION MANAGEMENT
+========================================================== */
+
+async function selectAdminSection(section) {
+  adminSection = section;
+
+  $("tabAdults").classList.toggle("active",section === "adults");
+  $("tabKids").classList.toggle("active",section === "kids");
+  $("tabHistory").classList.remove("active");
+
+  $("sectionAdminPanel").classList.remove("hidden");
+  $("historyPanel").classList.add("hidden");
+
+  $("adminSectionTitle").textContent =
+    `${SECTION_NAMES[section]} wheel`;
+
+  $("sectionStatus").textContent = "";
+  $("singleName").value = "";
+
+  await loadAdminList();
+}
+
+async function loadAdminList() {
+  try {
+    const room = await getRoom(adminSection);
+
+    const {data,error} = await db
+      .from("choices")
+      .select("id,label,is_taken,taken_by,taken_at")
+      .eq("room_id",room.id)
+      .order("label",{ascending:true});
+
+    if (error) throw error;
+
+    const rows = data || [];
+    const available = rows.filter(row => !row.is_taken).length;
+    const selected = rows.length - available;
+
+    $("adminSummary").textContent =
+      `${rows.length} total names · ${available} available · ${selected} selected`;
+
+    if (!rows.length) {
+      $("adminNameList").innerHTML =
+        '<div class="empty-state">No names yet. Add names above or prepare both wheels.</div>';
       return;
     }
 
-    try {
-      await verifyDeveloper();
+    $("adminNameList").innerHTML = rows.map(row => `
+      <div class="name-row">
+        <div>
+          <strong>${escapeHTML(row.label)}</strong>
+          <small>
+            ${row.is_taken
+              ? `Selected by ${escapeHTML(row.taken_by || "participant")}`
+              : "Available on the wheel"}
+          </small>
+        </div>
 
-      const room = await getSectionRoom(
-        $('manageSection').value
-      );
+        <div class="row-actions">
+          ${row.is_taken
+            ? `<button class="mini-btn" data-action="return" data-id="${row.id}">Return</button>`
+            : ""}
+          <button class="mini-btn remove" data-action="remove" data-id="${row.id}">
+            Remove
+          </button>
+        </div>
+      </div>
+    `).join("");
 
-      const {error} = await db.from('choices').insert({
-        room_id:room.id,
-        label
-      });
+  } catch (error) {
+    $("adminSummary").textContent =
+      error.message || "Could not load wheel information.";
 
-      if (error) throw error;
+    $("adminNameList").innerHTML =
+      '<div class="empty-state">The wheel is not ready. Prepare it above.</div>';
+  }
+}
 
-      $('newChoice').value = '';
+async function addSingleName() {
+  const label = $("singleName").value.trim();
 
-      await loadAdminChoices();
-
-    } catch (error) {
-      alert(error.message);
-    }
-  });
-
-  async function removeChoice(id) {
-    try {
-      await verifyDeveloper();
-
-      const {error} = await db
-        .from('choices')
-        .delete()
-        .eq('id',id);
-
-      if (error) throw error;
-
-      await loadAdminChoices();
-
-    } catch (error) {
-      alert(error.message);
-    }
+  if (!label) {
+    $("sectionStatus").textContent = "Type a name first.";
+    return;
   }
 
-  // ==========================================
-  // 12. SPIN HISTORY
-  // ==========================================
+  try {
+    const room = await getRoom(adminSection);
 
-  $('loadHistoryBtn').addEventListener('click',async () => {
-    $('historyList').innerHTML =
-      '<div class="empty">Loading history…</div>';
+    const {data:existing,error:findError} = await db
+      .from("choices")
+      .select("id,label")
+      .eq("room_id",room.id);
 
-    try {
-      await verifyDeveloper();
+    if (findError) throw findError;
 
-      const room = await getSectionRoom(
-        $('historySection').value
-      );
+    if ((existing || []).some(row =>
+      row.label.toLocaleLowerCase() === label.toLocaleLowerCase()
+    )) {
+      $("sectionStatus").textContent =
+        "That name is already on this wheel.";
+      return;
+    }
 
-      const {data,error} = await db
-        .from('spins')
-        .select('*')
-        .eq('room_id',room.id)
-        .order('created_at',{ascending:false})
-        .limit(100);
+    const {error} = await db.from("choices").insert({
+      room_id:room.id,
+      label,
+      is_taken:false
+    });
+
+    if (error) throw error;
+
+    $("singleName").value = "";
+    $("sectionStatus").textContent =
+      `${label} was added to the ${SECTION_NAMES[adminSection]} wheel.`;
+
+    await loadAdminList();
+    await updateHomeCounts();
+
+  } catch (error) {
+    $("sectionStatus").textContent =
+      error.message || "Could not add the name.";
+  }
+}
+
+async function returnAllSelected() {
+  if (!confirm(`Return every selected name to the ${SECTION_NAMES[adminSection]} wheel?`)) {
+    return;
+  }
+
+  try {
+    const room = await getRoom(adminSection);
+
+    const {error} = await db
+      .from("choices")
+      .update({
+        is_taken:false,
+        taken_by:null,
+        taken_at:null
+      })
+      .eq("room_id",room.id)
+      .eq("is_taken",true);
+
+    if (error) throw error;
+
+    $("sectionStatus").textContent =
+      "All selected names have been returned to the wheel.";
+
+    await loadAdminList();
+    await updateHomeCounts();
+
+  } catch (error) {
+    $("sectionStatus").textContent =
+      error.message || "Could not return the names.";
+  }
+}
+
+/* Individual return / remove buttons */
+
+$("adminNameList").addEventListener("click",async event => {
+  const button = event.target.closest("button[data-action]");
+
+  if (!button) return;
+
+  const id = button.dataset.id;
+  const action = button.dataset.action;
+
+  try {
+    if (action === "return") {
+      const {error} = await db
+        .from("choices")
+        .update({
+          is_taken:false,
+          taken_by:null,
+          taken_at:null
+        })
+        .eq("id",id);
 
       if (error) throw error;
 
-      $('historyList').innerHTML = data.length
-        ? data.map(item => `
-          <div class="item">
-            <span>
-              <strong>${safe(item.participant_name)}</strong><br>
-              ${safe(item.choice_label)}
-            </span>
-            <span>
-              ${new Date(item.created_at).toLocaleString()}
-            </span>
-          </div>
-        `).join('')
-        : '<div class="empty">No gift exchanges recorded yet.</div>';
+      $("sectionStatus").textContent = "Name returned to the wheel.";
 
-    } catch (error) {
-      $('historyList').innerHTML =
-        `<div class="empty">${safe(error.message)}</div>`;
+    } else if (action === "remove") {
+      if (!confirm("Remove this name from the wheel?")) return;
+
+      const {error} = await db
+        .from("choices")
+        .delete()
+        .eq("id",id);
+
+      if (error) throw error;
+
+      $("sectionStatus").textContent = "Name removed.";
+    }
+
+    await loadAdminList();
+    await updateHomeCounts();
+
+  } catch (error) {
+    $("sectionStatus").textContent =
+      error.message || "That action could not be completed.";
+  }
+});
+
+/* ==========================================================
+   DEVELOPER: SPIN HISTORY
+========================================================== */
+
+async function showHistory() {
+  $("tabAdults").classList.remove("active");
+  $("tabKids").classList.remove("active");
+  $("tabHistory").classList.add("active");
+
+  $("sectionAdminPanel").classList.add("hidden");
+  $("historyPanel").classList.remove("hidden");
+
+  await loadHistoryFor(historySection);
+}
+
+async function loadHistoryFor(section) {
+  historySection = section;
+
+  $("historyAdults").classList.toggle("active",section === "adults");
+  $("historyKids").classList.toggle("active",section === "kids");
+
+  try {
+    const room = await getRoom(section);
+
+    const {data,error} = await db
+      .from("spins")
+      .select("participant_name,choice_label,created_at")
+      .eq("room_id",room.id)
+      .order("created_at",{ascending:false})
+      .limit(100);
+
+    if (error) throw error;
+
+    if (!data || !data.length) {
+      $("historyContent").innerHTML =
+        '<div class="empty-state">No spins recorded for this section yet.</div>';
+      return;
+    }
+
+    $("historyContent").innerHTML = `
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Participant</th>
+            <th>Selected person</th>
+            <th>Date / time</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data.map(row => `
+            <tr>
+              <td>${escapeHTML(row.participant_name)}</td>
+              <td>${escapeHTML(row.choice_label)}</td>
+              <td>${escapeHTML(new Date(row.created_at).toLocaleString())}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+
+  } catch (error) {
+    $("historyContent").innerHTML =
+      `<div class="empty-state">${escapeHTML(error.message || "Could not load history.")}</div>`;
+  }
+}
+
+/* ==========================================================
+   DEVELOPER SIGN OUT
+========================================================== */
+
+async function logoutDeveloper() {
+  try {
+    await db.auth.signOut();
+    await db.auth.signInAnonymously();
+  } catch (_) {}
+
+  showView("homeView");
+  notify("Developer signed out.");
+}
+
+/* ==========================================================
+   REALTIME UPDATES
+========================================================== */
+
+function subscribeToChanges() {
+  db.channel("tadifa-shared-wheel-updates")
+    .on(
+      "postgres_changes",
+      {
+        event:"*",
+        schema:"public",
+        table:"choices"
+      },
+      async () => {
+        updateHomeCounts();
+
+        if (
+          $("adminView").classList.contains("active") &&
+          $("historyPanel").classList.contains("hidden")
+        ) {
+          loadAdminList();
+        }
+
+        if (
+          $("wheelView").classList.contains("active") &&
+          !isSpinning
+        ) {
+          try {
+            const choices = await getAvailableChoices(currentSection);
+
+            $("wheelCount").textContent =
+              `${choices.length} name${choices.length === 1 ? "" : "s"} available`;
+
+            drawWheel(choices);
+
+          } catch (_) {}
+        }
+      }
+    )
+    .subscribe();
+}
+
+/* ==========================================================
+   INITIALIZE WEBSITE
+========================================================== */
+
+async function init() {
+  try {
+    await ensureSession();
+  } catch (error) {
+    notify("Could not connect. Please refresh the page and try again.");
+  }
+
+  subscribeToChanges();
+  updateHomeCounts();
+
+  db.auth.onAuthStateChange((event,session) => {
+    if (
+      event === "SIGNED_IN" &&
+      session?.user?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase()
+    ) {
+      notify("Developer account signed in. Open Developer access to manage the wheels.");
     }
   });
 
-  // Initial wheel drawing
-  drawWheel();
+  $("participantName").addEventListener("keydown",event => {
+    if (event.key === "Enter") continueToWheel();
+  });
 
-})();
+  $("developerEmail").addEventListener("keydown",event => {
+    if (event.key === "Enter") sendDeveloperLink();
+  });
+
+  $("developerModal").addEventListener("click",event => {
+    if (event.target === $("developerModal")) closeDeveloper();
+  });
+}
+
+init();
 </script>
 </body>
 </html>
