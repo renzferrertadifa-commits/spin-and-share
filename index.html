@@ -789,6 +789,16 @@ header{
 </style>
 </head>
 <body>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const db = window.supabase.createClient(
+    "YOUR_SUPABASE_PROJECT_URL",
+    "YOUR_SUPABASE_ANON_KEY"
+);
+</script>
+  
 <div class="texture"></div><div class="frame"></div>
 <div class="corner tl"></div><div class="corner tr"></div>
 <div class="corner bl"></div><div class="corner br"></div>
