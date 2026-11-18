@@ -395,6 +395,13 @@ header{
   <div class="dash-list" id="choiceList" style="margin-top:15px"></div>
  </div>
  <div class="dash-card"><h3>Replace a Complete List</h3><p style="font-size:11px;color:#898777;line-height:1.8">Enter one recipient name per line. Replacing a list resets its available gift names.</p><label class="label" for="replaceList">Recipient names</label><textarea class="input" id="replaceList" rows="6" placeholder="Name One&#10;Name Two&#10;Name Three"></textarea><button class="primary" id="replaceBtn">REPLACE CURRENT GROUP LIST</button></div>
+ <div class="dash-card">
+   <h3>Participant Spin Reset</h3>
+   <p style="font-size:11px;color:#898777;line-height:1.8">If someone was blocked by mistake, reset their previous draw so they can spin again. Matching ignores capitalization and matches any shared name part.</p>
+   <label class="label" for="resetParticipantName">Participant name to reset</label>
+   <input class="input" id="resetParticipantName" maxlength="60" placeholder="Enter full name or one name part">
+   <button class="secondary" id="resetParticipantBtn" style="margin-top:12px">ALLOW ANOTHER SPIN</button>
+  </div>
  <div class="dash-card"><h3>Draw History</h3><button class="secondary" id="loadHistory">REFRESH HISTORY</button><div id="historyList" style="margin-top:15px"></div></div>
 </section>
 </main>
@@ -404,14 +411,7 @@ header{
 <div class="toast" id="toast"></div>
 
 <script>
-/* SUPABASE CONFIG */
-const SUPABASE_URL="https://dbffyzbeywibhlvmobzb.supabase.co";
-const SUPABASE_KEY="sb_publishable_K9wUziaVO5LJ5fqjRnQIHg_HBtJeG2m";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-
-const ROOM_CODES={adults:"TADIFA-ADULTS",kids:"TADIFA-KIDS"};
-let currentRoomCode="",currentRoomId="",currentParticipant="";
-let currentChoices=[],adminRoomCode="TADIFA-ADULTS";
+  let currentChoices=[],adminRoomCode="TADIFA-ADULTS";
 let spinning=false,wheelRotation=0,realtimeChannel=null;
 
 const $=id=>document.getElementById(id);
@@ -423,6 +423,14 @@ function notice(id,message,type="error"){
  const el=$(id);el.textContent=message;el.className="notice "+type;
 }
 function clearNotice(id){$(id).textContent="";$(id).className="notice"}
+function normalizeNameParts(value){
+ return String(value||"").normalize("NFKC").toLocaleLowerCase()
+  .trim().replace(/\s+/g," ").split(" ").filter(Boolean);
+}
+function namesOverlap(a,b){
+ const first=normalizeNameParts(a),second=normalizeNameParts(b);
+ return first.some(part=>second.includes(part));
+}
 function errorText(error){
  const m=error?.message||"Something went wrong. Please try again.";
  if(m.toLowerCase().includes("already used"))return "This name has already used its one draw in this group.";
@@ -482,14 +490,13 @@ $("registerForm").addEventListener("submit",async e=>{
   currentRoomId=room.id;
   currentParticipant=name;
 
-  // Check previous draws case-insensitively before showing the wheel.
-  // The secure RPC checks again when the actual draw is requested.
   const {data:already,error:checkError}=await db.rpc("has_name_already_spun",{
    p_room_code:currentRoomCode,
    p_participant_name:name
   });
-  if(!checkError && already===true){
-   throw new Error("This name has already used its one draw in this group.");
+  if(checkError)throw checkError;
+  if(already===true){
+   throw new Error("This name or part of this name has already used its one draw in this group.");
   }
 
   $("visibleParticipantName").textContent=name;
@@ -515,10 +522,8 @@ async function refreshParticipantChoices(){
   .order("label");
  if(error)throw error;
 
- // Exclude the participant's own name, ignoring letter case and outer spaces.
- const own=currentParticipant.trim().toLocaleLowerCase();
  currentChoices=(data||[]).filter(item=>
-  item.label.trim().toLocaleLowerCase()!==own
+  !namesOverlap(item.label,currentParticipant)
  );
  $("remainingCount").textContent=currentChoices.length;
  $("wheelStatus").textContent=currentChoices.length
@@ -556,7 +561,6 @@ function drawWheel(items){
   ctx.fillStyle=colors[i%colors.length];ctx.fill();
   ctx.strokeStyle="#f8e8b9";ctx.lineWidth=4;ctx.stroke();
 
-  // Label sits inside its own segment.
   ctx.save();ctx.translate(c,c);ctx.rotate(mid);ctx.translate(r*.66,0);ctx.rotate(Math.PI/2);
   let font=items.length>22?17:items.length>15?20:items.length>10?24:29;
   if(item.label.length>12)font-=4;
@@ -596,7 +600,6 @@ $("spinBtn").addEventListener("click",async()=>{
   );
   if(index<0)throw new Error("The selected name could not be matched to the wheel.");
 
-  // Wheel starts at the top. Rotate the chosen slice's center to the top pointer.
   const slice=360/currentChoices.length;
   const target=(360-(index+.5)*slice)%360;
   const current=((wheelRotation%360)+360)%360;
@@ -749,6 +752,27 @@ $("replaceBtn").onclick=async()=>{
  }catch(e){toast(errorText(e));}
 };
 $("refreshAdmin").onclick=()=>loadAdminChoices().then(loadDashboardStatsOnly).then(()=>toast("List refreshed.")).catch(e=>toast(errorText(e)));
+
+/* RESET A PARTICIPANT'S DRAW (ADMIN ONLY) */
+$("resetParticipantBtn").onclick=async()=>{
+ const participant=$("resetParticipantName").value.trim();
+ if(!participant)return toast("Enter a participant name first.");
+ if(!confirm("Reset matching participant history in this group and allow another spin?"))return;
+ const btn=$("resetParticipantBtn");
+ btn.disabled=true;btn.textContent="RESETTING...";
+ try{
+  const {data,error}=await db.rpc("admin_reset_participant",{
+   p_room_code:adminRoomCode,
+   p_participant_name:participant
+  });
+  if(error)throw error;
+  if(!data){toast("No matching participant history was found.");return;}
+  $("resetParticipantName").value="";
+  await loadDashboard();
+  toast("Participant reset. They can spin again!");
+ }catch(e){toast(errorText(e));}
+ finally{btn.disabled=false;btn.textContent="ALLOW ANOTHER SPIN";}
+};
 
 /* DRAW HISTORY */
 async function loadHistory(){
