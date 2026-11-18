@@ -1,683 +1,775 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#10251d">
-<title>Tadifa Clan | Christmas Gift Exchange</title>
+<meta name="theme-color" content="#102b20">
+<title>Tadifa Clan | Christmas Grand Celebration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700;800&family=Great+Vibes&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 :root{
-  --forest:#10251d;--forest2:#18372a;--forest3:#214735;
-  --gold:#d7b978;--gold2:#f0dfb4;--cream:#f7f0e2;
-  --burgundy:#713b43;--muted:#b9c4b9;--line:rgba(215,185,120,.25);
-  --shadow:0 22px 70px rgba(0,0,0,.28);
+  --forest:#102d22;
+  --forest2:#1b4934;
+  --green:#315f43;
+  --gold:#d6b56e;
+  --gold2:#f5e5b9;
+  --cream:#fffaf0;
+  --paper:#f5eddf;
+  --red:#9d3445;
+  --ink:#243b2c;
+  --muted:#8d8979;
+  --line:#d7c49a;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
-  margin:0;min-height:100vh;color:var(--cream);
-  font-family:Georgia,"Times New Roman",serif;
+  margin:0;color:var(--ink);font-family:'DM Sans',sans-serif;
   background:
-    radial-gradient(ellipse at 50% -20%,rgba(215,185,120,.14),transparent 55%),
-    radial-gradient(ellipse at 0% 80%,rgba(113,59,67,.18),transparent 42%),
-    linear-gradient(145deg,#0b1b15,#10251d 55%,#142c21);
-}
-body:before{
-  content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;
-  background-image:radial-gradient(#e8d6a8 1px,transparent 1px);
-  background-size:38px 38px;mask-image:linear-gradient(to bottom,black,transparent 85%);
+    radial-gradient(ellipse at 10% 5%,#e7d5ac 0,transparent 35%),
+    radial-gradient(ellipse at 90% 40%,#e1e8d9 0,transparent 35%),
+    linear-gradient(135deg,#f8f0df,#fffaf1 55%,#eee4d1);
+  min-height:100vh;overflow-x:hidden;
 }
 button,input,textarea{font:inherit}
-button{cursor:pointer;visibility:visible}
-button:disabled{opacity:.55;cursor:not-allowed}
-.hidden{display:none!important}
-.topbar{
-  position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;
-  max-width:1120px;margin:auto;padding:22px 24px;
+button{cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}
+.texture{
+  position:fixed;inset:0;z-index:10;pointer-events:none;opacity:.10;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.2'/%3E%3C/svg%3E");
 }
-.brand{display:flex;align-items:center;gap:12px}
-.brand-mark{
-  width:43px;height:43px;border:1px solid var(--gold);border-radius:50%;
-  display:grid;place-items:center;color:var(--gold2);font-size:21px;
-  box-shadow:0 0 24px rgba(215,185,120,.12)
+.frame{position:fixed;inset:12px;border:1px solid #b9975b55;pointer-events:none;z-index:9}
+.corner{position:fixed;width:65px;height:65px;border-color:#b38f53;z-index:9;pointer-events:none}
+.tl{top:18px;left:18px;border-top:2px solid;border-left:2px solid}
+.tr{top:18px;right:18px;border-top:2px solid;border-right:2px solid}
+.bl{bottom:18px;left:18px;border-bottom:2px solid;border-left:2px solid}
+.br{bottom:18px;right:18px;border-bottom:2px solid;border-right:2px solid}
+.wrap{width:min(1250px,calc(100% - 58px));margin:auto;position:relative}
+header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:25px 0 20px;border-bottom:1px solid #bba16b66;position:relative;z-index:3;
 }
-.brand-name{font-size:13px;letter-spacing:2.4px;text-transform:uppercase;color:var(--gold2)}
-.brand-sub{font:10px Arial,sans-serif;letter-spacing:2px;color:var(--muted);margin-top:4px}
-.ghost-btn{
-  display:inline-flex;align-items:center;justify-content:center;min-height:38px;
-  border:1px solid var(--line);background:rgba(255,255,255,.035);color:var(--gold2);
-  border-radius:999px;padding:10px 16px;font:11px Arial,sans-serif;letter-spacing:1.2px;
-  text-transform:uppercase;transition:.2s
+.brand{display:flex;align-items:center;gap:13px}
+.seal{
+  width:51px;height:51px;border-radius:50%;display:grid;place-items:center;
+  color:var(--gold2);font:30px 'Cormorant Garamond',serif;
+  background:radial-gradient(circle at 35% 25%,#376c4b,#0b291f 70%);
+  border:1px solid var(--gold);box-shadow:0 0 0 4px #d5b36b24,0 8px 20px #183b2b2b;
 }
-.ghost-btn:hover{background:rgba(215,185,120,.12);border-color:var(--gold)}
-main{position:relative;z-index:1;max-width:1050px;margin:0 auto;padding:30px 22px 70px}
-.hero{text-align:center;padding:46px 12px 35px}
-.eyebrow{font:10px Arial,sans-serif;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
-h1{font-size:clamp(38px,7vw,68px);font-weight:400;line-height:1.04;margin:0;color:var(--cream)}
-h1 em{color:var(--gold2);font-weight:400}
-.hero p{font:13px/1.8 Arial,sans-serif;color:var(--muted);max-width:510px;margin:20px auto 0}
-.rule{display:flex;align-items:center;justify-content:center;gap:13px;color:var(--gold);margin:28px auto}
-.rule:before,.rule:after{content:"";height:1px;width:58px;background:var(--line)}
-.section-title{text-align:center;font-size:25px;font-weight:400;margin:14px 0 8px}
-.section-note{text-align:center;font:12px Arial,sans-serif;color:var(--muted);margin:0 0 25px}
-.section-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:760px;margin:0 auto}
-.section-card{
-  position:relative;overflow:hidden;text-align:left;min-height:220px;padding:27px;
-  border:1px solid var(--line);border-radius:19px;
-  background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.018));
-  color:var(--cream);box-shadow:var(--shadow);transition:transform .25s,border-color .25s;
+.brand-title{font:700 17px 'Playfair Display',serif;letter-spacing:2px;color:var(--forest)}
+.brand-sub{margin-top:4px;font-size:8px;letter-spacing:3px;text-transform:uppercase;color:#9a7845}
+.header-right{display:flex;align-items:center;gap:14px}
+.season{padding:10px 15px;border:1px solid #b99b604e;border-radius:30px;background:#fffaf080;color:#927344;font-size:9px;letter-spacing:2px}
+.admin-link{border:0;background:transparent;color:#806b48;font-size:10px;letter-spacing:2px;padding:10px}
+.admin-link:hover{color:var(--red)}
+.garland{height:70px;position:absolute;top:0;left:0;width:100%;pointer-events:none;overflow:hidden}
+.garland svg{width:100%;height:70px}
+.hero{min-height:630px;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:10px;padding:50px 0 35px}
+.hero-copy{padding-left:25px;position:relative;z-index:2}
+.eyebrow{display:flex;align-items:center;gap:13px;color:#9a7742;font-size:10px;letter-spacing:4px;text-transform:uppercase;font-weight:700;margin-bottom:26px}
+.eyebrow:before{content:"";width:43px;height:1px;background:var(--gold)}
+.hero h1{font:500 clamp(58px,7.3vw,100px)/.88 'Playfair Display',serif;letter-spacing:-4px;color:var(--forest);margin:0}
+.script{display:block;font:400 clamp(65px,8vw,110px)/1.05 'Great Vibes',cursive;color:var(--red);letter-spacing:0;margin-top:10px}
+.hero-last{display:block;font-size:.69em;letter-spacing:1px;margin-top:5px}
+.hero-desc{max-width:445px;margin:28px 0;color:#797d6d;font-size:13px;line-height:2.1}
+.hero-meta{display:flex;align-items:center;gap:13px;color:#9a7b4a;font-size:9px;letter-spacing:2px;text-transform:uppercase}
+.hero-meta span:first-child,.hero-meta span:last-child{font-size:20px;color:#c69c51}
+.hero-visual{min-height:550px;position:relative;display:grid;place-items:center}
+.aura{position:absolute;width:490px;height:490px;border-radius:50%;background:radial-gradient(circle,#d5b7795c,#d5b77920 48%,transparent 70%)}
+.ring{position:absolute;width:460px;height:460px;border-radius:50%;border:1px solid #b9954c66;box-shadow:0 0 0 14px #d4b26a0b,0 0 0 28px #d4b26a09;animation:orbit 70s linear infinite}
+.ring:before,.ring:after{content:"✦";position:absolute;color:#b9934d;font-size:23px}
+.ring:before{top:22px;left:50%}.ring:after{bottom:22px;right:50%}
+@keyframes orbit{to{transform:rotate(360deg)}}
+.palace{
+  position:relative;width:370px;height:475px;border-radius:190px 190px 22px 22px;
+  background:radial-gradient(ellipse at 50% 30%,#356b4a,#19412f 48%,#0d2b22);
+  border:1px solid var(--gold);box-shadow:0 35px 85px #142f2440,inset 0 0 0 8px #d7b56d15;overflow:hidden;
 }
-.section-card:hover{transform:translateY(-5px);border-color:rgba(240,223,180,.7)}
-.section-card:after{content:"✦";position:absolute;right:24px;top:17px;color:rgba(215,185,120,.45);font-size:22px}
-.card-icon{font-size:31px;margin-bottom:20px}
-.card-kicker{font:10px Arial,sans-serif;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold)}
-.card-title{font-size:31px;font-weight:400;margin:8px 0}
-.card-desc{font:12px/1.7 Arial,sans-serif;color:var(--muted);max-width:250px}
-.card-link{display:inline-block;margin-top:19px;color:var(--gold2);font:10px Arial,sans-serif;letter-spacing:1.5px;text-transform:uppercase}
-.panel{
-  max-width:760px;margin:0 auto;padding:28px;border:1px solid var(--line);border-radius:20px;
-  background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.02));box-shadow:var(--shadow)
-}
-.back-btn{display:inline-flex;align-items:center;min-height:34px;border:0;background:none;color:var(--gold);font:11px Arial,sans-serif;letter-spacing:1.2px;text-transform:uppercase;padding:0;margin-bottom:22px}
-.panel h2{font-size:30px;font-weight:400;margin:0 0 8px}
-.panel-intro{font:12px/1.7 Arial,sans-serif;color:var(--muted);margin:0 0 22px}
-.field-label{display:block;font:10px Arial,sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:var(--gold2);margin:14px 0 8px}
-.field{
-  width:100%;border:1px solid rgba(215,185,120,.35);border-radius:11px;padding:14px 15px;
-  background:rgba(4,15,10,.42);color:var(--cream);outline:none;font:14px Arial,sans-serif
-}
-.field:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(215,185,120,.1)}
-.field::placeholder{color:#87958b}
-.primary-btn{
-  display:inline-flex;align-items:center;justify-content:center;min-height:46px;
-  border:1px solid #e5cc91;border-radius:999px;padding:13px 22px;color:#18251b;
-  background:linear-gradient(135deg,#f0dfb4,#c9a966);font:11px Arial,sans-serif;
-  font-weight:bold;letter-spacing:1.5px;text-transform:uppercase;box-shadow:0 8px 25px rgba(0,0,0,.18);
-  transition:filter .2s,transform .2s
-}
-.primary-btn:hover{filter:brightness(1.07);transform:translateY(-1px)}
-.full{width:100%;margin-top:18px}
-.wheel-layout{display:grid;grid-template-columns:minmax(260px,1fr) minmax(190px,.7fr);gap:25px;align-items:center}
-.wheel-wrap{position:relative;width:min(100%,390px);aspect-ratio:1;margin:12px auto}
-.wheel-frame{
-  position:absolute;inset:0;border-radius:50%;padding:9px;
-  background:linear-gradient(135deg,#f4e5bd,#a98545,#f0dfb4);
-  box-shadow:0 15px 45px rgba(0,0,0,.35),0 0 0 5px rgba(215,185,120,.08)
-}
-#wheel{width:100%;height:100%;border-radius:50%;display:block;transition:transform 5s cubic-bezier(.12,.72,.08,1);background:#173527}
-.pointer{
-  position:absolute;z-index:3;top:-8px;left:50%;transform:translateX(-50%);
-  width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;
-  border-top:29px solid #f1dfb4;filter:drop-shadow(0 3px 3px rgba(0,0,0,.4))
-}
-.wheel-center{
-  position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#f2e2bb,#b18d4e);
-  border:4px solid #173527;box-shadow:0 2px 10px #0008
-}
-.spin-side{text-align:center}
-.spin-side .count{font-size:38px;color:var(--gold2);margin:4px 0}
-.spin-side .small{font:11px/1.7 Arial,sans-serif;color:var(--muted)}
-.result{
-  margin-top:20px;padding:23px;border:1px solid var(--gold);border-radius:16px;
-  background:rgba(215,185,120,.08);text-align:center
-}
-.result .result-label{font:10px Arial,sans-serif;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
-.result .result-name{font-size:34px;color:var(--gold2);margin:10px 0;overflow-wrap:anywhere}
-.result p{font:12px/1.7 Arial,sans-serif;color:var(--muted)}
-.notice{font:11px/1.6 Arial,sans-serif;color:var(--muted);margin-top:14px}
-.toast{
-  position:fixed;z-index:20;left:50%;bottom:22px;transform:translate(-50%,20px);
-  opacity:0;pointer-events:none;background:#f0dfb4;color:#17251c;border-radius:999px;
-  padding:12px 18px;font:12px Arial,sans-serif;box-shadow:var(--shadow);transition:.25s;
-  max-width:calc(100vw - 30px);text-align:center
-}
+.palace:before{content:"";position:absolute;inset:12px;border:1px solid #e5cb8a70;border-radius:180px 180px 14px 14px;z-index:4}
+.palace-title{position:absolute;top:32px;left:0;right:0;text-align:center;font:11px 'Cormorant Garamond',serif;letter-spacing:5px;color:#f2dba5;z-index:5}
+.palace-sub{position:absolute;top:53px;left:0;right:0;text-align:center;font:26px 'Great Vibes',cursive;color:#e7c77f;z-index:5}
+.tree{position:absolute;top:100px;left:50%;transform:translateX(-50%);width:270px;height:290px;z-index:2}
+.tree-tip{position:absolute;top:-18px;left:50%;transform:translateX(-50%);color:#f9d98b;font-size:37px;text-shadow:0 0 15px #f3d68b,0 0 35px #e8b954}
+.branch{position:absolute;left:50%;transform:translateX(-50%);width:0;height:0;border-left:var(--w) solid transparent;border-right:var(--w) solid transparent;border-bottom:var(--h) solid var(--c);filter:drop-shadow(0 7px 5px #071d16)}
+.ba{--w:58px;--h:96px;--c:#59845b;top:12px}
+.bb{--w:91px;--h:122px;--c:#376c48;top:65px}
+.bc{--w:121px;--h:143px;--c:#28553a;top:120px}
+.bd{--w:135px;--h:125px;--c:#1d4933;top:172px}
+.trunk{position:absolute;top:280px;left:50%;transform:translateX(-50%);width:32px;height:48px;background:#815b3d;border-radius:4px}
+.bauble{position:absolute;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#ffe9ba,#b98b43 60%,#78502a);box-shadow:2px 3px 4px #061b13}
+.bauble.red{background:radial-gradient(circle at 30% 25%,#ffd4c9,#c34d59 60%,#6e2335)}
+.bauble.cream{background:radial-gradient(circle at 30% 25%,#fff8df,#d8c49a 60%,#89734b)}
+.star-dot{position:absolute;width:9px;height:9px;border-radius:50%;background:#ffdfa0;box-shadow:0 0 14px 5px #e8bd69;animation:twinkle 1.8s ease-in-out infinite alternate}
+@keyframes twinkle{to{opacity:.4;transform:scale(.7)}}
+.ribbon{position:absolute;left:50%;top:75px;width:190px;height:160px;border-radius:50%;border:3px solid transparent;border-top-color:#d7b56d;border-bottom-color:#d7b56d;opacity:.8;transform:translateX(-50%) rotate(-15deg)}
+.presents{position:absolute;bottom:46px;left:0;right:0;height:90px;z-index:3}
+.gift{position:absolute;bottom:0;width:100px;height:72px;border-radius:4px;background:linear-gradient(135deg,#bd4d58,#802d3b);box-shadow:0 12px 19px #081d1666}
+.gift:before{content:"";position:absolute;left:43px;top:0;width:14px;height:100%;background:#e7c77e}
+.gift:after{content:"";position:absolute;left:0;top:26px;width:100%;height:12px;background:#e7c77e}
+.gift.one{left:48px;transform:rotate(-4deg)}
+.gift.two{width:85px;height:58px;right:40px;background:linear-gradient(135deg,#d7bd80,#98703d);transform:rotate(4deg)}
+.gift.two:before,.gift.two:after{background:#fff0c6}
+.gift.three{width:65px;height:48px;left:155px;background:linear-gradient(135deg,#78926b,#34543b)}
+.gift.three:before,.gift.three:after{background:#d7b56d}
+.palace-caption{position:absolute;bottom:18px;left:0;right:0;text-align:center;font:22px 'Great Vibes',cursive;color:#f0d9a4;z-index:5}
+.float-card{position:absolute;z-index:6;padding:13px 17px;background:#fffaf0;border:1px solid #c8a967;box-shadow:0 12px 30px #1c38251c;border-radius:3px;color:#244431;font:18px 'Cormorant Garamond',serif}
+.float-card small{display:block;font:8px 'DM Sans',sans-serif;letter-spacing:2px;text-transform:uppercase;color:#a17e48;margin-bottom:4px}
+.float-left{left:-15px;top:115px;transform:rotate(-7deg)}
+.float-right{right:-10px;bottom:92px;transform:rotate(6deg)}
+.divider{display:flex;align-items:center;justify-content:center;gap:18px;margin:25px 0 42px;color:#b28e4c}
+.divider:before,.divider:after{content:"";height:1px;width:150px;background:linear-gradient(90deg,transparent,#b28e4c99)}
+.divider span{font:28px 'Great Vibes',cursive}
+.selection{text-align:center;padding:0 0 50px}
+.overline{color:#a0814b;font-size:9px;font-weight:700;letter-spacing:4px;text-transform:uppercase}
+.selection h2{font:500 clamp(33px,4.4vw,48px) 'Playfair Display',serif;color:var(--forest);margin:12px 0 8px}
+.selection>p{font-size:12px;color:#8b8877;margin:0 0 32px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:920px;margin:auto}
+.group-card{position:relative;min-height:280px;text-align:left;overflow:hidden;padding:29px 30px;border-radius:5px;cursor:pointer;background:linear-gradient(145deg,#fffdf5,#f8efd9);border:1px solid #c9aa6c;box-shadow:0 12px 35px #1e3c2812;transition:.35s}
+.group-card:hover{transform:translateY(-9px);box-shadow:0 24px 48px #1e3c2826}
+.group-card:before{content:"";position:absolute;inset:8px;border:1px solid #c8aa6b65;pointer-events:none}
+.group-card:after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;right:-95px;top:-95px;background:radial-gradient(circle,#d6b56d2b,transparent 70%)}
+.group-card.kids{background:linear-gradient(145deg,#fffaf6,#f6e6dc);border-color:#d39b98}
+.group-card.kids:before{border-color:#c37c8065}
+.group-top{display:flex;justify-content:space-between;align-items:center}
+.group-symbol{width:59px;height:59px;border-radius:50%;display:grid;place-items:center;font-size:28px;background:#e8eee1;border:1px solid #c6d4ba}
+.kids .group-symbol{background:#f5e4df;border-color:#e5b9b0}
+.group-arrow{width:36px;height:36px;border:1px solid #b99b60;border-radius:50%;display:grid;place-items:center;color:#987747;font-size:17px;transition:.3s}
+.group-card:hover .group-arrow{background:var(--forest);color:#f5dfac;transform:rotate(-45deg)}
+.group-card h3{font:500 36px 'Playfair Display',serif;color:var(--forest);margin:22px 0 6px}
+.group-card.kids h3{color:#984653}
+.group-card p{font-size:11px;color:#898777;line-height:1.8;margin:0;max-width:300px}
+.card-bottom{margin-top:22px;display:flex;align-items:center;gap:10px;color:#967644;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.card-bottom:before{content:"";width:25px;height:1px;background:#bd9a59}
+
+/* Panels */
+.panel{display:none;max-width:920px;margin:30px auto 60px;background:var(--cream);border:1px solid #c9aa6c;box-shadow:0 25px 75px #1e3c2820;position:relative;animation:enter .5s ease}
+.panel:before{content:"";position:absolute;inset:7px;border:1px solid #c8aa6b70;pointer-events:none;z-index:1}
+@keyframes enter{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:none}}
+.panel-head{background:radial-gradient(circle at 90% 10%,#ffffff12,transparent 35%),linear-gradient(120deg,#1d4a35,#0c2a21);color:#f3dfaa;padding:30px 32px;position:relative;overflow:hidden}
+.panel-head:after{content:"✦  ❄  ✧  ❄  ✦";position:absolute;right:20px;top:23px;color:#d6b56d66;font-size:25px;letter-spacing:8px}
+.panel-head small{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#d8bd7e}
+.panel-head h2{font:500 34px 'Playfair Display',serif;margin:7px 0}
+.panel-head p{font-size:11px;color:#d4d8c5;margin:0}
+.panel-content{padding:30px;position:relative;z-index:2}
+.back{background:none;border:0;color:#927c55;font-size:10px;letter-spacing:1.5px;margin:0 0 20px;padding:0}
+.label{display:block;font-size:9px;text-transform:uppercase;letter-spacing:2px;color:#8c7956;font-weight:700;margin:17px 0 8px}
+.input{width:100%;border:1px solid #d8c8a8;background:#fffdf8;padding:15px;border-radius:3px;outline:none;color:#203b2d;font-size:13px;transition:.2s}
+.input:focus{border-color:#b48c48;box-shadow:0 0 0 3px #d7b56d22}
+.primary{display:block;width:100%;padding:16px 20px;margin-top:20px;color:#f5e4ba;background:linear-gradient(110deg,#28553d,#102b22);border:1px solid #d2b36d;border-radius:3px;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:800;box-shadow:0 8px 18px #143c2b26;transition:.25s}
+.primary:hover{transform:translateY(-2px);box-shadow:0 12px 23px #143c2b3a}
+.secondary{padding:12px 16px;border:1px solid #c9b17e;background:#fff7e6;color:#735e39;border-radius:3px;font-size:10px;letter-spacing:1px}
+.notice{display:none;margin-top:14px;padding:12px;border-radius:3px;font-size:11px;line-height:1.6}
+.notice.error{display:block;background:#f9e8e5;color:#913e47;border:1px solid #e8c3bd}
+.notice.success{display:block;background:#e8efe4;color:#416447;border:1px solid #cadac3}
+.helper{text-align:center;font-size:10px;color:#96917e;line-height:1.8;margin-top:16px}
+.name-plaque{position:relative;max-width:620px;margin:0 auto 25px;padding:22px 24px 20px;text-align:center;color:var(--gold2);background:radial-gradient(ellipse at 50% 0%,#47744d,#1b4934 55%,#0c2b20);border:1px solid var(--gold);outline:1px solid #b18a4c88;outline-offset:5px;box-shadow:0 12px 30px #102b2224,inset 0 0 25px #e4c77b12}
+.name-plaque:before,.name-plaque:after{content:"✦";position:absolute;top:50%;transform:translateY(-50%);color:#e5c77e;font-size:22px}
+.name-plaque:before{left:18px}.name-plaque:after{right:18px}
+.name-plaque small{display:block;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:#e2c989}
+.participant-name{display:block;margin-top:7px;font:clamp(32px,6vw,49px)/1.1 'Great Vibes',cursive;color:#fff0c4;text-shadow:0 2px 15px #e4c77b55;overflow-wrap:anywhere}
+.plaque-sub{margin-top:8px;font-size:9px;letter-spacing:2px;color:#c4d3bf;text-transform:uppercase}
+.wheel-area{text-align:center}
+.wheel-title{font:500 31px 'Playfair Display',serif;color:var(--forest);margin:10px 0}
+.wheel-status{font-size:11px;color:#918b79}
+.wheel-instruction{display:inline-flex;align-items:center;gap:9px;margin-top:12px;padding:9px 15px;background:#f4ecd9;border:1px solid #dfcda5;color:#806b48;font-size:9px;letter-spacing:1.3px;text-transform:uppercase}
+.wheel-wrap{width:min(100%,470px);aspect-ratio:1;margin:34px auto 28px;position:relative;display:grid;place-items:center}
+.wheel-ornament{position:absolute;inset:-17px;border-radius:50%;border:2px solid #c9a45d;box-shadow:0 0 0 5px #f4e7c9,0 0 0 7px #aa884d;pointer-events:none}
+.wheel-ornament:before,.wheel-ornament:after{content:"✦";position:absolute;color:#a47a37;font-size:25px;background:#f5ecd9}
+.wheel-ornament:before{top:50%;left:-13px;transform:translateY(-50%)}
+.wheel-ornament:after{top:50%;right:-13px;transform:translateY(-50%)}
+.wheel-inner-frame{position:absolute;inset:-7px;border-radius:50%;border:1px dashed #9b783f;pointer-events:none}
+.wheel{width:100%;height:100%;border-radius:50%;border:10px solid #e3c67e;box-shadow:0 0 0 4px #214a35,0 0 0 8px #e6d6ac,0 18px 42px #0004,inset 0 0 0 3px #fff7df;transition:transform 6s cubic-bezier(.12,.75,.12,1);position:relative;overflow:hidden;background:#244d36}
+#wheelCanvas{display:block;width:100%;height:100%;border-radius:50%}
+.pointer{position:absolute;z-index:5;top:-17px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:21px solid transparent;border-right:21px solid transparent;border-top:43px solid #a83243;filter:drop-shadow(0 4px 3px #0005)}
+.pointer:after{content:"";position:absolute;top:-43px;left:-8px;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff0c2,#b88b40);border:2px solid #fff0c2}
+.wheel-center{position:absolute;z-index:4;left:50%;top:50%;transform:translate(-50%,-50%);width:82px;height:82px;border-radius:50%;display:grid;place-items:center;text-align:center;background:radial-gradient(circle at 30% 25%,#fff1c6,#c29b55);border:5px solid #fff0c6;color:#21432f;font:700 11px 'Playfair Display',serif;box-shadow:0 4px 12px #0005,0 0 0 3px #9c773c}
+.spin-button{max-width:300px;margin:0 auto}
+.spin-button .primary{font-size:12px;padding:19px}
+.result{display:none;max-width:570px;margin:28px auto 0;padding:30px 25px;border:1px solid #d5b975;background:radial-gradient(circle at 50% 0%,#fff9e9,#f8eed9 70%);box-shadow:inset 0 0 0 5px #fff9,0 12px 30px #1c38251c;text-align:center;position:relative}
+.result:before{content:"";position:absolute;inset:8px;border:1px solid #c9aa6c77;pointer-events:none}
+.result small{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#9a7a43}
+.result-name{font:clamp(43px,8vw,62px) 'Great Vibes',cursive;color:#9b3444;margin:13px 0;overflow-wrap:anywhere}
+.result p{font-size:11px;color:#898777;line-height:1.8}
+.result button{max-width:250px;margin:15px auto 0}
+.remaining{max-width:600px;margin:25px auto 0;padding:15px 18px;background:#f5efdf;border:1px solid #dfd0ad;text-align:center}
+.remaining strong{display:block;color:#244631;font:22px 'Playfair Display',serif}
+.remaining span{color:#928365;font-size:9px;letter-spacing:2px;text-transform:uppercase}
+.dash{display:none;max-width:1050px;margin:30px auto 60px}
+.dash-card{background:#fffaf0;border:1px solid #d4bd8d;padding:24px;margin-top:17px;box-shadow:0 8px 25px #243b2610}
+.dash-card h3{font:500 23px 'Playfair Display',serif;color:var(--forest);margin:0 0 15px}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}
+.stat{background:linear-gradient(145deg,#f6efdf,#eee4cf);border:1px solid #e0d1af;text-align:center;padding:17px 10px}
+.stat b{display:block;font:30px 'Playfair Display',serif;color:var(--forest)}
+.stat span{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#95815b}
+.dash-list{max-height:300px;overflow:auto}
+.dash-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #eae1d0;font-size:11px}
+.dash-item button{background:#fff0ed;border:1px solid #e7c8bf;color:#984650;padding:7px 10px;font-size:9px}
+.dash-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.dash-actions button{flex:1;min-width:130px}
+.tab{padding:10px 14px;background:#f4ecd9;border:1px solid #d9c69b;color:#806b48;font-size:9px;letter-spacing:1px}
+.tab.active{background:#183e2d;color:#f5e4ba;border-color:#d5b36d}
+.history-row{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;padding:11px 0;border-bottom:1px solid #eae1d0;font-size:10px}
+.footer{text-align:center;padding:60px 10px 35px;color:#9a8e74;font-size:9px;letter-spacing:2px}
+.footer-script{font:32px 'Great Vibes',cursive;color:#9c7650;letter-spacing:0}
+.footer-rule{width:90px;height:1px;background:#c4a66a;margin:15px auto}
+.toast{position:fixed;bottom:25px;left:50%;transform:translate(-50%,20px);background:#153b2e;color:#f7e5b6;padding:13px 20px;font-size:11px;border:1px solid #d7b56d;opacity:0;pointer-events:none;transition:.3s;z-index:20;text-align:center;max-width:90%}
 .toast.show{opacity:1;transform:translate(-50%,0)}
-footer{position:relative;z-index:1;text-align:center;padding:20px 15px 34px;color:#819087;font:10px Arial,sans-serif;letter-spacing:1px}
-.modal-backdrop{
-  position:fixed;z-index:30;inset:0;background:rgba(2,9,6,.78);backdrop-filter:blur(9px);
-  display:grid;place-items:center;padding:18px
+@media(max-width:800px){
+ .wrap{width:calc(100% - 40px)}
+ .hero{grid-template-columns:1fr;padding:60px 0 25px}
+ .hero-copy{text-align:center;padding:0}
+ .eyebrow{justify-content:center}
+ .hero-desc{margin-left:auto;margin-right:auto}
+ .hero-meta{justify-content:center}
+ .hero-visual{min-height:560px}
 }
-.modal{
-  width:min(100%,430px);padding:30px;border:1px solid var(--gold);border-radius:19px;
-  background:linear-gradient(145deg,#1b392b,#0c1e16);box-shadow:0 30px 90px #0009
+@media(max-width:540px){
+ .wrap{width:calc(100% - 30px)}
+ .frame{inset:5px}
+ .corner{width:35px;height:35px}
+ header{padding-top:18px}
+ .brand-title{font-size:13px}
+ .brand-sub{font-size:7px;letter-spacing:2px}
+ .seal{width:40px;height:40px}
+ .season{display:none}
+ .hero{padding-top:50px}
+ .hero h1{font-size:60px}
+ .script{font-size:73px}
+ .hero-visual{min-height:475px;transform:scale(.9);margin:-10px 0}
+ .palace{width:330px;height:430px}
+ .tree{transform:translateX(-50%) scale(.88);transform-origin:top center}
+ .presents{bottom:43px}
+ .palace-caption{bottom:15px}
+ .ring{width:365px;height:365px}
+ .aura{width:400px;height:400px}
+ .float-left{left:-6px;top:90px}
+ .float-right{right:-5px;bottom:75px}
+ .cards{grid-template-columns:1fr;max-width:390px}
+ .group-card{min-height:225px;padding:25px}
+ .panel-content{padding:22px 17px}
+ .panel-head{padding:25px 20px}
+ .panel-head h2{font-size:27px}
+ .wheel-wrap{width:min(86vw,390px);margin:32px auto 27px}
+ .wheel-center{width:65px;height:65px;font-size:9px}
+ .name-plaque{padding:20px 30px}
+ .name-plaque:before{left:9px}
+ .name-plaque:after{right:9px}
+ .dash-grid{grid-template-columns:1fr}
+ .stats{grid-template-columns:repeat(3,1fr)}
+ .stat{padding:12px 5px}
+ .stat b{font-size:23px}
+ .history-row{grid-template-columns:1fr 1fr}
+ .history-row span:last-child{grid-column:1/-1}
 }
-.modal h2{font-size:27px;font-weight:400;margin:0 0 8px}
-.modal p{font:12px/1.7 Arial,sans-serif;color:var(--muted);margin:0 0 18px}
-.modal-actions{display:flex;gap:10px;margin-top:18px}
-.modal-actions button{flex:1}
-.admin-shell{max-width:1000px;margin:0 auto}
-.admin-head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:20px}
-.admin-head h2{font-size:32px;font-weight:400;margin:0}
-.admin-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
-.tab-btn,.small-btn{
-  display:inline-flex;align-items:center;justify-content:center;min-height:34px;
-  border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--gold2);
-  border-radius:999px;padding:9px 14px;font:10px Arial,sans-serif;letter-spacing:1px;text-transform:uppercase
-}
-.tab-btn.active{background:var(--gold);color:#17251c;border-color:var(--gold)}
-.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
-.admin-card{border:1px solid var(--line);border-radius:15px;padding:19px;background:rgba(255,255,255,.035);min-width:0}
-.admin-card h3{font-size:20px;font-weight:400;margin:0 0 14px}
-.admin-card textarea{min-height:135px;resize:vertical;line-height:1.6}
-.admin-card .primary-btn{margin-top:12px}
-.admin-row{display:flex;gap:8px;align-items:center;margin-top:10px}
-.admin-row .field{min-width:0}
-.small-btn{padding:8px 11px;white-space:nowrap}
-.list-wrap{margin-top:14px}
-.choice-row{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
-  border-top:1px solid rgba(215,185,120,.13);padding:11px 0;font:12px Arial,sans-serif
-}
-.choice-main{min-width:0;overflow-wrap:anywhere}
-.choice-meta{display:block;color:var(--muted);font-size:10px;margin-top:4px}
-.choice-actions{display:flex;gap:6px;flex-shrink:0}
-.danger{border-color:rgba(210,120,120,.4);color:#e7b5b5}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px 0}
-.stat{padding:15px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.03)}
-.stat strong{display:block;font-size:25px;font-weight:400;color:var(--gold2)}
-.stat span{font:9px Arial,sans-serif;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
-.history-row{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;padding:11px 0;border-top:1px solid rgba(215,185,120,.13);font:11px Arial,sans-serif}
-.history-row span:last-child{color:var(--muted);text-align:right}
-@media(max-width:700px){
-  .topbar{padding:16px}.brand-name{font-size:11px}.brand-sub{font-size:9px}
-  main{padding:18px 15px 45px}.hero{padding:35px 6px 26px}
-  .section-grid{gap:11px}.section-card{min-height:190px;padding:18px}.card-title{font-size:25px}
-  .panel{padding:21px 17px}.wheel-layout{grid-template-columns:1fr;gap:8px}
-  .wheel-wrap{width:min(82vw,340px)}.spin-side{padding-bottom:8px}
-  .admin-grid{grid-template-columns:1fr}.admin-head{align-items:flex-start}
-  .stats{grid-template-columns:repeat(3,1fr)}.stat{padding:11px}.stat strong{font-size:21px}
-}
-@media(max-width:390px){.section-grid{grid-template-columns:1fr}.section-card{min-height:155px}.card-icon{margin-bottom:10px}}
 </style>
 </head>
 <body>
-<header class="topbar">
-  <div class="brand">
-    <div class="brand-mark">✦</div>
-    <div><div class="brand-name">Tadifa Clan</div><div class="brand-sub">A season of giving</div></div>
-  </div>
-  <button class="ghost-btn" id="developerBtn">✧ Developer Access</button>
+<div class="texture"></div><div class="frame"></div>
+<div class="corner tl"></div><div class="corner tr"></div>
+<div class="corner bl"></div><div class="corner br"></div>
+
+<div class="wrap">
+<div class="garland">
+<svg viewBox="0 0 1400 90" preserveAspectRatio="none">
+<path d="M0 0 Q350 120 700 25 T1400 0" fill="none" stroke="#315c40" stroke-width="3"/>
+<g fill="#315c40">
+<ellipse cx="100" cy="25" rx="16" ry="6" transform="rotate(30 100 25)"/>
+<ellipse cx="135" cy="35" rx="16" ry="6" transform="rotate(-25 135 35)"/>
+<ellipse cx="370" cy="60" rx="16" ry="6" transform="rotate(30 370 60)"/>
+<ellipse cx="410" cy="60" rx="16" ry="6" transform="rotate(-25 410 60)"/>
+<ellipse cx="570" cy="45" rx="16" ry="6" transform="rotate(30 570 45)"/>
+<ellipse cx="610" cy="40" rx="16" ry="6" transform="rotate(-25 610 40)"/>
+<ellipse cx="790" cy="30" rx="16" ry="6" transform="rotate(30 790 30)"/>
+<ellipse cx="830" cy="25" rx="16" ry="6" transform="rotate(-25 830 25)"/>
+<ellipse cx="1010" cy="12" rx="16" ry="6" transform="rotate(30 1010 12)"/>
+<ellipse cx="1050" cy="10" rx="16" ry="6" transform="rotate(-25 1050 10)"/>
+</g>
+<g fill="#a33143"><circle cx="115" cy="33" r="5"/><circle cx="125" cy="29" r="5"/><circle cx="390" cy="58" r="5"/><circle cx="400" cy="55" r="5"/><circle cx="590" cy="47" r="5"/><circle cx="600" cy="43" r="5"/></g>
+<g fill="#e9c779"><circle cx="300" cy="55" r="4"/><circle cx="500" cy="56" r="4"/><circle cx="700" cy="34" r="4"/><circle cx="900" cy="20" r="4"/><circle cx="1150" cy="8" r="4"/></g>
+</svg>
+</div>
+
+<header>
+ <div class="brand"><div class="seal">T</div><div><div class="brand-title">TADIFA CLAN</div><div class="brand-sub">A Season of Giving</div></div></div>
+ <div class="header-right"><div class="season">✦ CHRISTMAS CELEBRATION ✦</div><button class="admin-link" id="adminOpen">ADMIN ACCESS</button></div>
 </header>
 
 <main>
-  <section id="homeView">
-    <div class="hero">
-      <div class="eyebrow">Together is the best gift</div>
-      <h1>A Christmas<br><em>Gift Exchange</em></h1>
-      <p>One little spin, one lovely surprise. Choose your group and let the season of giving begin.</p>
-      <div class="rule">❧</div>
-    </div>
-    <h2 class="section-title">Choose Your Section</h2>
-    <p class="section-note">Select the group you belong to</p>
-    <div class="section-grid">
-      <button class="section-card" data-section="adults">
-        <div class="card-icon">🎁</div><div class="card-kicker">The grown-ups</div>
-        <div class="card-title">Adults</div><div class="card-desc">A little mystery, a thoughtful gift, and a moment to remember.</div>
-        <span class="card-link">Enter the wheel&nbsp; →</span>
-      </button>
-      <button class="section-card" data-section="kids">
-        <div class="card-icon">🎄</div><div class="card-kicker">The little stars</div>
-        <div class="card-title">Kids</div><div class="card-desc">A sprinkle of Christmas magic and a surprise waiting just for you.</div>
-        <span class="card-link">Enter the wheel&nbsp; →</span>
-      </button>
-    </div>
-  </section>
-
-  <section id="participantView" class="hidden">
-    <div class="panel">
-      <button class="back-btn" id="backHome">← Back to sections</button>
-      <div class="eyebrow" id="participantEyebrow">Tadifa Clan • Gift Exchange</div>
-      <h2 id="participantTitle">Adults Wheel</h2>
-      <p class="panel-intro">Enter your name to continue. When you're ready, give the wheel a spin and see who you'll be giving a gift to.</p>
-      <div id="nameStep">
-        <label class="field-label" for="participantName">Your name</label>
-        <input class="field" id="participantName" maxlength="60" autocomplete="name" placeholder="Enter your full name">
-        <button class="primary-btn full" id="continueBtn">Continue to the wheel</button>
-      </div>
-      <div id="wheelStep" class="hidden">
-        <div class="wheel-layout">
-          <div class="wheel-wrap">
-            <div class="pointer"></div><div class="wheel-frame"><canvas id="wheel" width="600" height="600"></canvas></div>
-            <div class="wheel-center"></div>
-          </div>
-          <div class="spin-side">
-            <div class="eyebrow">Ready, <span id="nameGreeting"></span>?</div>
-            <div class="count" id="availableCount">0</div>
-            <div class="small">available names remaining</div>
-            <button class="primary-btn full" id="spinBtn">✦ Spin the wheel</button>
-            <div class="notice" id="wheelNotice">Your result is reserved for you and removed from the shared wheel.</div>
-          </div>
-        </div>
-        <div id="resultBox" class="result hidden">
-          <div class="result-label">Your gift recipient is</div>
-          <div class="result-name" id="resultName"></div>
-          <p>Keep your result a secret and take a screenshot so you won't forget. Merry Christmas!</p>
-          <button class="ghost-btn" id="homeAfterResult">Back to home</button>
-        </div>
-      </div>
-      <div id="participantMessage" class="notice"></div>
-    </div>
-  </section>
-
-  <section id="adminView" class="hidden">
-    <div class="admin-shell">
-      <div class="admin-head">
-        <div><div class="eyebrow">Private control room</div><h2>Developer Dashboard</h2></div>
-        <button class="ghost-btn" id="adminLogout">Sign out</button>
-      </div>
-      <p class="panel-intro">Manage both gift exchange wheels. Changes to available names are shared with participants in real time.</p>
-      <div class="stats">
-        <div class="stat"><strong id="adultAvailable">0</strong><span>Adults available</span></div>
-        <div class="stat"><strong id="kidsAvailable">0</strong><span>Kids available</span></div>
-        <div class="stat"><strong id="totalSpins">0</strong><span>Total spins</span></div>
-      </div>
-      <div class="admin-tabs">
-        <button class="tab-btn active" data-admin-tab="manage">Manage wheels</button>
-        <button class="tab-btn" data-admin-tab="history">Spin history</button>
-      </div>
-      <div id="manageTab">
-        <div class="admin-card" style="margin-bottom:15px">
-          <h3>Prepare both wheels</h3>
-          <p class="notice">Paste one name per line. Preparing a list replaces the current names for that section. Previous spin history is kept.</p>
-          <div class="admin-grid">
-            <div><label class="field-label" for="adultNames">Adults names</label><textarea class="field" id="adultNames" placeholder="Name 1&#10;Name 2&#10;Name 3"></textarea></div>
-            <div><label class="field-label" for="kidsNames">Kids names</label><textarea class="field" id="kidsNames" placeholder="Name 1&#10;Name 2&#10;Name 3"></textarea></div>
-          </div>
-          <button class="primary-btn full" id="prepareBothBtn">Prepare / Replace Both Wheels</button>
-        </div>
-        <div class="admin-grid">
-          <div class="admin-card">
-            <h3>Adults wheel</h3>
-            <div class="admin-row"><input class="field" id="addAdultName" placeholder="Add a name"><button class="small-btn" id="addAdultBtn">Add</button></div>
-            <div class="list-wrap" id="adultList"></div>
-            <button class="small-btn danger" id="returnAdultAll" style="margin-top:12px">Return all selected</button>
-          </div>
-          <div class="admin-card">
-            <h3>Kids wheel</h3>
-            <div class="admin-row"><input class="field" id="addKidName" placeholder="Add a name"><button class="small-btn" id="addKidBtn">Add</button></div>
-            <div class="list-wrap" id="kidsList"></div>
-            <button class="small-btn danger" id="returnKidsAll" style="margin-top:12px">Return all selected</button>
-          </div>
-        </div>
-      </div>
-      <div id="historyTab" class="admin-card hidden" style="margin-top:10px">
-        <h3>Recent spins</h3><div class="notice">A record of completed gift exchanges.</div>
-        <div id="historyList" class="list-wrap"></div>
-      </div>
-    </div>
-  </section>
-</main>
-<footer>MADE WITH LOVE &nbsp; ✦ &nbsp; TADIFA CLAN CHRISTMAS GIFT EXCHANGE</footer>
-
-<div class="modal-backdrop hidden" id="loginModal">
-  <div class="modal">
-    <div class="eyebrow">Restricted access</div>
-    <h2>Developer Login</h2>
-    <p>Sign in with your registered administrator Gmail and private PIN.</p>
-    <form id="loginForm">
-      <label class="field-label" for="adminEmail">Administrator Gmail</label>
-      <input class="field" id="adminEmail" type="email" autocomplete="username" required placeholder="Enter your Gmail">
-      <label class="field-label" for="adminPin">Private PIN</label>
-      <input class="field" id="adminPin" type="password" inputmode="numeric" autocomplete="current-password" minlength="6" maxlength="64" required placeholder="Enter your PIN">
-      <div class="modal-actions">
-        <button type="button" class="ghost-btn" id="cancelLogin">Cancel</button>
-        <button type="submit" class="primary-btn" id="loginSubmit">Enter Dashboard</button>
-      </div>
-    </form>
-    <div class="notice" id="loginMessage"></div>
+<section class="hero" id="hero">
+ <div class="hero-copy">
+  <div class="eyebrow">The most wonderful time of the year</div>
+  <h1>The Christmas<span class="script">Grand</span><span class="hero-last">Celebration</span></h1>
+  <p class="hero-desc">A little sparkle, a little surprise, and a whole lot of Christmas joy. Let the festive wheel decide who you will make smile this season.</p>
+  <div class="hero-meta"><span>✧</span><span>One name · One turn · One special surprise</span><span>✧</span></div>
+ </div>
+ <div class="hero-visual">
+  <div class="aura"></div><div class="ring"></div>
+  <div class="float-card float-left"><small>A season of</small>Giving & Joy</div>
+  <div class="float-card float-right"><small>Made with</small>Christmas Magic ✧</div>
+  <div class="palace">
+   <div class="palace-title">TADIFA CLAN PRESENTS</div><div class="palace-sub">A Magical Christmas</div>
+   <div class="tree">
+    <div class="tree-tip">✦</div><div class="branch ba"></div><div class="branch bb"></div><div class="branch bc"></div><div class="branch bd"></div><div class="ribbon"></div><div class="trunk"></div>
+    <div class="bauble" style="top:75px;left:112px"></div><div class="bauble red" style="top:112px;left:72px"></div><div class="bauble cream" style="top:142px;left:165px"></div><div class="bauble red" style="top:185px;left:105px"></div><div class="bauble" style="top:215px;left:190px"></div><div class="bauble cream" style="top:235px;left:55px"></div><div class="bauble red" style="top:250px;left:145px"></div>
+    <div class="star-dot" style="top:50px;left:80px"></div><div class="star-dot" style="top:100px;left:190px"></div><div class="star-dot" style="top:170px;left:40px"></div><div class="star-dot" style="top:205px;left:220px"></div>
+   </div>
+   <div class="presents"><div class="gift one"></div><div class="gift two"></div><div class="gift three"></div></div>
+   <div class="palace-caption">Where Christmas wishes come true</div>
   </div>
+ </div>
+</section>
+
+<div class="divider"><span>Season of wonder</span></div>
+
+<section class="selection" id="selection">
+ <div class="overline">Let the celebration begin</div>
+ <h2>Choose Your Christmas Circle</h2>
+ <p>Choose your group to enter the Christmas gift exchange draw.</p>
+ <div class="cards">
+  <div class="group-card" id="adultCard" role="button" tabindex="0"><div class="group-top"><div class="group-symbol">🎁</div><div class="group-arrow">↗</div></div><h3>Adults</h3><p>A special Christmas surprise for the grown-ups of the Tadifa Clan.</p><div class="card-bottom">Enter the adults circle</div></div>
+  <div class="group-card kids" id="kidsCard" role="button" tabindex="0"><div class="group-top"><div class="group-symbol">🎄</div><div class="group-arrow">↗</div></div><h3>Kids</h3><p>More giggles, more magic, and a little surprise for our young celebrants.</p><div class="card-bottom">Enter the kids circle</div></div>
+ </div>
+</section>
+
+<section class="panel" id="registerPanel">
+ <div class="panel-head"><small>✦ YOUR CHRISTMAS MOMENT ✦</small><h2 id="registerTitle">Welcome to the Circle</h2><p>Enter your name to prepare your one-time Christmas draw.</p></div>
+ <div class="panel-content">
+  <button class="back" id="backHome">← BACK TO HOME</button>
+  <form id="registerForm">
+   <label class="label" for="participantInput">Your complete name</label>
+   <input class="input" id="participantInput" maxlength="60" autocomplete="name" placeholder="Enter your name..." required>
+   <button class="primary" id="continueBtn" type="submit">CONTINUE TO THE WHEEL ✦</button>
+  </form>
+  <div class="notice" id="registerNotice"></div>
+  <div class="helper">Your name can only make one draw in this group.<br>Your draw is shared across devices.</div>
+ </div>
+</section>
+
+<section class="panel" id="wheelPanel">
+ <div class="panel-head"><small>✦ THE CHRISTMAS GIFT EXCHANGE ✦</small><h2 id="wheelGroupTitle">The Grand Christmas Draw</h2><p>One name. One turn. One wonderful surprise.</p></div>
+ <div class="panel-content">
+  <button class="back" id="wheelBack">← BACK</button>
+  <div class="name-plaque"><small>A little Christmas magic for</small><span class="participant-name" id="visibleParticipantName">Your Name</span><div class="plaque-sub">May your Christmas be full of joy</div></div>
+  <div class="wheel-area">
+   <h3 class="wheel-title">The Gift Exchange Wheel</h3>
+   <div class="wheel-status" id="wheelStatus">Preparing your Christmas wheel...</div>
+   <div class="wheel-instruction">✦ The pointer shows your selected recipient ✦</div>
+   <div class="wheel-wrap">
+    <div class="wheel-ornament"></div><div class="wheel-inner-frame"></div><div class="pointer"></div>
+    <div class="wheel" id="wheel"><canvas id="wheelCanvas" width="1000" height="1000"></canvas></div>
+    <div class="wheel-center">TADIFA<br>✦<br>CLAN</div>
+   </div>
+   <div class="spin-button"><button class="primary" id="spinBtn" disabled>SPIN THE WHEEL ✦</button></div>
+   <div class="result" id="resultBox"><small>✦ YOUR CHRISTMAS DRAW IS ✦</small><div class="result-name" id="resultName"></div><p>This is the person you will give your Christmas gift to. Keep the surprise safe!</p><button class="primary" id="finishBtn">FINISH & RETURN HOME</button></div>
+   <div class="remaining"><strong id="remainingCount">—</strong><span>Eligible gift names remaining in this circle</span></div>
+  </div>
+  <div class="notice" id="wheelNotice"></div>
+ </div>
+</section>
+
+<section class="panel" id="adminPanel">
+ <div class="panel-head"><small>✦ PRIVATE MANAGEMENT ✦</small><h2>Administrator Access</h2><p>Sign in to manage the Tadifa Clan Christmas draw.</p></div>
+ <div class="panel-content">
+  <button class="back" id="adminBack">← BACK TO HOME</button>
+  <form id="adminForm">
+   <label class="label" for="adminEmail">Administrator email</label><input class="input" id="adminEmail" type="email" autocomplete="username" placeholder="Your admin email" required>
+   <label class="label" for="adminPassword">Password</label><input class="input" id="adminPassword" type="password" autocomplete="current-password" placeholder="Your private password" required>
+   <button class="primary" id="adminLoginBtn" type="submit">SIGN IN TO DASHBOARD</button>
+  </form>
+  <div class="notice" id="adminNotice"></div>
+ </div>
+</section>
+
+<section class="dash" id="dashboard">
+ <div class="panel-head"><small>✦ TADIFA CLAN CONTROL ROOM ✦</small><h2>Christmas Draw Dashboard</h2><p>Manage participants, gift names, and draw history.</p></div>
+ <div class="dash-card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap"><h3 style="margin:0">Overview</h3><button class="secondary" id="adminLogout">SIGN OUT</button></div><div class="stats"><div class="stat"><b id="adultStat">0</b><span>Adult names</span></div><div class="stat"><b id="kidsStat">0</b><span>Kids names</span></div><div class="stat"><b id="drawStat">0</b><span>Total draws</span></div></div></div>
+ <div class="dash-card">
+  <h3>Manage Gift Names</h3>
+  <div class="tabs"><button class="tab active" data-room="TADIFA-ADULTS">ADULTS</button><button class="tab" data-room="TADIFA-KIDS">KIDS</button></div>
+  <label class="label" for="newChoice">Add a gift recipient name</label>
+  <div style="display:flex;gap:9px"><input class="input" id="newChoice" placeholder="Enter a name..." maxlength="60"><button class="secondary" id="addChoice" style="white-space:nowrap">ADD NAME +</button></div>
+  <div class="dash-actions"><button class="secondary" id="refreshAdmin">REFRESH LIST</button><button class="secondary" id="returnAll">RETURN ALL SELECTED NAMES</button></div>
+  <div class="dash-list" id="choiceList" style="margin-top:15px"></div>
+ </div>
+ <div class="dash-card"><h3>Replace a Complete List</h3><p style="font-size:11px;color:#898777;line-height:1.8">Enter one recipient name per line. Replacing a list resets its available gift names.</p><label class="label" for="replaceList">Recipient names</label><textarea class="input" id="replaceList" rows="6" placeholder="Name One&#10;Name Two&#10;Name Three"></textarea><button class="primary" id="replaceBtn">REPLACE CURRENT GROUP LIST</button></div>
+ <div class="dash-card"><h3>Draw History</h3><button class="secondary" id="loadHistory">REFRESH HISTORY</button><div id="historyList" style="margin-top:15px"></div></div>
+</section>
+</main>
+
+<footer class="footer"><div class="footer-script">Merry Christmas</div><div class="footer-rule"></div>TADIFA CLAN · A CELEBRATION OF LOVE, JOY & GIVING<div style="margin-top:12px;color:#b79a61">✦ &nbsp; ❦ &nbsp; ✧ &nbsp; ❦ &nbsp; ✦</div></footer>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
-(() => {
-  const SUPABASE_URL = "https://dbffyzbeywibhlvmobzb.supabase.co";
-  const SUPABASE_ANON_KEY = "sb_publishable_K9wUziaVO5LJ5fqjRnQIHg_HBtJeG2m";
-  const ADMIN_EMAIL = "renzferrertadifa@gmail.com";
-  const ROOM_CODES = {
-    adults: { code: "TADIFA-ADULTS", name: "Tadifa Clan Adults" },
-    kids: { code: "TADIFA-KIDS", name: "Tadifa Clan Kids" }
-  };
+/* SUPABASE CONFIG */
+const SUPABASE_URL="https://dbffyzbeywibhlvmobzb.supabase.co";
+const SUPABASE_KEY="sb_publishable_K9wUziaVO5LJ5fqjRnQIHg_HBtJeG2m";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  const $ = (id) => document.getElementById(id);
-  let currentSection = null;
-  let currentRoom = null;
-  let participantName = "";
-  let availableChoices = [];
-  let isSpinning = false;
-  let adminRooms = {};
-  let adminRealtime = null;
-  let participantRealtime = null;
+const ROOM_CODES={adults:"TADIFA-ADULTS",kids:"TADIFA-KIDS"};
+let currentRoomCode="",currentRoomId="",currentParticipant="";
+let currentChoices=[],adminRoomCode="TADIFA-ADULTS";
+let spinning=false,wheelRotation=0,realtimeChannel=null;
 
-  function toast(message) {
-    const el = $("toast"); el.textContent = message; el.classList.add("show");
-    clearTimeout(toast.timer); toast.timer = setTimeout(() => el.classList.remove("show"), 3000);
-  }
-  function showView(view) {
-    ["homeView","participantView","adminView"].forEach(id => $(id).classList.toggle("hidden", id !== view));
-    window.scrollTo({top:0,behavior:"smooth"});
-  }
-  function safeText(value) {
-    return String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
-  }
-  async function ensureSession() {
-    const {data:{session}, error} = await db.auth.getSession();
-    if (error) throw error;
-    if (session) return session;
-    const {data, error:signError} = await db.auth.signInAnonymously();
-    if (signError) throw signError;
-    return data.session;
-  }
-  async function getRoomByCode(code) {
-    const {data,error} = await db.from("rooms").select("*").eq("room_code",code).maybeSingle();
-    if (error) throw error;
-    return data;
-  }
-  function unsubscribeParticipant() {
-    if (participantRealtime) { db.removeChannel(participantRealtime); participantRealtime = null; }
-  }
-  function subscribeParticipant(roomId) {
-    unsubscribeParticipant();
-    participantRealtime = db.channel("participant-room-" + roomId)
-      .on("postgres_changes",{event:"*",schema:"public",table:"choices",filter:"room_id=eq."+roomId},() => {
-        if (!isSpinning) loadParticipantChoices();
-      }).subscribe();
-  }
-  async function enterSection(section) {
-    currentSection = section;
-    participantName = "";
-    currentRoom = null;
-    $("participantTitle").textContent = section === "adults" ? "Adults Wheel" : "Kids Wheel";
-    $("participantEyebrow").textContent = "Tadifa Clan • " + (section === "adults" ? "Adults" : "Kids");
-    $("participantName").value = "";
-    $("nameStep").classList.remove("hidden");
-    $("wheelStep").classList.add("hidden");
-    $("resultBox").classList.add("hidden");
-    $("participantMessage").textContent = "";
-    showView("participantView");
-  }
-  async function continueToWheel() {
-    const name = $("participantName").value.trim();
-    if (!name) { toast("Please enter your name first."); $("participantName").focus(); return; }
-    participantName = name;
-    $("continueBtn").disabled = true;
-    $("participantMessage").textContent = "Loading the wheel…";
-    try {
-      await ensureSession();
-      const roomInfo = ROOM_CODES[currentSection];
-      currentRoom = await getRoomByCode(roomInfo.code);
-      if (!currentRoom) {
-        $("participantMessage").textContent = "This wheel has not been prepared yet. Please contact the event organizer.";
-        return;
-      }
-      $("nameGreeting").textContent = safeText(participantName);
-      $("nameStep").classList.add("hidden");
-      $("wheelStep").classList.remove("hidden");
-      await loadParticipantChoices();
-      subscribeParticipant(currentRoom.id);
-    } catch (error) {
-      $("participantMessage").textContent = error.message || "Unable to load the wheel. Please try again.";
-    } finally {
-      $("continueBtn").disabled = false;
-    }
-  }
-  async function loadParticipantChoices() {
-    if (!currentRoom) return;
-    const {data,error} = await db.from("choices").select("id,label,is_taken").eq("room_id",currentRoom.id).eq("is_taken",false).order("label");
-    if (error) throw error;
-    availableChoices = data || [];
-    $("availableCount").textContent = availableChoices.length;
-    drawWheel(availableChoices.map(c => c.label));
-    const empty = availableChoices.length === 0;
-    $("spinBtn").disabled = empty || isSpinning;
-    $("wheelNotice").textContent = empty ? "There are no available names left in this section." : "Your result is reserved for you and removed from the shared wheel.";
-  }
-  const wheelColors = ["#244b37","#8a4a4d","#b18d4e","#1c3b2c","#6d3740","#c3a66a","#31553e","#75434a"];
-  function drawWheel(labels) {
-    const canvas = $("wheel"), ctx = canvas.getContext("2d"), size = canvas.width, center = size/2;
-    ctx.clearRect(0,0,size,size);
-    if (!labels.length) {
-      ctx.beginPath();ctx.arc(center,center,center-5,0,Math.PI*2);ctx.fillStyle="#1b392b";ctx.fill();
-      ctx.fillStyle="#e9d9b2";ctx.font="24px Georgia";ctx.textAlign="center";ctx.fillText("Names coming soon",center,center);return;
-    }
-    const arc = Math.PI*2/labels.length;
-    labels.forEach((label,i) => {
-      const start = -Math.PI/2 + i*arc, end = start+arc;
-      ctx.beginPath();ctx.moveTo(center,center);ctx.arc(center,center,center-5,start,end);ctx.closePath();
-      ctx.fillStyle = wheelColors[i%wheelColors.length];ctx.fill();
-      ctx.strokeStyle="rgba(240,223,180,.8)";ctx.lineWidth=3;ctx.stroke();
-      ctx.save();ctx.translate(center,center);ctx.rotate(start+arc/2);
-      ctx.textAlign="right";ctx.fillStyle="#fff5df";
-      const maxChars = labels.length > 18 ? 12 : labels.length > 10 ? 17 : 24;
-      let text = label.length > maxChars ? label.slice(0,maxChars-1)+"…" : label;
-      let fontSize = Math.max(12,Math.min(21,250/Math.max(10,labels.length)));
-      ctx.font = "bold "+fontSize+"px Arial";
-      ctx.fillText(text,center-32,7);ctx.restore();
-    });
-    ctx.beginPath();ctx.arc(center,center,center-5,0,Math.PI*2);ctx.strokeStyle="#e6d2a0";ctx.lineWidth=8;ctx.stroke();
-  }
-  async function spinWheel() {
-    if (isSpinning || !currentRoom) return;
-    if (!participantName) { toast("Please enter your name first."); return; }
-    if (!availableChoices.length) { toast("No names are available."); return; }
-    isSpinning = true;
-    $("spinBtn").disabled = true;
-    $("resultBox").classList.add("hidden");
-    const snapshot = [...availableChoices];
-    $("wheelNotice").textContent = "The wheel is spinning…";
-    try {
-      await ensureSession();
-      const {data,error} = await db.rpc("claim_random_choice",{
-        p_room_code: ROOM_CODES[currentSection].code,
-        p_participant_name: participantName
-      });
-      if (error) throw error;
-      const label = data && data.label;
-      if (!label) throw new Error("The server did not return a selected name. Please try again.");
-      const index = snapshot.findIndex(item => item.label === label);
-      const actualIndex = index >= 0 ? index : 0;
-      const degreesPerSlice = 360/snapshot.length;
-      const finalRotation = 360*6 - (actualIndex + .5)*degreesPerSlice;
-      $("wheel").style.transform = "rotate(0deg)";
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        $("wheel").style.transform = "rotate("+finalRotation+"deg)";
-      }));
-      setTimeout(async () => {
-        $("resultName").textContent = label;
-        $("resultBox").classList.remove("hidden");
-        $("wheelNotice").textContent = "Your name has been recorded. Keep your result a secret!";
-        isSpinning = false;
-        try { await loadParticipantChoices(); } catch(e) { console.error(e); }
-      }, 5100);
-    } catch (error) {
-      isSpinning = false;
-      $("spinBtn").disabled = false;
-      $("wheelNotice").textContent = error.message || "Something went wrong. Please try again.";
-      toast(error.message || "Unable to spin. Please try again.");
-    }
-  }
+const $=id=>document.getElementById(id);
+function toast(message){
+ const el=$("toast");el.textContent=message;el.classList.add("show");
+ setTimeout(()=>el.classList.remove("show"),3000);
+}
+function notice(id,message,type="error"){
+ const el=$(id);el.textContent=message;el.className="notice "+type;
+}
+function clearNotice(id){$(id).textContent="";$(id).className="notice"}
+function errorText(error){
+ const m=error?.message||"Something went wrong. Please try again.";
+ if(m.toLowerCase().includes("already used"))return "This name has already used its one draw in this group.";
+ if(m.toLowerCase().includes("no eligible names"))return "No eligible names remain. Your own name cannot be selected.";
+ if(m.toLowerCase().includes("invalid login"))return "Incorrect email or password.";
+ return m.replace(/^Error:\s*/i,"");
+}
+function showPanel(id){
+ ["registerPanel","wheelPanel","adminPanel"].forEach(x=>$(x).style.display=x===id?"block":"none");
+ $("selection").style.display="none";$("hero").style.display="none";$("dashboard").style.display="none";
+ $(id).scrollIntoView({behavior:"smooth",block:"start"});
+}
+function showHome(){
+ ["registerPanel","wheelPanel","adminPanel"].forEach(x=>$(x).style.display="none");
+ $("dashboard").style.display="none";$("hero").style.display="grid";$("selection").style.display="block";
+ clearNotice("registerNotice");clearNotice("wheelNotice");clearNotice("adminNotice");
+ $("hero").scrollIntoView({behavior:"smooth"});
+}
+async function ensureAnonymousSession(){
+ const {data:{session}}=await db.auth.getSession();
+ if(session)return;
+ const {error}=await db.auth.signInAnonymously();
+ if(error)throw error;
+}
+async function getRoom(code){
+ const {data,error}=await db.from("rooms").select("id,room_code,name").eq("room_code",code).maybeSingle();
+ if(error)throw error;
+ if(!data)throw new Error("This group has not been prepared by the administrator yet.");
+ return data;
+}
 
-  async function requireAdmin() {
-    const {data:{user},error:userError} = await db.auth.getUser();
-    if (userError || !user) return false;
-    if ((user.email || "").toLowerCase() !== ADMIN_EMAIL.toLowerCase()) return false;
-    const {data,error} = await db.rpc("is_current_user_admin");
-    if (error) throw error;
-    return data === true;
-  }
-  async function getOrCreateRoom(section) {
-    const config = ROOM_CODES[section];
-    let room = await getRoomByCode(config.code);
-    if (room) return room;
-    const {data:{user}} = await db.auth.getUser();
-    const {data,error} = await db.from("rooms").insert({
-      room_code:config.code,name:config.name,created_by:user.id
-    }).select("*").single();
-    if (error) throw error;
-    return data;
-  }
-  async function openAdminDashboard() {
-    try {
-      const ok = await requireAdmin();
-      if (!ok) throw new Error("Please sign in with the registered administrator account.");
-      adminRooms.adults = await getOrCreateRoom("adults");
-      adminRooms.kids = await getOrCreateRoom("kids");
-      showView("adminView");
-      await refreshDashboard();
-      if (adminRealtime) db.removeChannel(adminRealtime);
-      adminRealtime = db.channel("admin-live-updates")
-        .on("postgres_changes",{event:"*",schema:"public",table:"choices"},() => refreshDashboard())
-        .subscribe();
-    } catch(error) {
-      toast(error.message || "Could not open the dashboard.");
-      showView("homeView");
-    }
-  }
-  async function getAdminChoices(section) {
-    const room = adminRooms[section];
-    const {data,error} = await db.from("choices").select("*").eq("room_id",room.id).order("label");
-    if (error) throw error;
-    return data || [];
-  }
-  async function refreshDashboard() {
-    if (!adminRooms.adults || !adminRooms.kids) return;
-    const [adults,kids] = await Promise.all([getAdminChoices("adults"),getAdminChoices("kids")]);
-    $("adultAvailable").textContent = adults.filter(x=>!x.is_taken).length;
-    $("kidsAvailable").textContent = kids.filter(x=>!x.is_taken).length;
-    renderChoiceList("adultList",adults,"adults");
-    renderChoiceList("kidsList",kids,"kids");
-    const {count,error} = await db.from("spins").select("*",{count:"exact",head:true});
-    if (!error) $("totalSpins").textContent = count || 0;
-  }
-  function renderChoiceList(targetId, choices, section) {
-    const target = $(targetId);
-    if (!choices.length) { target.innerHTML = '<div class="notice">No names added yet.</div>'; return; }
-    target.innerHTML = choices.map(choice => {
-      const status = choice.is_taken ? "Selected by " + safeText(choice.taken_by || "participant") : "Available";
-      const action = choice.is_taken
-        ? '<button class="small-btn" data-action="return" data-id="'+choice.id+'" data-section="'+section+'">Return</button>'
-        : '';
-      return '<div class="choice-row"><div class="choice-main">'+safeText(choice.label)+'<span class="choice-meta">'+status+'</span></div><div class="choice-actions">'+action+'<button class="small-btn danger" data-action="remove" data-id="'+choice.id+'" data-section="'+section+'">Remove</button></div></div>';
-    }).join("");
-  }
-  async function prepareBothWheels() {
-    const adultNames = $("adultNames").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
-    const kidNames = $("kidsNames").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
-    if (!adultNames.length && !kidNames.length) { toast("Enter at least one name in either list."); return; }
-    if (!confirm("This replaces all current names in both sections. Previous spin history will remain. Continue?")) return;
-    const btn = $("prepareBothBtn");btn.disabled=true;
-    try {
-      for (const [section,names] of [["adults",adultNames],["kids",kidNames]]) {
-        const room = adminRooms[section];
-        const {error:deleteError} = await db.from("choices").delete().eq("room_id",room.id);
-        if (deleteError) throw deleteError;
-        if (names.length) {
-          const unique = [...new Set(names)];
-          const rows = unique.map(label=>({room_id:room.id,label,is_taken:false,taken_by:null,taken_at:null}));
-          const {error:insertError} = await db.from("choices").insert(rows);
-          if (insertError) throw insertError;
-        }
-      }
-      $("adultNames").value="";$("kidsNames").value="";
-      await refreshDashboard();toast("Both wheels have been prepared.");
-    } catch(error) { toast(error.message || "Unable to prepare the wheels."); }
-    finally { btn.disabled=false; }
-  }
-  async function addName(section) {
-    const input = $(section==="adults"?"addAdultName":"addKidName");
-    const label = input.value.trim();if(!label){toast("Enter a name first.");return;}
-    try {
-      const {error} = await db.from("choices").insert({room_id:adminRooms[section].id,label,is_taken:false});
-      if(error) throw error;input.value="";await refreshDashboard();toast("Name added.");
-    } catch(error) { toast(error.message || "Unable to add the name."); }
-  }
-  async function choiceAction(action,id,section) {
-    try {
-      let query = db.from("choices");
-      if(action==="remove") {
-        const {error} = await query.delete().eq("id",id);if(error) throw error;
-      } else {
-        const {error} = await query.update({is_taken:false,taken_by:null,taken_at:null}).eq("id",id);
-        if(error) throw error;
-      }
-      await refreshDashboard();toast(action==="remove"?"Name removed.":"Name returned to the wheel.");
-    } catch(error) { toast(error.message || "Unable to update this name."); }
-  }
-  async function returnAll(section) {
-    if(!confirm("Return every selected name in the "+(section==="adults"?"Adults":"Kids")+" wheel?")) return;
-    try {
-      const {error} = await db.from("choices").update({is_taken:false,taken_by:null,taken_at:null})
-        .eq("room_id",adminRooms[section].id).eq("is_taken",true);
-      if(error) throw error;await refreshDashboard();toast("Selected names have been returned.");
-    } catch(error) { toast(error.message || "Unable to return names."); }
-  }
-  async function loadHistory() {
-    const {data,error} = await db.from("spins").select("participant_name,choice_label,created_at,room_id").order("created_at",{ascending:false}).limit(100);
-    if(error) throw error;
-    const roomNames = {};
-    Object.entries(adminRooms).forEach(([key,room])=>roomNames[room.id]=key==="adults"?"Adults":"Kids");
-    $("historyList").innerHTML = data && data.length ? data.map(row => {
-      const date = new Date(row.created_at).toLocaleString();
-      return '<div class="history-row"><span>'+safeText(row.participant_name)+' → '+safeText(row.choice_label)+'</span><span>'+safeText(roomNames[row.room_id]||"Gift exchange")+'</span><span>'+safeText(date)+'</span></div>';
-    }).join("") : '<div class="notice">No spins have been recorded yet.</div>';
-  }
-  async function showAdminTab(tab) {
-    $("manageTab").classList.toggle("hidden",tab!=="manage");
-    $("historyTab").classList.toggle("hidden",tab!=="history");
-    document.querySelectorAll("[data-admin-tab]").forEach(b=>b.classList.toggle("active",b.dataset.adminTab===tab));
-    if(tab==="history") { try { await loadHistory(); } catch(e) { toast(e.message); } }
-  }
+/* GROUP SELECTION */
+async function openGroup(group){
+ currentRoomCode=ROOM_CODES[group];currentParticipant="";
+ $("registerTitle").textContent=group==="adults"?"Welcome, Adults":"Welcome, Kids";
+ $("participantInput").value="";clearNotice("registerNotice");showPanel("registerPanel");
+ $("participantInput").focus();
+}
+$("adultCard").onclick=()=>openGroup("adults");
+$("kidsCard").onclick=()=>openGroup("kids");
+["adultCard","kidsCard"].forEach(id=>$(id).addEventListener("keydown",e=>{
+ if(e.key==="Enter"||e.key===" ")$(id).click();
+}));
+$("backHome").onclick=showHome;
+$("wheelBack").onclick=showHome;
+$("adminBack").onclick=showHome;
 
-  $("developerBtn").addEventListener("click",async()=>{
-    $("loginModal").classList.remove("hidden");$("loginMessage").textContent="";
-    $("adminEmail").value=ADMIN_EMAIL;$("adminPin").value="";
-    try {
-      const {data:{session}} = await db.auth.getSession();
-      if(session && await requireAdmin()) { $("loginModal").classList.add("hidden"); await openAdminDashboard(); }
-    } catch(e) { /* show login form */ }
+/* NAME LOGIN */
+$("registerForm").addEventListener("submit",async e=>{
+ e.preventDefault();clearNotice("registerNotice");
+ const name=$("participantInput").value.trim();
+ if(!name)return notice("registerNotice","Please enter your name.");
+ const btn=$("continueBtn");btn.disabled=true;btn.textContent="CHECKING YOUR NAME...";
+ try{
+  await ensureAnonymousSession();
+  const room=await getRoom(currentRoomCode);
+  currentRoomId=room.id;
+  currentParticipant=name;
+
+  // Check previous draws case-insensitively before showing the wheel.
+  // The secure RPC checks again when the actual draw is requested.
+  const {data:already,error:checkError}=await db.rpc("has_name_already_spun",{
+   p_room_code:currentRoomCode,
+   p_participant_name:name
   });
-  $("cancelLogin").addEventListener("click",()=>$("loginModal").classList.add("hidden"));
-  $("loginModal").addEventListener("click",e=>{if(e.target===$("loginModal"))$("loginModal").classList.add("hidden");});
-  $("loginForm").addEventListener("submit",async e=>{
-    e.preventDefault();
-    const email=$("adminEmail").value.trim().toLowerCase(),password=$("adminPin").value;
-    if(email!==ADMIN_EMAIL.toLowerCase()){ $("loginMessage").textContent="This Gmail is not the registered administrator account.";return; }
-    const btn=$("loginSubmit");btn.disabled=true;$("loginMessage").textContent="Checking your login…";
-    try {
-      const {error} = await db.auth.signInWithPassword({email,password});
-      if(error) throw error;
-      const ok=await requireAdmin();
-      if(!ok) { await db.auth.signOut();throw new Error("This account is not listed as an administrator in the database."); }
-      $("loginModal").classList.add("hidden");$("adminPin").value="";
-      await openAdminDashboard();
-    } catch(error) { $("loginMessage").textContent=error.message||"Login failed. Check your Gmail and PIN."; }
-    finally { btn.disabled=false; }
+  if(!checkError && already===true){
+   throw new Error("This name has already used its one draw in this group.");
+  }
+
+  $("visibleParticipantName").textContent=name;
+  $("wheelGroupTitle").textContent=currentRoomCode===ROOM_CODES.adults?"The Adults Christmas Draw":"The Kids Christmas Draw";
+  $("resultBox").style.display="none";
+  $("spinBtn").textContent="SPIN THE WHEEL ✦";
+  await refreshParticipantChoices();
+  subscribeToRoom();
+  showPanel("wheelPanel");
+ }catch(err){
+  notice("registerNotice",errorText(err));
+ }finally{
+  btn.disabled=false;btn.textContent="CONTINUE TO THE WHEEL ✦";
+ }
+});
+
+/* LIVE AVAILABLE RECIPIENTS */
+async function refreshParticipantChoices(){
+ const {data,error}=await db.from("choices")
+  .select("id,label,is_taken")
+  .eq("room_id",currentRoomId)
+  .eq("is_taken",false)
+  .order("label");
+ if(error)throw error;
+
+ // Exclude the participant's own name, ignoring letter case and outer spaces.
+ const own=currentParticipant.trim().toLocaleLowerCase();
+ currentChoices=(data||[]).filter(item=>
+  item.label.trim().toLocaleLowerCase()!==own
+ );
+ $("remainingCount").textContent=currentChoices.length;
+ $("wheelStatus").textContent=currentChoices.length
+  ?currentChoices.length+" eligible gift names are ready"
+  :"No eligible gift names remain.";
+ drawWheel(currentChoices);
+ $("spinBtn").disabled=currentChoices.length===0||spinning;
+}
+function subscribeToRoom(){
+ if(realtimeChannel){db.removeChannel(realtimeChannel);realtimeChannel=null;}
+ realtimeChannel=db.channel("choices-"+currentRoomId)
+  .on("postgres_changes",{event:"*",schema:"public",table:"choices",filter:"room_id=eq."+currentRoomId},()=>{
+   if(!spinning)refreshParticipantChoices().catch(()=>{});
+  }).subscribe();
+}
+document.addEventListener("visibilitychange",()=>{
+ if(!document.hidden&&currentRoomId&&!spinning)refreshParticipantChoices().catch(()=>{});
+});
+
+/* WHEEL RENDERING: EACH SLICE HAS A RECIPIENT NAME */
+function drawWheel(items){
+ const canvas=$("wheelCanvas"),ctx=canvas.getContext("2d");
+ const size=canvas.width,c=size/2,r=c-8;
+ ctx.clearRect(0,0,size,size);
+ if(!items.length){
+  ctx.beginPath();ctx.arc(c,c,r,0,Math.PI*2);ctx.fillStyle="#244d36";ctx.fill();
+  ctx.fillStyle="#f5e4ba";ctx.font="bold 30px sans-serif";ctx.textAlign="center";
+  ctx.fillText("NO ELIGIBLE NAMES",c,c);return;
+ }
+ const colors=["#24543e","#9e3545","#d5b36b","#315d43","#a63c4b","#e5c477","#1e4934","#b54b56","#d8c18b","#356747"];
+ const slice=2*Math.PI/items.length;
+ items.forEach((item,i)=>{
+  const start=-Math.PI/2+i*slice,end=start+slice,mid=start+slice/2;
+  ctx.beginPath();ctx.moveTo(c,c);ctx.arc(c,c,r,start,end);ctx.closePath();
+  ctx.fillStyle=colors[i%colors.length];ctx.fill();
+  ctx.strokeStyle="#f8e8b9";ctx.lineWidth=4;ctx.stroke();
+
+  // Label sits inside its own segment.
+  ctx.save();ctx.translate(c,c);ctx.rotate(mid);ctx.translate(r*.66,0);ctx.rotate(Math.PI/2);
+  let font=items.length>22?17:items.length>15?20:items.length>10?24:29;
+  if(item.label.length>12)font-=4;
+  if(item.label.length>18)font-=5;
+  ctx.font=`700 ${Math.max(12,font)}px "DM Sans",sans-serif`;
+  ctx.textAlign="center";ctx.textBaseline="middle";
+  let label=item.label;
+  const maxWidth=r*.45;
+  while(ctx.measureText(label).width>maxWidth&&label.length>5)label=label.slice(0,-2)+"…";
+  ctx.shadowColor="#071b16";ctx.shadowBlur=5;ctx.fillStyle="#fff9e8";
+  ctx.fillText(label,0,0,maxWidth+8);
+  ctx.restore();
+ });
+ ctx.beginPath();ctx.arc(c,c,r*.18,0,Math.PI*2);ctx.fillStyle="#f3dfac";ctx.fill();
+ ctx.strokeStyle="#fff5d9";ctx.lineWidth=8;ctx.stroke();
+ ctx.beginPath();ctx.arc(c,c,r*.94,0,Math.PI*2);ctx.strokeStyle="#f5e2ac";ctx.lineWidth=7;ctx.stroke();
+}
+
+/* SPIN: SERVER RPC SELECTS THE RESULT */
+$("spinBtn").addEventListener("click",async()=>{
+ if(spinning||!currentParticipant||!currentRoomCode)return;
+ if(!currentChoices.length)return notice("wheelNotice","No eligible gift names remain.");
+ spinning=true;$("spinBtn").disabled=true;$("spinBtn").textContent="THE MAGIC IS HAPPENING...";
+ clearNotice("wheelNotice");
+
+ try{
+  const {data,error}=await db.rpc("claim_random_choice",{
+   p_room_code:currentRoomCode,
+   p_participant_name:currentParticipant
   });
-  document.querySelectorAll("[data-section]").forEach(btn=>btn.addEventListener("click",()=>enterSection(btn.dataset.section)));
-  $("backHome").addEventListener("click",()=>{unsubscribeParticipant();showView("homeView");});
-  $("continueBtn").addEventListener("click",continueToWheel);
-  $("participantName").addEventListener("keydown",e=>{if(e.key==="Enter")continueToWheel();});
-  $("spinBtn").addEventListener("click",spinWheel);
-  $("homeAfterResult").addEventListener("click",()=>{unsubscribeParticipant();showView("homeView");});
-  $("prepareBothBtn").addEventListener("click",prepareBothWheels);
-  $("addAdultBtn").addEventListener("click",()=>addName("adults"));
-  $("addKidBtn").addEventListener("click",()=>addName("kids"));
-  $("addAdultName").addEventListener("keydown",e=>{if(e.key==="Enter")addName("adults");});
-  $("addKidName").addEventListener("keydown",e=>{if(e.key==="Enter")addName("kids");});
-  $("adultList").addEventListener("click",e=>{const b=e.target.closest("button[data-action]");if(b)choiceAction(b.dataset.action,b.dataset.id,b.dataset.section);});
-  $("kidsList").addEventListener("click",e=>{const b=e.target.closest("button[data-action]");if(b)choiceAction(b.dataset.action,b.dataset.id,b.dataset.section);});
-  $("returnAdultAll").addEventListener("click",()=>returnAll("adults"));
-  $("returnKidsAll").addEventListener("click",()=>returnAll("kids"));
-  $("adminLogout").addEventListener("click",async()=>{
-    if(adminRealtime){db.removeChannel(adminRealtime);adminRealtime=null;}
-    await db.auth.signOut();adminRooms={};showView("homeView");toast("You have signed out.");
+  if(error)throw error;
+  const selectedLabel=data?.label;
+  if(!selectedLabel)throw new Error("The draw did not return a recipient name.");
+
+  const index=currentChoices.findIndex(x=>
+   x.label.trim().toLocaleLowerCase()===selectedLabel.trim().toLocaleLowerCase()
+  );
+  if(index<0)throw new Error("The selected name could not be matched to the wheel.");
+
+  // Wheel starts at the top. Rotate the chosen slice's center to the top pointer.
+  const slice=360/currentChoices.length;
+  const target=(360-(index+.5)*slice)%360;
+  const current=((wheelRotation%360)+360)%360;
+  const delta=(target-current+360)%360;
+  const final=wheelRotation+360*7+delta;
+
+  $("wheel").style.transform=`rotate(${final}deg)`;
+  wheelRotation=final;
+
+  setTimeout(async()=>{
+   $("resultName").textContent=selectedLabel;
+   $("resultBox").style.display="block";
+   $("spinBtn").textContent="DRAW COMPLETED";
+   $("wheelStatus").textContent="The pointer has selected your recipient!";
+   $("resultBox").scrollIntoView({behavior:"smooth",block:"center"});
+   spinning=false;
+   await refreshParticipantChoices().catch(()=>{});
+   toast("Your Christmas draw is complete!");
+  },6200);
+ }catch(err){
+  spinning=false;$("spinBtn").disabled=false;$("spinBtn").textContent="SPIN THE WHEEL ✦";
+  notice("wheelNotice",errorText(err));
+  await refreshParticipantChoices().catch(()=>{});
+ }
+});
+
+$("finishBtn").onclick=()=>{
+ if(realtimeChannel){db.removeChannel(realtimeChannel);realtimeChannel=null;}
+ currentParticipant="";currentRoomId="";currentRoomCode="";currentChoices=[];wheelRotation=0;
+ $("wheel").style.transform="rotate(0deg)";$("participantInput").value="";
+ $("resultBox").style.display="none";showHome();
+};
+
+/* ADMIN LOGIN */
+$("adminOpen").onclick=()=>showPanel("adminPanel");
+$("adminForm").addEventListener("submit",async e=>{
+ e.preventDefault();clearNotice("adminNotice");
+ const btn=$("adminLoginBtn");btn.disabled=true;btn.textContent="SIGNING IN...";
+ try{
+  const {data,error}=await db.auth.signInWithPassword({
+   email:$("adminEmail").value.trim(),
+   password:$("adminPassword").value
   });
-  document.querySelectorAll("[data-admin-tab]").forEach(btn=>btn.addEventListener("click",()=>showAdminTab(btn.dataset.adminTab)));
-})();
+  if(error)throw error;
+  const {data:isAdmin,error:adminError}=await db.rpc("is_current_user_admin");
+  if(adminError)throw adminError;
+  if(!isAdmin){await db.auth.signOut();throw new Error("This account is not listed as an administrator.");}
+  await prepareRooms();await loadDashboard();
+  $("adminPanel").style.display="none";$("dashboard").style.display="block";
+  $("hero").style.display="none";$("selection").style.display="none";
+  $("dashboard").scrollIntoView({behavior:"smooth"});
+ }catch(err){notice("adminNotice",errorText(err));}
+ finally{btn.disabled=false;btn.textContent="SIGN IN TO DASHBOARD";}
+});
+async function prepareRooms(){
+ const {data:userData}=await db.auth.getUser(),userId=userData?.user?.id;
+ if(!userId)throw new Error("Administrator session not found.");
+ for(const [code,name] of [["TADIFA-ADULTS","Adults"],["TADIFA-KIDS","Kids"]]){
+  const {data,error}=await db.from("rooms").select("id").eq("room_code",code).maybeSingle();
+  if(error)throw error;
+  if(!data){
+   const {error:insertError}=await db.from("rooms").insert({room_code:code,name,created_by:userId});
+   if(insertError)throw insertError;
+  }
+ }
+}
+$("adminLogout").onclick=async()=>{await db.auth.signOut();showHome();};
+
+/* ADMIN DASHBOARD */
+async function getAdminRoom(code){
+ const {data,error}=await db.from("rooms").select("id,room_code,name").eq("room_code",code).single();
+ if(error)throw error;return data;
+}
+async function loadDashboard(){
+ await loadDashboardStatsOnly();await loadAdminChoices();await loadHistory();
+}
+async function loadDashboardStatsOnly(){
+ const ar=await getAdminRoom(ROOM_CODES.adults),kr=await getAdminRoom(ROOM_CODES.kids);
+ const {count:a,error:ae}=await db.from("choices").select("*",{count:"exact",head:true}).eq("room_id",ar.id);
+ const {count:k,error:ke}=await db.from("choices").select("*",{count:"exact",head:true}).eq("room_id",kr.id);
+ const {count:d,error:de}=await db.from("spins").select("*",{count:"exact",head:true});
+ if(ae)throw ae;if(ke)throw ke;if(de)throw de;
+ $("adultStat").textContent=a??0;$("kidsStat").textContent=k??0;$("drawStat").textContent=d??0;
+}
+document.querySelectorAll(".tab").forEach(tab=>tab.onclick=()=>{
+ document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+ tab.classList.add("active");adminRoomCode=tab.dataset.room;
+ loadAdminChoices().catch(e=>toast(errorText(e)));
+});
+async function loadAdminChoices(){
+ const room=await getAdminRoom(adminRoomCode);
+ const {data,error}=await db.from("choices").select("id,label,is_taken,taken_by").eq("room_id",room.id).order("label");
+ if(error)throw error;
+ const list=$("choiceList");list.innerHTML="";
+ if(!data.length){list.textContent="No names have been added to this group yet.";return;}
+ data.forEach(item=>{
+  const row=document.createElement("div");row.className="dash-item";
+  const label=document.createElement("span");
+  label.textContent=item.label+(item.is_taken?" — DRAWN":" — AVAILABLE");
+  const actions=document.createElement("div");actions.style.display="flex";actions.style.gap="6px";
+  if(item.is_taken){
+   const ret=document.createElement("button");ret.textContent="RETURN";
+   ret.onclick=()=>returnChoice(item.id);actions.appendChild(ret);
+  }
+  const del=document.createElement("button");del.textContent="REMOVE";
+  del.onclick=()=>deleteChoice(item.id);actions.appendChild(del);
+  row.append(label,actions);list.appendChild(row);
+ });
+}
+$("addChoice").onclick=async()=>{
+ const label=$("newChoice").value.trim();if(!label)return toast("Enter a name first.");
+ try{
+  const room=await getAdminRoom(adminRoomCode);
+  const {error}=await db.from("choices").insert({room_id:room.id,label,is_taken:false});
+  if(error)throw error;
+  $("newChoice").value="";await loadAdminChoices();await loadDashboardStatsOnly();toast("Name added.");
+ }catch(e){toast(errorText(e));}
+};
+async function deleteChoice(id){
+ if(!confirm("Remove this name from the wheel?"))return;
+ const {error}=await db.from("choices").delete().eq("id",id);
+ if(error)return toast(errorText(error));
+ await loadAdminChoices();await loadDashboardStatsOnly();toast("Name removed.");
+}
+async function returnChoice(id){
+ const {error}=await db.from("choices").update({is_taken:false,taken_by:null,taken_at:null}).eq("id",id);
+ if(error)return toast(errorText(error));
+ await loadAdminChoices();await loadDashboardStatsOnly();toast("Name returned to the wheel.");
+}
+$("returnAll").onclick=async()=>{
+ if(!confirm("Return every selected recipient name to this group's wheel?"))return;
+ try{
+  const room=await getAdminRoom(adminRoomCode);
+  const {error}=await db.from("choices").update({is_taken:false,taken_by:null,taken_at:null}).eq("room_id",room.id).eq("is_taken",true);
+  if(error)throw error;
+  await loadAdminChoices();await loadDashboardStatsOnly();toast("Selected names returned.");
+ }catch(e){toast(errorText(e));}
+};
+$("replaceBtn").onclick=async()=>{
+ const names=$("replaceList").value.split("\n").map(x=>x.trim()).filter(Boolean);
+ if(!names.length)return toast("Enter at least one name.");
+ if(!confirm("Replace this group's entire gift list?"))return;
+ try{
+  const room=await getAdminRoom(adminRoomCode);
+  const {error:de}=await db.from("choices").delete().eq("room_id",room.id);
+  if(de)throw de;
+  const {error:ie}=await db.from("choices").insert(names.map(label=>({room_id:room.id,label,is_taken:false})));
+  if(ie)throw ie;
+  $("replaceList").value="";await loadAdminChoices();await loadDashboardStatsOnly();toast("List replaced.");
+ }catch(e){toast(errorText(e));}
+};
+$("refreshAdmin").onclick=()=>loadAdminChoices().then(loadDashboardStatsOnly).then(()=>toast("List refreshed.")).catch(e=>toast(errorText(e)));
+
+/* DRAW HISTORY */
+async function loadHistory(){
+ const {data,error}=await db.from("spins").select("participant_name,choice_label,created_at,room_id").order("created_at",{ascending:false}).limit(100);
+ if(error)throw error;
+ const {data:rooms,error:re}=await db.from("rooms").select("id,room_code");
+ if(re)throw re;
+ const map=Object.fromEntries((rooms||[]).map(x=>[x.id,x.room_code]));
+ const list=$("historyList");list.innerHTML="";
+ if(!data?.length){list.textContent="No draws have been made yet.";return;}
+ data.forEach(item=>{
+  const row=document.createElement("div");row.className="history-row";
+  const a=document.createElement("span"),b=document.createElement("span"),c=document.createElement("span");
+  a.textContent=item.participant_name;b.textContent="→ "+item.choice_label;
+  c.textContent=map[item.room_id]===ROOM_CODES.adults?"ADULTS":"KIDS";
+  row.append(a,b,c);list.appendChild(row);
+ });
+}
+$("loadHistory").onclick=()=>loadHistory().then(()=>toast("History refreshed.")).catch(e=>toast(errorText(e)));
+
+showHome();
 </script>
 </body>
 </html>
