@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0405)https://sdmntprindiasocentral.oaiusercontent.com/files/00000000-4fb0-8211-bb69-460822b36381/raw?se=2026-11-18T11%3A19%3A21Z&sp=r&sv=2026-06-06&sr=b&scid=d3cc9a75-3d29-4b78-8410-07e870e78483&skoid=54865dd2-31dc-44cc-a877-635aa4250446&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-11-18T04%3A18%3A29Z&ske=2026-11-19T04%3A18%3A29Z&sks=b&skv=2026-06-06&sig=WEKnQwxVEO5TU/mRpa4Br4IywG3FJas3hf7uMNouO14%3D -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#102b20">
 <title>Tadifa Clan | Christmas Grand Celebration</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700;800&family=Great+Vibes&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="./Tadifa Clan _ Christmas Grand Celebration_files/css2" rel="stylesheet">
+<script src="./Tadifa Clan _ Christmas Grand Celebration_files/supabase-js@2"></script>
 
 <style>
 :root{
@@ -256,530 +256,6 @@ header{
  .name-plaque:before{left:9px}
  .name-plaque:after{right:9px}
  .dash-grid{grid-template-columns:1fr}
-}
-</style>
-</head>
-  :"No eligible recipient names remain";
- drawWheel(currentChoices);
- $("spinBtn").disabled=currentChoices.length===0;
-}
-function subscribeToRoom(){
- if(realtimeChannel)db.removeChannel(realtimeChannel);
- realtimeChannel=db.channel("room-"+currentRoomId)
-  .on("postgres_changes",{event:"*",schema:"public",table:"choices",filter:"room_id=eq."+currentRoomId},async()=>{
-   if($("wheelPanel").style.display==="block"&&!spinning){
-    try{await refreshParticipantChoices()}catch(e){notice("wheelNotice",errorText(e))}
-   }
-  }).subscribe();
-}
-
-/* DRAW THE WHEEL */
-function drawWheel(items){
- const canvas=$("wheelCanvas"),ctx=canvas.getContext("2d");
- const size=canvas.width,c=size/2,r=size/2-12;
- ctx.clearRect(0,0,size,size);
- if(!items.length){
-  ctx.beginPath();ctx.arc(c,c,r,0,Math.PI*2);ctx.fillStyle="#315f43";ctx.fill();
-  ctx.fillStyle="#f5e5b9";ctx.textAlign="center";ctx.font="bold 35px Georgia";
-  ctx.fillText("NO NAMES",c,c);return;
- }
- const colors=["#214d37","#9d3445","#b58a42","#386a4b","#783b43","#d0b675","#28543d","#a85c4e"];
- const angle=(Math.PI*2)/items.length;
- items.forEach((item,i)=>{
-  const start=-Math.PI/2+i*angle,end=start+angle;
-  ctx.beginPath();ctx.moveTo(c,c);ctx.arc(c,c,r,start,end);ctx.closePath();
-  ctx.fillStyle=colors[i%colors.length];ctx.fill();
-  ctx.strokeStyle="#f2dba5";ctx.lineWidth=5;ctx.stroke();
-  ctx.save();ctx.translate(c,c);ctx.rotate(start+angle/2);
-  ctx.textAlign="right";ctx.textBaseline="middle";
-  ctx.fillStyle="#fff6df";
-  let fontSize=items.length>18?22:items.length>10?27:34;
-  ctx.font="600 "+fontSize+"px Georgia";
-  let label=item.label;
-  const maxWidth=r*.72;
-  while(ctx.measureText(label).width>maxWidth&&fontSize>16){
-   fontSize-=2;ctx.font="600 "+fontSize+"px Georgia";
-  }
-  if(ctx.measureText(label).width>maxWidth){
-   while(ctx.measureText(label+"…").width>maxWidth&&label.length>3)label=label.slice(0,-1);
-   label+="…";
-  }
-  ctx.fillText(label,r-30,0);
-  ctx.restore();
- });
- ctx.beginPath();ctx.arc(c,c,r,0,Math.PI*2);ctx.strokeStyle="#e9d49b";ctx.lineWidth=12;ctx.stroke();
-}
-
-/* SPIN AND CLAIM */
-$("spinBtn").onclick=async()=>{
- if(spinning||!currentChoices.length)return;
- spinning=true;$("spinBtn").disabled=true;$("spinBtn").textContent="THE MAGIC IS HAPPENING...";
- clearNotice("wheelNotice");
- try{
-  await ensureAnonymousSession();
-  const {data,error}=await db.rpc("claim_random_choice",{
-   p_room_code:currentRoomCode,
-   p_participant_name:currentParticipant
-  });
-  if(error)throw error;
-  const selected=typeof data==="string"?JSON.parse(data):data;
-  const label=selected?.label||selected?.choice_label;
-  if(!label)throw new Error("The draw did not return a recipient name. Please refresh and try again.");
-
-  const index=currentChoices.findIndex(x=>x.label===label);
-  const count=currentChoices.length;
-  const chosenIndex=index>=0?index:0;
-  const slice=360/count;
-  const target=360-(chosenIndex*slice+slice/2);
-  const current=((wheelRotation%360)+360)%360;
-  const adjustment=((target-current)+360)%360;
-  wheelRotation+=360*6+adjustment;
-  $("wheel").style.transform="rotate("+wheelRotation+"deg)";
-
-  setTimeout(async()=>{
-   $("resultName").textContent=label;
-   $("resultBox").style.display="block";
-   $("spinBtn").style.display="none";
-   $("wheelStatus").textContent="Your Christmas recipient has been selected!";
-   spinning=false;
-   try{await refreshParticipantChoices()}catch(e){}
-   $("resultBox").scrollIntoView({behavior:"smooth",block:"center"});
-  },6200);
- }catch(err){
-  spinning=false;
-  $("spinBtn").disabled=false;
-  $("spinBtn").textContent="SPIN THE WHEEL ✦";
-  notice("wheelNotice",errorText(err));
- }
-};
-$("finishBtn").onclick=()=>{
- if(realtimeChannel){db.removeChannel(realtimeChannel);realtimeChannel=null}
- currentParticipant="";currentChoices=[];currentRoomCode="";currentRoomId="";
- $("spinBtn").style.display="block";$("spinBtn").disabled=false;
- $("wheel").style.transition="none";$("wheel").style.transform="rotate(0deg)";
- wheelRotation=0;$("wheel").offsetHeight;$("wheel").style.transition="";
- showHome();
-};
-
-/* ADMIN LOGIN */
-$("adminOpen").onclick=()=>showPanel("adminPanel");
-$("adminForm").addEventListener("submit",async e=>{
- e.preventDefault();clearNotice("adminNotice");
- const btn=$("adminLoginBtn");btn.disabled=true;btn.textContent="SIGNING IN...";
- try{
-  const {error}=await db.auth.signInWithPassword({
-   email:$("adminEmail").value.trim(),
-   password:$("adminPassword").value
-  });
-  if(error)throw error;
-  const {data:allowed,error:adminError}=await db.rpc("is_current_user_admin");
-  if(adminError)throw adminError;
-  if(allowed!==true)throw new Error("This account is not authorized as an administrator.");
-  $("adminPanel").style.display="none";$("dashboard").style.display="block";
-  $("hero").style.display="none";$("selection").style.display="none";
-  await loadDashboard();
-  $("dashboard").scrollIntoView({behavior:"smooth"});
- }catch(err){notice("adminNotice",errorText(err))}
- finally{btn.disabled=false;btn.textContent="SIGN IN TO DASHBOARD"}
-});
-$("adminLogout").onclick=async()=>{
- await db.auth.signOut();showHome();toast("You have signed out.");
-};
-
-/* ADMIN DASHBOARD */
-async function loadDashboard(){
- const [adult,kids,draws]=await Promise.all([
-  getRoom(ROOM_CODES.adults),getRoom(ROOM_CODES.kids),
-  db.from("spins").select("id",{count:"exact",head:true})
- ]);
- if(draws.error)throw draws.error;
- const [adultChoices,kidsChoices]=await Promise.all([
-  db.from("choices").select("id").eq("room_id",adult.id),
-  db.from("choices").select("id").eq("room_id",kids.id)
- ]);
- if(adultChoices.error)throw adultChoices.error;
- if(kidsChoices.error)throw kidsChoices.error;
- $("adultStat").textContent=adultChoices.data.length;
- $("kidsStat").textContent=kidsChoices.data.length;
- $("drawStat").textContent=draws.count||0;
- await loadChoices();
- await loadHistory();
-}
-document.querySelectorAll(".tab").forEach(tab=>{
- tab.onclick=async()=>{
-  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-  tab.classList.add("active");adminRoomCode=tab.dataset.room;
-  await loadChoices();
- };
-});
-async function loadChoices(){
- const room=await getRoom(adminRoomCode);
- const {data,error}=await db.from("choices")
-  .select("id,label,is_taken,taken_by")
-  .eq("room_id",room.id).order("label");
- if(error)throw error;
- $("choiceList").innerHTML="";
- (data||[]).forEach(item=>{
-  const div=document.createElement("div");div.className="dash-item";
-  const name=document.createElement("span");
-  name.textContent=item.label+(item.is_taken?" — SELECTED":" — AVAILABLE");
-  const del=document.createElement("button");del.textContent="REMOVE";
-  del.onclick=()=>removeChoice(item.id);
-  div.append(name,del);$("choiceList").appendChild(div);
- });
- if(!data?.length)$("choiceList").textContent="No names in this group yet.";
-}
-async function removeChoice(id){
- if(!confirm("Remove this recipient name?"))return;
- const {error}=await db.from("choices").delete().eq("id",id);
- if(error){toast(errorText(error));return}
- await loadChoices();toast("Recipient removed.");
-}
-$("addChoice").onclick=async()=>{
- const label=$("newChoice").value.trim();
- if(!label)return toast("Enter a name first.");
- try{
-  const room=await getRoom(adminRoomCode);
-  const {error}=await db.from("choices").insert({room_id:room.id,label,is_taken:false});
-  if(error)throw error;
-  $("newChoice").value="";await loadChoices();await loadDashboard();
-  toast("Name added successfully.");
- }catch(e){toast(errorText(e))}
-};
-$("refreshAdmin").onclick=async()=>{
- try{await loadDashboard();toast("Dashboard refreshed.")}catch(e){toast(errorText(e))}
-};
-$("returnAll").onclick=async()=>{
- if(!confirm("Return all selected recipient names in this group to the wheel?"))return;
- try{
-  const room=await getRoom(adminRoomCode);
-  const {error}=await db.from("choices").update({is_taken:false,taken_by:null,taken_at:null}).eq("room_id",room.id);
-  if(error)throw error;
-  await loadDashboard();toast("All recipient names have been returned.");
- }catch(e){toast(errorText(e))}
-};
-$("replaceBtn").onclick=async()=>{
- const names=$("replaceList").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
- if(!names.length)return toast("Enter at least one name.");
- if(!confirm("Replace the entire recipient list for this group?"))return;
- try{
-  const room=await getRoom(adminRoomCode);
-  const {error:deleteError}=await db.from("choices").delete().eq("room_id",room.id);
-  if(deleteError)throw deleteError;
-  const {error:insertError}=await db.from("choices").insert(names.map(label=>({room_id:room.id,label,is_taken:false})));
-  if(insertError)throw insertError;
-  $("replaceList").value="";await loadDashboard();toast("Recipient list replaced.");
- }catch(e){toast(errorText(e))}
-};
-$("loadHistory").onclick=loadHistory;
-async function loadHistory(){
- const {data,error}=await db.from("spins")
-  .select("participant_name,choice_label,created_at,rooms(room_code)")
-  .order("created_at",{ascending:false}).limit(100);
- if(error)throw error;
- const box=$("historyList");box.innerHTML="";
- (data||[]).forEach(row=>{
-  const div=document.createElement("div");div.className="history-row";
-  const person=document.createElement("span");person.textContent=row.participant_name;
-  const recipient=document.createElement("span");recipient.textContent="→ "+row.choice_label;
-  const date=document.createElement("span");date.textContent=new Date(row.created_at).toLocaleString();
-  div.append(person,recipient,date);box.appendChild(div);
- });
- if(!data?.length)box.textContent="No draw history yet.";
-}
-
-/* PARTICIPANT SPIN RESET */
-$("resetParticipantBtn").onclick=async()=>{
- const participant=$("resetParticipantName").value.trim();
- if(!participant)return toast("Enter a participant name first.");
- if(!confirm("Reset matching participant history in this group and allow another spin?"))return;
- const btn=$("resetParticipantBtn");
- btn.disabled=true;btn.textContent="RESETTING...";
- try{
-  const {data,error}=await db.rpc("admin_reset_participant",{
-   p_room_code:adminRoomCode,
-   p_participant_name:participant
-  });
-  if(error)throw error;
-  if(!data){toast("No matching participant history was found.");return}
-  $("resetParticipantName").value="";
-  await loadDashboard();
-  toast("Participant reset. They can spin again!");
- }catch(e){toast(errorText(e))}
- finally{btn.disabled=false;btn.textContent="ALLOW ANOTHER SPIN"}
-};
-
-/* START */
-showHome();
-</script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#102b20">
-<title>Tadifa Clan | Christmas Grand Celebration</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700;800&family=Great+Vibes&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<style>
-:root{
-  --forest:#102d22;
-  --forest2:#1b4934;
-  --green:#315f43;
-  --gold:#d6b56e;
-  --gold2:#f5e5b9;
-  --cream:#fffaf0;
-  --paper:#f5eddf;
-  --red:#9d3445;
-  --ink:#243b2c;
-  --muted:#8d8979;
-  --line:#d7c49a;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;color:var(--ink);font-family:'DM Sans',sans-serif;
-  background:
-    radial-gradient(ellipse at 10% 5%,#e7d5ac 0,transparent 35%),
-    radial-gradient(ellipse at 90% 40%,#e1e8d9 0,transparent 35%),
-    linear-gradient(135deg,#f8f0df,#fffaf1 55%,#eee4d1);
-  min-height:100vh;overflow-x:hidden;
-}
-button,input,textarea{font:inherit}
-button{cursor:pointer}
-button:disabled{opacity:.5;cursor:not-allowed}
-.texture{
-  position:fixed;inset:0;z-index:10;pointer-events:none;opacity:.10;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.2'/%3E%3C/svg%3E");
-}
-.frame{position:fixed;inset:12px;border:1px solid #b9975b55;pointer-events:none;z-index:9}
-.corner{position:fixed;width:65px;height:65px;border-color:#b38f53;z-index:9;pointer-events:none}
-.tl{top:18px;left:18px;border-top:2px solid;border-left:2px solid}
-.tr{top:18px;right:18px;border-top:2px solid;border-right:2px solid}
-.bl{bottom:18px;left:18px;border-bottom:2px solid;border-left:2px solid}
-.br{bottom:18px;right:18px;border-bottom:2px solid;border-right:2px solid}
-.wrap{width:min(1250px,calc(100% - 58px));margin:auto;position:relative}
-header{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:25px 0 20px;border-bottom:1px solid #bba16b66;position:relative;z-index:3;
-}
-.brand{display:flex;align-items:center;gap:13px}
-.seal{
-  width:51px;height:51px;border-radius:50%;display:grid;place-items:center;
-  color:var(--gold2);font:30px 'Cormorant Garamond',serif;
-  background:radial-gradient(circle at 35% 25%,#376c4b,#0b291f 70%);
-  border:1px solid var(--gold);box-shadow:0 0 0 4px #d5b36b24,0 8px 20px #183b2b2b;
-}
-.brand-title{font:700 17px 'Playfair Display',serif;letter-spacing:2px;color:var(--forest)}
-.brand-sub{margin-top:4px;font-size:8px;letter-spacing:3px;text-transform:uppercase;color:#9a7845}
-.header-right{display:flex;align-items:center;gap:14px}
-.season{padding:10px 15px;border:1px solid #b99b604e;border-radius:30px;background:#fffaf080;color:#927344;font-size:9px;letter-spacing:2px}
-.admin-link{border:0;background:transparent;color:#806b48;font-size:10px;letter-spacing:2px;padding:10px}
-.admin-link:hover{color:var(--red)}
-.garland{height:70px;position:absolute;top:0;left:0;width:100%;pointer-events:none;overflow:hidden}
-.garland svg{width:100%;height:70px}
-.hero{min-height:630px;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:10px;padding:50px 0 35px}
-.hero-copy{padding-left:25px;position:relative;z-index:2}
-.eyebrow{display:flex;align-items:center;gap:13px;color:#9a7742;font-size:10px;letter-spacing:4px;text-transform:uppercase;font-weight:700;margin-bottom:26px}
-.eyebrow:before{content:"";width:43px;height:1px;background:var(--gold)}
-.hero h1{font:500 clamp(58px,7.3vw,100px)/.88 'Playfair Display',serif;letter-spacing:-4px;color:var(--forest);margin:0}
-.script{display:block;font:400 clamp(65px,8vw,110px)/1.05 'Great Vibes',cursive;color:var(--red);letter-spacing:0;margin-top:10px}
-.hero-last{display:block;font-size:.69em;letter-spacing:1px;margin-top:5px}
-.hero-desc{max-width:445px;margin:28px 0;color:#797d6d;font-size:13px;line-height:2.1}
-.hero-meta{display:flex;align-items:center;gap:13px;color:#9a7b4a;font-size:9px;letter-spacing:2px;text-transform:uppercase}
-.hero-meta span:first-child,.hero-meta span:last-child{font-size:20px;color:#c69c51}
-.hero-visual{min-height:550px;position:relative;display:grid;place-items:center}
-.aura{position:absolute;width:490px;height:490px;border-radius:50%;background:radial-gradient(circle,#d5b7795c,#d5b77920 48%,transparent 70%)}
-.ring{position:absolute;width:460px;height:460px;border-radius:50%;border:1px solid #b9954c66;box-shadow:0 0 0 14px #d4b26a0b,0 0 0 28px #d4b26a09;animation:orbit 70s linear infinite}
-.ring:before,.ring:after{content:"✦";position:absolute;color:#b9934d;font-size:23px}
-.ring:before{top:22px;left:50%}.ring:after{bottom:22px;right:50%}
-@keyframes orbit{to{transform:rotate(360deg)}}
-.palace{
-  position:relative;width:370px;height:475px;border-radius:190px 190px 22px 22px;
-  background:radial-gradient(ellipse at 50% 30%,#356b4a,#19412f 48%,#0d2b22);
-  border:1px solid var(--gold);box-shadow:0 35px 85px #142f2440,inset 0 0 0 8px #d7b56d15;overflow:hidden;
-}
-.palace:before{content:"";position:absolute;inset:12px;border:1px solid #e5cb8a70;border-radius:180px 180px 14px 14px;z-index:4}
-.palace-title{position:absolute;top:32px;left:0;right:0;text-align:center;font:11px 'Cormorant Garamond',serif;letter-spacing:5px;color:#f2dba5;z-index:5}
-.palace-sub{position:absolute;top:53px;left:0;right:0;text-align:center;font:26px 'Great Vibes',cursive;color:#e7c77f;z-index:5}
-.tree{position:absolute;top:100px;left:50%;transform:translateX(-50%);width:270px;height:290px;z-index:2}
-.tree-tip{position:absolute;top:-18px;left:50%;transform:translateX(-50%);color:#f9d98b;font-size:37px;text-shadow:0 0 15px #f3d68b,0 0 35px #e8b954}
-.branch{position:absolute;left:50%;transform:translateX(-50%);width:0;height:0;border-left:var(--w) solid transparent;border-right:var(--w) solid transparent;border-bottom:var(--h) solid var(--c);filter:drop-shadow(0 7px 5px #071d16)}
-.ba{--w:58px;--h:96px;--c:#59845b;top:12px}
-.bb{--w:91px;--h:122px;--c:#376c48;top:65px}
-.bc{--w:121px;--h:143px;--c:#28553a;top:120px}
-.bd{--w:135px;--h:125px;--c:#1d4933;top:172px}
-.trunk{position:absolute;top:280px;left:50%;transform:translateX(-50%);width:32px;height:48px;background:#815b3d;border-radius:4px}
-.bauble{position:absolute;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#ffe9ba,#b98b43 60%,#78502a);box-shadow:2px 3px 4px #061b13}
-.bauble.red{background:radial-gradient(circle at 30% 25%,#ffd4c9,#c34d59 60%,#6e2335)}
-.bauble.cream{background:radial-gradient(circle at 30% 25%,#fff8df,#d8c49a 60%,#89734b)}
-.star-dot{position:absolute;width:9px;height:9px;border-radius:50%;background:#ffdfa0;box-shadow:0 0 14px 5px #e8bd69;animation:twinkle 1.8s ease-in-out infinite alternate}
-@keyframes twinkle{to{opacity:.4;transform:scale(.7)}}
-.ribbon{position:absolute;left:50%;top:75px;width:190px;height:160px;border-radius:50%;border:3px solid transparent;border-top-color:#d7b56d;border-bottom-color:#d7b56d;opacity:.8;transform:translateX(-50%) rotate(-15deg)}
-.presents{position:absolute;bottom:46px;left:0;right:0;height:90px;z-index:3}
-.gift{position:absolute;bottom:0;width:100px;height:72px;border-radius:4px;background:linear-gradient(135deg,#bd4d58,#802d3b);box-shadow:0 12px 19px #081d1666}
-.gift:before{content:"";position:absolute;left:43px;top:0;width:14px;height:100%;background:#e7c77e}
-.gift:after{content:"";position:absolute;left:0;top:26px;width:100%;height:12px;background:#e7c77e}
-.gift.one{left:48px;transform:rotate(-4deg)}
-.gift.two{width:85px;height:58px;right:40px;background:linear-gradient(135deg,#d7bd80,#98703d);transform:rotate(4deg)}
-.gift.two:before,.gift.two:after{background:#fff0c6}
-.gift.three{width:65px;height:48px;left:155px;background:linear-gradient(135deg,#78926b,#34543b)}
-.gift.three:before,.gift.three:after{background:#d7b56d}
-.palace-caption{position:absolute;bottom:18px;left:0;right:0;text-align:center;font:22px 'Great Vibes',cursive;color:#f0d9a4;z-index:5}
-.float-card{position:absolute;z-index:6;padding:13px 17px;background:#fffaf0;border:1px solid #c8a967;box-shadow:0 12px 30px #1c38251c;border-radius:3px;color:#244431;font:18px 'Cormorant Garamond',serif}
-.float-card small{display:block;font:8px 'DM Sans',sans-serif;letter-spacing:2px;text-transform:uppercase;color:#a17e48;margin-bottom:4px}
-.float-left{left:-15px;top:115px;transform:rotate(-7deg)}
-.float-right{right:-10px;bottom:92px;transform:rotate(6deg)}
-.divider{display:flex;align-items:center;justify-content:center;gap:18px;margin:25px 0 42px;color:#b28e4c}
-.divider:before,.divider:after{content:"";height:1px;width:150px;background:linear-gradient(90deg,transparent,#b28e4c99)}
-.divider span{font:28px 'Great Vibes',cursive}
-.selection{text-align:center;padding:0 0 50px}
-.overline{color:#a0814b;font-size:9px;font-weight:700;letter-spacing:4px;text-transform:uppercase}
-.selection h2{font:500 clamp(33px,4.4vw,48px) 'Playfair Display',serif;color:var(--forest);margin:12px 0 8px}
-.selection>p{font-size:12px;color:#8b8877;margin:0 0 32px}
-.cards{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:920px;margin:auto}
-.group-card{position:relative;min-height:280px;text-align:left;overflow:hidden;padding:29px 30px;border-radius:5px;cursor:pointer;background:linear-gradient(145deg,#fffdf5,#f8efd9);border:1px solid #c9aa6c;box-shadow:0 12px 35px #1e3c2812;transition:.35s}
-.group-card:hover{transform:translateY(-9px);box-shadow:0 24px 48px #1e3c2826}
-.group-card:before{content:"";position:absolute;inset:8px;border:1px solid #c8aa6b65;pointer-events:none}
-.group-card:after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;right:-100px;bottom:-130px;background:#d7b56d18}
-.group-top{display:flex;align-items:center;justify-content:space-between}
-.group-symbol{width:59px;height:59px;border-radius:50%;display:grid;place-items:center;font-size:28px;background:#e8eee1;border:1px solid #c6d4ba}
-.kids .group-symbol{background:#f5e4df;border-color:#e5b9b0}
-.group-arrow{width:36px;height:36px;border:1px solid #b99b60;border-radius:50%;display:grid;place-items:center;color:#987747;font-size:17px;transition:.3s}
-.group-card:hover .group-arrow{background:var(--forest);color:#f5dfac;transform:rotate(-45deg)}
-.group-card h3{font:500 36px 'Playfair Display',serif;color:var(--forest);margin:22px 0 6px}
-.group-card.kids h3{color:#984653}
-.group-card p{font-size:11px;color:#898777;line-height:1.8;margin:0;max-width:300px}
-.card-bottom{margin-top:22px;display:flex;align-items:center;gap:10px;color:#967644;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
-.card-bottom:before{content:"";width:25px;height:1px;background:#bd9a59}
-
-/* Panels */
-.panel{display:none;max-width:920px;margin:30px auto 60px;background:var(--cream);border:1px solid #c9aa6c;box-shadow:0 25px 75px #1e3c2820;position:relative;animation:enter .5s ease}
-.panel:before{content:"";position:absolute;inset:7px;border:1px solid #c8aa6b70;pointer-events:none;z-index:1}
-@keyframes enter{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:none}}
-.panel-head{background:radial-gradient(circle at 90% 10%,#ffffff12,transparent 35%),linear-gradient(120deg,#1d4a35,#0c2a21);color:#f3dfaa;padding:30px 32px;position:relative;overflow:hidden}
-.panel-head:after{content:"✦  ❄  ✧  ❄  ✦";position:absolute;right:20px;top:23px;color:#d6b56d66;font-size:25px;letter-spacing:8px}
-.panel-head small{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#d8bd7e}
-.panel-head h2{font:500 34px 'Playfair Display',serif;margin:7px 0}
-.panel-head p{font-size:11px;color:#d4d8c5;margin:0}
-.panel-content{padding:30px;position:relative;z-index:2}
-.back{background:none;border:0;color:#927c55;font-size:10px;letter-spacing:1.5px;margin:0 0 20px;padding:0}
-.label{display:block;font-size:9px;text-transform:uppercase;letter-spacing:2px;color:#8c7956;font-weight:700;margin:17px 0 8px}
-.input{width:100%;border:1px solid #d8c8a8;background:#fffdf8;padding:15px;border-radius:3px;outline:none;color:#203b2d;font-size:13px;transition:.2s}
-.input:focus{border-color:#b48c48;box-shadow:0 0 0 3px #d7b56d22}
-.primary{display:block;width:100%;padding:16px 20px;margin-top:20px;color:#f5e4ba;background:linear-gradient(110deg,#28553d,#102b22);border:1px solid #d2b36d;border-radius:3px;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:800;box-shadow:0 8px 18px #143c2b26;transition:.25s}
-.primary:hover{transform:translateY(-2px);box-shadow:0 12px 23px #143c2b3a}
-.secondary{padding:12px 16px;border:1px solid #c9b17e;background:#fff7e6;color:#735e39;border-radius:3px;font-size:10px;letter-spacing:1px}
-.notice{display:none;margin-top:14px;padding:12px;border-radius:3px;font-size:11px;line-height:1.6}
-.notice.error{display:block;background:#f9e8e5;color:#913e47;border:1px solid #e8c3bd}
-.notice.success{display:block;background:#e8efe4;color:#416447;border:1px solid #cadac3}
-.helper{text-align:center;font-size:10px;color:#96917e;line-height:1.8;margin-top:16px}
-.name-plaque{position:relative;max-width:620px;margin:0 auto 25px;padding:22px 24px 20px;text-align:center;color:var(--gold2);background:radial-gradient(ellipse at 50% 0%,#47744d,#1b4934 55%,#0c2b20);border:1px solid var(--gold);outline:1px solid #b18a4c88;outline-offset:5px;box-shadow:0 12px 30px #102b2224,inset 0 0 25px #e4c77b12}
-.name-plaque:before,.name-plaque:after{content:"✦";position:absolute;top:50%;transform:translateY(-50%);color:#e5c77e;font-size:22px}
-.name-plaque:before{left:18px}.name-plaque:after{right:18px}
-.name-plaque small{display:block;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:#e2c989}
-.participant-name{display:block;margin-top:7px;font:clamp(32px,6vw,49px)/1.1 'Great Vibes',cursive;color:#fff0c4;text-shadow:0 2px 15px #e4c77b55;overflow-wrap:anywhere}
-.plaque-sub{margin-top:8px;font-size:9px;letter-spacing:2px;color:#c4d3bf;text-transform:uppercase}
-.wheel-area{text-align:center}
-.wheel-title{font:500 31px 'Playfair Display',serif;color:var(--forest);margin:10px 0}
-.wheel-status{font-size:11px;color:#918b79}
-.wheel-instruction{display:inline-flex;align-items:center;gap:9px;margin-top:12px;padding:9px 15px;background:#f4ecd9;border:1px solid #dfcda5;color:#806b48;font-size:9px;letter-spacing:1.3px;text-transform:uppercase}
-.wheel-wrap{width:min(100%,470px);aspect-ratio:1;margin:34px auto 28px;position:relative;display:grid;place-items:center}
-.wheel-ornament{position:absolute;inset:-17px;border-radius:50%;border:2px solid #c9a45d;box-shadow:0 0 0 5px #f4e7c9,0 0 0 7px #aa884d;pointer-events:none}
-.wheel-ornament:before,.wheel-ornament:after{content:"✦";position:absolute;color:#a47a37;font-size:25px;background:#f5ecd9}
-.wheel-ornament:before{top:50%;left:-13px;transform:translateY(-50%)}
-.wheel-ornament:after{top:50%;right:-13px;transform:translateY(-50%)}
-.wheel-inner-frame{position:absolute;inset:-7px;border-radius:50%;border:1px dashed #9b783f;pointer-events:none}
-.wheel{width:100%;height:100%;border-radius:50%;border:10px solid #e3c67e;box-shadow:0 0 0 4px #214a35,0 0 0 8px #e6d6ac,0 18px 42px #0004,inset 0 0 0 3px #fff7df;transition:transform 6s cubic-bezier(.12,.75,.12,1);position:relative;overflow:hidden;background:#244d36}
-#wheelCanvas{display:block;width:100%;height:100%;border-radius:50%}
-.pointer{position:absolute;z-index:5;top:-17px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:21px solid transparent;border-right:21px solid transparent;border-top:43px solid #a83243;filter:drop-shadow(0 4px 3px #0005)}
-.pointer:after{content:"";position:absolute;top:-43px;left:-8px;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff0c2,#b88b40);border:2px solid #fff0c2}
-.wheel-center{position:absolute;z-index:4;left:50%;top:50%;transform:translate(-50%,-50%);width:82px;height:82px;border-radius:50%;display:grid;place-items:center;text-align:center;background:radial-gradient(circle at 30% 25%,#fff1c6,#c29b55);border:5px solid #fff0c6;color:#21432f;font:700 11px 'Playfair Display',serif;box-shadow:0 4px 12px #0005,0 0 0 3px #9c773c}
-.spin-button{max-width:300px;margin:0 auto}
-.spin-button .primary{font-size:12px;padding:19px}
-.result{display:none;max-width:570px;margin:28px auto 0;padding:30px 25px;border:1px solid #d5b975;background:radial-gradient(circle at 50% 0%,#fff9e9,#f8eed9 70%);box-shadow:inset 0 0 0 5px #fff9,0 12px 30px #1c38251c;text-align:center;position:relative}
-.result:before{content:"";position:absolute;inset:8px;border:1px solid #c9aa6c77;pointer-events:none}
-.result small{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#9a7a43}
-.result-name{font:clamp(43px,8vw,62px) 'Great Vibes',cursive;color:#9b3444;margin:13px 0;overflow-wrap:anywhere}
-.result p{font-size:11px;color:#898777;line-height:1.8}
-.result button{max-width:250px;margin:15px auto 0}
-.remaining{max-width:600px;margin:25px auto 0;padding:15px 18px;background:#f5efdf;border:1px solid #dfd0ad;text-align:center}
-.remaining strong{display:block;color:#244631;font:22px 'Playfair Display',serif}
-.remaining span{color:#928365;font-size:9px;letter-spacing:2px;text-transform:uppercase}
-.dash{display:none;max-width:1050px;margin:30px auto 60px}
-.dash-card{background:#fffaf0;border:1px solid #d4bd8d;padding:24px;margin-top:17px;box-shadow:0 8px 25px #243b2610}
-.dash-card h3{font:500 23px 'Playfair Display',serif;color:var(--forest);margin:0 0 15px}
-.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}
-.stat{background:linear-gradient(145deg,#f6efdf,#eee4cf);border:1px solid #e0d1af;text-align:center;padding:17px 10px}
-.stat b{display:block;font:30px 'Playfair Display',serif;color:var(--forest)}
-.stat span{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#95815b}
-.dash-list{max-height:300px;overflow:auto}
-.dash-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #eae1d0;font-size:11px}
-.dash-item button{background:#fff0ed;border:1px solid #e7c8bf;color:#984650;padding:7px 10px;font-size:9px}
-.dash-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.dash-actions button{flex:1;min-width:130px}
-.tab{padding:10px 14px;background:#f4ecd9;border:1px solid #d9c69b;color:#806b48;font-size:9px;letter-spacing:1px}
-.tab.active{background:#183e2d;color:#f5e4ba;border-color:#d5b36d}
-.history-row{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;padding:11px 0;border-bottom:1px solid #eae1d0;font-size:10px}
-.footer{text-align:center;padding:60px 10px 35px;color:#9a8e74;font-size:9px;letter-spacing:2px}
-.footer-script{font:32px 'Great Vibes',cursive;color:#9c7650;letter-spacing:0}
-.footer-rule{width:90px;height:1px;background:#c4a66a;margin:15px auto}
-.toast{position:fixed;bottom:25px;left:50%;transform:translate(-50%,20px);background:#153b2e;color:#f7e5b6;padding:13px 20px;font-size:11px;border:1px solid #d7b56d;opacity:0;pointer-events:none;transition:.3s;z-index:20;text-align:center;max-width:90%}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-@media(max-width:800px){
- .wrap{width:calc(100% - 40px)}
- .hero{grid-template-columns:1fr;padding:60px 0 25px}
- .hero-copy{text-align:center;padding:0}
- .eyebrow{justify-content:center}
- .hero-desc{margin-left:auto;margin-right:auto}
- .hero-meta{justify-content:center}
- .hero-visual{min-height:560px}
-}
-@media(max-width:540px){
- .wrap{width:calc(100% - 30px)}
- .frame{inset:5px}
- .corner{width:35px;height:35px}
- header{padding-top:18px}
- .brand-title{font-size:13px}
- .brand-sub{font-size:7px;letter-spacing:2px}
- .seal{width:40px;height:40px}
- .season{display:none}
- .hero{padding-top:50px}
- .hero h1{font-size:60px}
- .script{font-size:73px}
- .hero-visual{min-height:475px;transform:scale(.9);margin:-10px 0}
- .palace{width:330px;height:430px}
- .tree{transform:translateX(-50%) scale(.88);transform-origin:top center}
- .presents{bottom:43px}
- .palace-caption{bottom:15px}
- .ring{width:365px;height:365px}
- .aura{width:400px;height:400px}
- .float-left{left:-6px;top:90px}
- .float-right{right:-5px;bottom:75px}
- .cards{grid-template-columns:1fr;max-width:390px}
- .group-card{min-height:225px;padding:25px}
- .panel-content{padding:22px 17px}
- .panel-head{padding:25px 20px}
- .panel-head h2{font-size:27px}
- .wheel-wrap{width:min(86vw,390px);margin:32px auto 27px}
- .wheel-center{width:65px;height:65px;font-size:9px}
- .name-plaque{padding:20px 30px}
- .name-plaque:before{left:9px}
- .name-plaque:after{right:9px}
- .dash-grid{grid-template-columns:1fr}
- .stats{grid-template-columns:repeat(3,1fr)}
- .stat{padding:12px 5px}
- .stat b{font-size:23px}
- .history-row{grid-template-columns:1fr 1fr}
- .history-row span:last-child{grid-column:1/-1}
-}
-</style>
-</head>
  .stats{grid-template-columns:repeat(3,1fr)}
  .stat{padding:12px 5px}
  .stat b{font-size:23px}
@@ -790,15 +266,6 @@ header{
 </head>
 <body>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-const db = window.supabase.createClient(
-    "YOUR_SUPABASE_PROJECT_URL",
-    "YOUR_SUPABASE_ANON_KEY"
-);
-</script>
-  
 <div class="texture"></div><div class="frame"></div>
 <div class="corner tl"></div><div class="corner tr"></div>
 <div class="corner bl"></div><div class="corner br"></div>
@@ -806,21 +273,21 @@ const db = window.supabase.createClient(
 <div class="wrap">
 <div class="garland">
 <svg viewBox="0 0 1400 90" preserveAspectRatio="none">
-<path d="M0 0 Q350 120 700 25 T1400 0" fill="none" stroke="#315c40" stroke-width="3"/>
+<path d="M0 0 Q350 120 700 25 T1400 0" fill="none" stroke="#315c40" stroke-width="3"></path>
 <g fill="#315c40">
-<ellipse cx="100" cy="25" rx="16" ry="6" transform="rotate(30 100 25)"/>
-<ellipse cx="135" cy="35" rx="16" ry="6" transform="rotate(-25 135 35)"/>
-<ellipse cx="370" cy="60" rx="16" ry="6" transform="rotate(30 370 60)"/>
-<ellipse cx="410" cy="60" rx="16" ry="6" transform="rotate(-25 410 60)"/>
-<ellipse cx="570" cy="45" rx="16" ry="6" transform="rotate(30 570 45)"/>
-<ellipse cx="610" cy="40" rx="16" ry="6" transform="rotate(-25 610 40)"/>
-<ellipse cx="790" cy="30" rx="16" ry="6" transform="rotate(30 790 30)"/>
-<ellipse cx="830" cy="25" rx="16" ry="6" transform="rotate(-25 830 25)"/>
-<ellipse cx="1010" cy="12" rx="16" ry="6" transform="rotate(30 1010 12)"/>
-<ellipse cx="1050" cy="10" rx="16" ry="6" transform="rotate(-25 1050 10)"/>
+<ellipse cx="100" cy="25" rx="16" ry="6" transform="rotate(30 100 25)"></ellipse>
+<ellipse cx="135" cy="35" rx="16" ry="6" transform="rotate(-25 135 35)"></ellipse>
+<ellipse cx="370" cy="60" rx="16" ry="6" transform="rotate(30 370 60)"></ellipse>
+<ellipse cx="410" cy="60" rx="16" ry="6" transform="rotate(-25 410 60)"></ellipse>
+<ellipse cx="570" cy="45" rx="16" ry="6" transform="rotate(30 570 45)"></ellipse>
+<ellipse cx="610" cy="40" rx="16" ry="6" transform="rotate(-25 610 40)"></ellipse>
+<ellipse cx="790" cy="30" rx="16" ry="6" transform="rotate(30 790 30)"></ellipse>
+<ellipse cx="830" cy="25" rx="16" ry="6" transform="rotate(-25 830 25)"></ellipse>
+<ellipse cx="1010" cy="12" rx="16" ry="6" transform="rotate(30 1010 12)"></ellipse>
+<ellipse cx="1050" cy="10" rx="16" ry="6" transform="rotate(-25 1050 10)"></ellipse>
 </g>
-<g fill="#a33143"><circle cx="115" cy="33" r="5"/><circle cx="125" cy="29" r="5"/><circle cx="390" cy="58" r="5"/><circle cx="400" cy="55" r="5"/><circle cx="590" cy="47" r="5"/><circle cx="600" cy="43" r="5"/></g>
-<g fill="#e9c779"><circle cx="300" cy="55" r="4"/><circle cx="500" cy="56" r="4"/><circle cx="700" cy="34" r="4"/><circle cx="900" cy="20" r="4"/><circle cx="1150" cy="8" r="4"/></g>
+<g fill="#a33143"><circle cx="115" cy="33" r="5"></circle><circle cx="125" cy="29" r="5"></circle><circle cx="390" cy="58" r="5"></circle><circle cx="400" cy="55" r="5"></circle><circle cx="590" cy="47" r="5"></circle><circle cx="600" cy="43" r="5"></circle></g>
+<g fill="#e9c779"><circle cx="300" cy="55" r="4"></circle><circle cx="500" cy="56" r="4"></circle><circle cx="700" cy="34" r="4"></circle><circle cx="900" cy="20" r="4"></circle><circle cx="1150" cy="8" r="4"></circle></g>
 </svg>
 </div>
 
@@ -830,7 +297,7 @@ const db = window.supabase.createClient(
 </header>
 
 <main>
-<section class="hero" id="hero">
+<section class="hero" id="hero" style="display: grid;">
  <div class="hero-copy">
   <div class="eyebrow">The most wonderful time of the year</div>
   <h1>The Christmas<span class="script">Grand</span><span class="hero-last">Celebration</span></h1>
@@ -839,7 +306,7 @@ const db = window.supabase.createClient(
  </div>
  <div class="hero-visual">
   <div class="aura"></div><div class="ring"></div>
-  <div class="float-card float-left"><small>A season of</small>Giving & Joy</div>
+  <div class="float-card float-left"><small>A season of</small>Giving &amp; Joy</div>
   <div class="float-card float-right"><small>Made with</small>Christmas Magic ✧</div>
   <div class="palace">
    <div class="palace-title">TADIFA CLAN PRESENTS</div><div class="palace-sub">A Magical Christmas</div>
@@ -856,7 +323,7 @@ const db = window.supabase.createClient(
 
 <div class="divider"><span>Season of wonder</span></div>
 
-<section class="selection" id="selection">
+<section class="selection" id="selection" style="display: block;">
  <div class="overline">Let the celebration begin</div>
  <h2>Choose Your Christmas Circle</h2>
  <p>Choose your group to enter the Christmas gift exchange draw.</p>
@@ -866,13 +333,13 @@ const db = window.supabase.createClient(
  </div>
 </section>
 
-<section class="panel" id="registerPanel">
+<section class="panel" id="registerPanel" style="display: none;">
  <div class="panel-head"><small>✦ YOUR CHRISTMAS MOMENT ✦</small><h2 id="registerTitle">Welcome to the Circle</h2><p>Enter your name to prepare your one-time Christmas draw.</p></div>
  <div class="panel-content">
   <button class="back" id="backHome">← BACK TO HOME</button>
   <form id="registerForm">
    <label class="label" for="participantInput">Your complete name</label>
-   <input class="input" id="participantInput" maxlength="60" autocomplete="name" placeholder="Enter your name..." required>
+   <input class="input" id="participantInput" maxlength="60" autocomplete="name" placeholder="Enter your name..." required="">
    <button class="primary" id="continueBtn" type="submit">CONTINUE TO THE WHEEL ✦</button>
   </form>
   <div class="notice" id="registerNotice"></div>
@@ -880,7 +347,7 @@ const db = window.supabase.createClient(
  </div>
 </section>
 
-<section class="panel" id="wheelPanel">
+<section class="panel" id="wheelPanel" style="display: none;">
  <div class="panel-head"><small>✦ THE CHRISTMAS GIFT EXCHANGE ✦</small><h2 id="wheelGroupTitle">The Grand Christmas Draw</h2><p>One name. One turn. One wonderful surprise.</p></div>
  <div class="panel-content">
   <button class="back" id="wheelBack">← BACK</button>
@@ -894,28 +361,28 @@ const db = window.supabase.createClient(
     <div class="wheel" id="wheel"><canvas id="wheelCanvas" width="1000" height="1000"></canvas></div>
     <div class="wheel-center">TADIFA<br>✦<br>CLAN</div>
    </div>
-   <div class="spin-button"><button class="primary" id="spinBtn" disabled>SPIN THE WHEEL ✦</button></div>
-   <div class="result" id="resultBox"><small>✦ YOUR CHRISTMAS DRAW IS ✦</small><div class="result-name" id="resultName"></div><p>This is the person you will give your Christmas gift to. Keep the surprise safe!</p><button class="primary" id="finishBtn">FINISH & RETURN HOME</button></div>
+   <div class="spin-button"><button class="primary" id="spinBtn" disabled="">SPIN THE WHEEL ✦</button></div>
+   <div class="result" id="resultBox"><small>✦ YOUR CHRISTMAS DRAW IS ✦</small><div class="result-name" id="resultName"></div><p>This is the person you will give your Christmas gift to. Keep the surprise safe!</p><button class="primary" id="finishBtn">FINISH &amp; RETURN HOME</button></div>
    <div class="remaining"><strong id="remainingCount">—</strong><span>Eligible gift names remaining in this circle</span></div>
   </div>
   <div class="notice" id="wheelNotice"></div>
  </div>
 </section>
 
-<section class="panel" id="adminPanel">
+<section class="panel" id="adminPanel" style="display: none;">
  <div class="panel-head"><small>✦ PRIVATE MANAGEMENT ✦</small><h2>Administrator Access</h2><p>Sign in to manage the Tadifa Clan Christmas draw.</p></div>
  <div class="panel-content">
   <button class="back" id="adminBack">← BACK TO HOME</button>
   <form id="adminForm">
-   <label class="label" for="adminEmail">Administrator email</label><input class="input" id="adminEmail" type="email" autocomplete="username" placeholder="Your admin email" required>
-   <label class="label" for="adminPassword">Password</label><input class="input" id="adminPassword" type="password" autocomplete="current-password" placeholder="Your private password" required>
+   <label class="label" for="adminEmail">Administrator email</label><input class="input" id="adminEmail" type="email" autocomplete="username" placeholder="Your admin email" required="">
+   <label class="label" for="adminPassword">Password</label><input class="input" id="adminPassword" type="password" autocomplete="current-password" placeholder="Your private password" required="">
    <button class="primary" id="adminLoginBtn" type="submit">SIGN IN TO DASHBOARD</button>
   </form>
   <div class="notice" id="adminNotice"></div>
  </div>
 </section>
 
-<section class="dash" id="dashboard">
+<section class="dash" id="dashboard" style="display: none;">
  <div class="panel-head"><small>✦ TADIFA CLAN CONTROL ROOM ✦</small><h2>Christmas Draw Dashboard</h2><p>Manage participants, gift names, and draw history.</p></div>
  <div class="dash-card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap"><h3 style="margin:0">Overview</h3><button class="secondary" id="adminLogout">SIGN OUT</button></div><div class="stats"><div class="stat"><b id="adultStat">0</b><span>Adult names</span></div><div class="stat"><b id="kidsStat">0</b><span>Kids names</span></div><div class="stat"><b id="drawStat">0</b><span>Total draws</span></div></div></div>
  <div class="dash-card" id="participantResetCard" style="border:2px solid #b99a5b;background:linear-gradient(135deg,#fffaf0,#f4ead5);box-shadow:0 8px 24px #1b38251a">
@@ -933,12 +400,14 @@ const db = window.supabase.createClient(
   <div class="dash-actions"><button class="secondary" id="refreshAdmin">REFRESH LIST</button><button class="secondary" id="returnAll">RETURN ALL SELECTED NAMES</button></div>
   <div class="dash-list" id="choiceList" style="margin-top:15px"></div>
  </div>
- <div class="dash-card"><h3>Replace a Complete List</h3><p style="font-size:11px;color:#898777;line-height:1.8">Enter one recipient name per line. Replacing a list resets its available gift names.</p><label class="label" for="replaceList">Recipient names</label><textarea class="input" id="replaceList" rows="6" placeholder="Name One&#10;Name Two&#10;Name Three"></textarea><button class="primary" id="replaceBtn">REPLACE CURRENT GROUP LIST</button></div>
+ <div class="dash-card"><h3>Replace a Complete List</h3><p style="font-size:11px;color:#898777;line-height:1.8">Enter one recipient name per line. Replacing a list resets its available gift names.</p><label class="label" for="replaceList">Recipient names</label><textarea class="input" id="replaceList" rows="6" placeholder="Name One
+Name Two
+Name Three"></textarea><button class="primary" id="replaceBtn">REPLACE CURRENT GROUP LIST</button></div>
  <div class="dash-card"><h3>Draw History</h3><button class="secondary" id="loadHistory">REFRESH HISTORY</button><div id="historyList" style="margin-top:15px"></div></div>
 </section>
 </main>
 
-<footer class="footer"><div class="footer-script">Merry Christmas</div><div class="footer-rule"></div>TADIFA CLAN · A CELEBRATION OF LOVE, JOY & GIVING<div style="margin-top:12px;color:#b79a61">✦ &nbsp; ❦ &nbsp; ✧ &nbsp; ❦ &nbsp; ✦</div></footer>
+<footer class="footer"><div class="footer-script">Merry Christmas</div><div class="footer-rule"></div>TADIFA CLAN · A CELEBRATION OF LOVE, JOY &amp; GIVING<div style="margin-top:12px;color:#b79a61">✦ &nbsp; ❦ &nbsp; ✧ &nbsp; ❦ &nbsp; ✦</div></footer>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -1323,5 +792,6 @@ $("resetParticipantBtn").onclick=async()=>{
 /* START */
 showHome();
 </script>
-</body>
-</html>
+
+
+</body></html>
